@@ -1,2 +1,25 @@
 # pleak-frontend
+
 The user-facing part of the Privacy Leak Tools
+
+v0.0.1
+
+## Building
+
+To build an app you need: [NodeJS](http://nodejs.org) with [npm](https://npmjs.org) and [grunt](http://gruntjs.com) installed.
+
+To install all project dependencies execute
+
+```
+npm install
+```
+
+Serve an app locally with
+
+```
+grunt auto-build
+```
+
+## License
+
+MIT

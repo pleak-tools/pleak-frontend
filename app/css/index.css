@@ -1,0 +1,7 @@
+html, body, #canvas, #canvas > div {
+  height: 100%;
+}
+
+.icon-pleaks-query {
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="#357986" width="270" height="240"><path d="M22,8 L36,15 L36,29 L22,36 L8,29 L8,15 Z"/></svg>');
+}
