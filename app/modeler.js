@@ -5,16 +5,21 @@ var modeler = new CustomModeler({ container: '#canvas', keyboard: { bindTo: docu
 
 var request = require('superagent');
 
+var domain = 'http://localhost:8000';
+var backend = 'http://localhost:8080';
+
 // if model name arrived - requesting the model from the server
-window.addEventListener("message", function(event) {
+window.addEventListener('message', function(event) {
   var origin = event.origin || event.originalEvent.origin;
-  if (origin !== "http://example.org:8000")
+  console.log(event);
+  if (origin !== domain)
     return;
 
+  console.log(event);
   var fileName = event.data;
 
   request
-    .get('http://localhost:8080/pleak/open?fileName=' + fileName)
+    .get(backend + '/pleak/open?fileName=' + fileName)
     .withCredentials()
     .end(function(err, res){
       console.log(res);
