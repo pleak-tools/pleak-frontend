@@ -14,10 +14,16 @@ To install all project dependencies execute
 npm install
 ```
 
-Serve an app locally with
+Serve an app locally, build it with
 
 ```
-grunt auto-build
+grunt build
+```
+
+and serve with
+
+```
+node server.js
 ```
 
 ## License
