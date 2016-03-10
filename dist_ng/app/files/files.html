@@ -1,0 +1,34 @@
+<div class="container" ng-controller="FilesController as c">
+  <div class="row">
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4>bpmn models</h4>
+      </div>
+
+      <div class="panel-body">
+        <div class="panel-group">
+
+          <div ng-show="c.noOrders()">
+            <h5 class=".text-muted">No availavle files...</h5>
+          </div>
+
+          <div ng-repeat="file in c.files()" class="panel panel-default">
+            <div class="panel-body">
+
+              <h3><b>{{file}}</b></h3>
+              <h4><small>.bpmn file</small></h4>
+
+              <div class="btn-group pull-right">
+                <button ng-click="c.openFile(file)" class="btn btn-success" type="submit">
+                  <span class="glyphicon glyphicon-ok"> Open</span>
+                </button>
+                <button class="btn btn-default" type="submit">
+                  <span class="glyphicon glyphicon-remove"> Delete</span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+  </div>
+</div>

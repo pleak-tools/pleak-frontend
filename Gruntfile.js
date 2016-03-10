@@ -52,12 +52,12 @@ module.exports = function(grunt) {
           watch: true
         },
         files: {
-          '<%= config.dist %>/app.js': [ '<%= config.sources %>/app.js' ]
+          '<%= config.dist %>/modeler.js': [ '<%= config.sources %>/modeler.js' ]
         }
       },
       app: {
         files: {
-          '<%= config.dist %>/app.js': [ '<%= config.sources %>/app.js' ]
+          '<%= config.dist %>/modeler.js': [ '<%= config.sources %>/modeler.js' ]
         }
       }
     },
@@ -118,12 +118,17 @@ module.exports = function(grunt) {
 
   grunt.registerTask('build', [ 'copy', 'browserify:app' ]);
 
+  /*
+
+  App is served now by ExpressJS server.
+
   grunt.registerTask('auto-build', [
     'copy',
     'browserify:watch',
     'connect:livereload',
     'watch'
   ]);
+  */
 
   grunt.registerTask('default', [ 'jshint', 'build' ]);
 };

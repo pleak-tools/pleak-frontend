@@ -1,11 +1,11 @@
 {
   "name": "pleak-frontend",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "modeler for privacy data enhanced bpmn models",
-  "main": "app/app.js",
+  "main": "dist_ng/app/index.html",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bpmn-io/bpmn-js-examples"
+    "url": "https://github.com/pleak-tools/pleak-frontend"
   },
   "keywords": [
     "pleak"
@@ -29,7 +29,9 @@
     "bootstrap": "^3.3.6",
     "bpmn-js": "^0.13.0",
     "diagram-js": "^0.13.0",
+    "express": "^4.13.4",
     "inherits": "^2.0.1",
-    "lodash": "^3.10.1"
+    "lodash": "^3.10.1",
+    "superagent": "^1.8.0"
   }
 }
