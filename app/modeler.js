@@ -68,13 +68,12 @@ $(document).on('ready', function() {
   var downloadButton = $('#download-diagram');
   var downloadSvgButton = $('#download-svg');
 
-  /*
   $('.buttons a').click(function(e) {
     if (!$(this).is('.active')) {
       e.preventDefault();
       e.stopPropagation();
     }
-  });*/
+  });
 
   function setEncoded(linkButton, name, data) {
     var encodedData = encodeURIComponent(data);
