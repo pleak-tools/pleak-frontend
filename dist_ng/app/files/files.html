@@ -8,7 +8,7 @@
               <h4>bpmn models</h4>
             </div>
             <div class="col-sm-4">
-              <input ng-model="search" ng-init="search = ''" type="text" class="form-control pull-right" placeholder="Search files">
+              <input ng-model="search" ng-init="search = ''" type="search" class="form-control pull-right" placeholder="Search files">
             </div>
           </div>
         </div>
@@ -33,10 +33,10 @@
                 <td>
                   <div class="btn-group pull-right">
                     <button ng-click="c.openFile(file)" class="btn btn-success" type="submit">
-                      <span class="glyphicon glyphicon-ok"></span> Open
+                      <span class="glyphicon glyphicon-open-file"></span> Open
                     </button>
                     <button class="btn btn-default" type="submit">
-                      <span class="glyphicon glyphicon-remove"></span> Delete
+                      <span class="glyphicon glyphicon-trash"></span> Delete
                     </button>
                   </div>
                 </td>
