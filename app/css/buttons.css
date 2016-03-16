@@ -22,10 +22,16 @@
 .buttons > li {
   display: inline-block;
 }
+
 .buttons > li > a {
   display: inline-block;
   padding: 5px;
   text-decoration: none;
+  opacity: 0.3;
+}
+
+.buttons > li > a.active {
+  opacity: 1.0;
 }
 
 .buttons a:hover {
