@@ -11,7 +11,7 @@ var domain = 'http://localhost:8000';
 var backend = 'http://localhost:8080';
 
 var fileName;
-var fileBpmn;
+var fileBpmnXml;
 
 //
 // If model name arrived - requesting the model from the server.
@@ -53,13 +53,12 @@ function openDiagram(diagram) {
 // Saving the model.
 //
 var saveButton = $('#save-diagram');
-saveButton.addClass('active');
 
 saveButton.click( function(e) {
   request
     .post(backend + '/pleak/save')
-    .send({ file: fileBpmn, fileName: fileName })
-    .withCredentials()
+    .field('fileName', fileName)
+    .field('file', fileBpmnXml)
     .end(function(err, res){
       console.log(res);
     });
@@ -93,14 +92,16 @@ $(document).on('ready', function() {
     var encodedData = encodeURIComponent(data);
 
     if (data) {
-      fileBpmn = 'data:application/bpmn20-xml;charset=UTF-8,' + encodedData;
+      fileBpmnXml = data;
 
+      saveButton.addClass('active');
       linkButton.addClass('active').attr({
-        'href': fileBpmn,
+        'href': 'data:application/bpmn20-xml;charset=UTF-8,' + encodedData,
         'download': name
       });
     } else {
       linkButton.removeClass('active');
+      saveButton.removeClass('active');
     }
   }
 
