@@ -28,8 +28,6 @@ window.addEventListener('message', function(event) {
     .get(backend + '/pleak/open?fileName=' + fileName)
     .withCredentials()
     .end(function(err, res){
-      console.log(res);
-
       var diagram = JSON.parse(res.text).text;
       openDiagram(diagram);
     });
@@ -52,7 +50,23 @@ function openDiagram(diagram) {
 }
 
 //
-// Downloading and saving the model.
+// Saving the model.
+//
+var saveButton = $('#save-diagram');
+saveButton.addClass('active');
+
+saveButton.click( function(e) {
+  request
+    .post(backend + '/pleak/save')
+    .send({ file: fileBpmn, fileName: fileName })
+    .withCredentials()
+    .end(function(err, res){
+      console.log(res);
+    });
+});
+
+//
+// Downloading the model.
 //
 function saveSVG(done) {
   modeler.saveSVG(done);
