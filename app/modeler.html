@@ -22,18 +22,28 @@
 
   <div id="canvas"></div>
 
-  <ul class="buttons">
-    <li><a id="save-diagram" href title="save BPMN diagram">
-      <span class="glyphicon glyphicon-floppy-disk"/> save diagram
-    </a></li>
-
-    <li><a id="download-diagram" href title="download BPMN diagram">
-      <span class="glyphicon glyphicon-cloud-download"/> BPMN diagram
-    </a></li>
-    <li><a id="download-svg" href title="download as SVG image">
-      <span class="glyphicon glyphicon-cloud-download"/> SVG image
-    </a></li>
-  </ul>
+  <div class="import-export">
+    <ul class="buttons">
+      <li>
+        <a id="save-diagram" title="save BPMN diagram">
+          <span class="glyphicon glyphicon-floppy-disk"></span> Save diagram
+        </a>
+      </li>
+    </ul>
+    <ul class="buttons">
+      <li>
+        <a id="download-diagram" title="download BPMN diagram">
+          <span class="glyphicon glyphicon-cloud-download"/></span> BPMN diagram
+        </a>
+      </li>
+      <span class="separator">|</span>
+      <li>
+        <a id="download-svg" title="download as SVG image">
+          <span class="glyphicon glyphicon-cloud-download"/></span> SVG image
+        </a>
+      </li>
+    </ul>
+  </div>
 
   <script src="./modeler.js"></script>
 </body>
