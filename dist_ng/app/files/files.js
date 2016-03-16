@@ -11,7 +11,7 @@ angular.module('pleaks.files', ['ngRoute'])
 
 .controller('FilesController', ['$scope','$http', function(scope, http) {
   var controller = this;
-;
+
   var _files = null;
 
   http({
@@ -28,8 +28,6 @@ angular.module('pleaks.files', ['ngRoute'])
   controller.noFiles = function() {
     return _files.length == 0;
   };
-
-  //var bpmnEditor;
 
   controller.openFile = function(fileName) {
     var modelerAddress = "http://localhost:8000/modeler.html";
