@@ -7,28 +7,37 @@
       </div>
 
       <div class="panel-body">
-        <div class="panel-group">
+        <div ng-show="c.noOrders()">
+          <h5 class=".text-muted">No available files...</h5>
+        </div>
 
-          <div ng-show="c.noFiles()">
-            <h5 class=".text-muted">No available files...</h5>
-          </div>
-
-          <div ng-repeat="file in c.files()" class="panel panel-default">
-            <div class="panel-body">
-
-              <h3><b>{{file}}</b></h3>
-              <h4><small>.bpmn file</small></h4>
-
-              <div class="btn-group pull-right">
-                <button ng-click="c.openFile(file)" class="btn btn-success" type="submit">
-                  <span class="glyphicon glyphicon-ok"> Open</span>
-                </button>
-                <button class="btn btn-default" type="submit">
-                  <span class="glyphicon glyphicon-remove"> Delete</span>
-                </button>
-              </div>
-
-            </div>
-          </div>
+        <!-- Table -->
+        <table class="table" id="filesTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>File name</th>
+              <th><span class="pull-right">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="file in c.files()">
+              <td>{{$index+1}}</td>
+              <td>{{file}}</td>
+              <td>
+                <div class="btn-group pull-right">
+                  <button ng-click="c.openFile(file)" class="btn btn-success" type="submit">
+                    <span class="glyphicon glyphicon-ok"></span> Open
+                  </button>
+                  <button class="btn btn-default" type="submit">
+                    <span class="glyphicon glyphicon-remove"></span> Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
