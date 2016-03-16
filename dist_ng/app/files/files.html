@@ -1,52 +1,50 @@
 <div class="container" ng-controller="FilesController as c">
   <div class="row topMargin">
-
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <div class="row">
-          <div class="col-sm-8">
-            <h4>bpmn models</h4>
-          </div>
-          <div class="col-sm-4">
-            <input ng-model="search" ng-init="search = ''" type="text" class="form-control pull-right" placeholder="Search files">
+    <div class="col-sm-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <div class="row">
+            <div class="col-sm-8">
+              <h4>bpmn models</h4>
+            </div>
+            <div class="col-sm-4">
+              <input ng-model="search" ng-init="search = ''" type="text" class="form-control pull-right" placeholder="Search files">
+            </div>
           </div>
         </div>
 
+        <div class="panel-body">
+          <!-- Table -->
+          <table class="table" id="filesTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>File name</th>
+                <th><span class="pull-right">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-show="c.noFiles()">
+                <td><h4>No available files...</h4></td>
+              </tr>
+              <tr ng-repeat="file in c.files()" ng-if="file.toLowerCase().indexOf(search.toLowerCase()) > -1">
+                <td>{{$index+1}}</td>
+                <td>{{file}}</td>
+                <td>
+                  <div class="btn-group pull-right">
+                    <button ng-click="c.openFile(file)" class="btn btn-success" type="submit">
+                      <span class="glyphicon glyphicon-ok"></span> Open
+                    </button>
+                    <button class="btn btn-default" type="submit">
+                      <span class="glyphicon glyphicon-remove"></span> Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-      </div>
-
-      <div class="panel-body">
-
-        <!-- Table -->
-        <table class="table" id="filesTable">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>File name</th>
-              <th><span class="pull-right">Actions</span></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr ng-show="c.noFiles()">
-              <td><h4>No available files...</h4></td>
-            </tr>
-
-            <tr ng-repeat="file in c.files()" ng-if="file.toLowerCase().indexOf(search.toLowerCase()) > -1">
-              <td>{{$index+1}}</td>
-              <td>{{file}}</td>
-              <td>
-                <div class="btn-group pull-right">
-                  <button ng-click="c.openFile(file)" class="btn btn-success" type="submit">
-                    <span class="glyphicon glyphicon-ok"/></span> Open
-                  </button>
-                  <button class="btn btn-default" type="submit">
-                    <span class="glyphicon glyphicon-remove"/></span> Delete
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </div>
   </div>
