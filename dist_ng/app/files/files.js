@@ -12,7 +12,8 @@ angular.module('pleaks.files', ['ngRoute'])
 .controller('FilesController', ['$scope','$http', function(scope, http) {
   var controller = this;
 
-  var _files = null;
+  var fileNames = null;
+  var fileModifiedDates = null;
 
   var domain = 'http://localhost:8000';
 
@@ -20,7 +21,8 @@ angular.module('pleaks.files', ['ngRoute'])
     method: 'GET',
     url: 'http://localhost:8080/pleak/list'
   }).then(function(response) {
-    _files = response.data.list;
+    fileNames = response.data.fileNames;
+    fileModifiedDates = response.data.fileModifiedDates;
   });
 
   // Refresh the page when user saves to display updated files.
@@ -33,15 +35,19 @@ angular.module('pleaks.files', ['ngRoute'])
     window.location.reload();
   }, false);
 
-  controller.files = function() {
-    return _files;
+  controller.getFileNames = function() {
+    return fileNames;
+  };
+
+  controller.getFileModifiedDates = function() {
+    return fileModifiedDates;
   };
 
   controller.noFiles = function() {
     // Console error fix.
-    if (_files === null) return true;
+    if (fileNames === null) return true;
 
-    return _files.length == 0;
+    return fileNames.length == 0;
   };
 
   controller.openFile = function(message) {
@@ -79,11 +85,11 @@ angular.module('pleaks.files', ['ngRoute'])
 
   controller.isExistingFileName = function(fileName) {
     // Console error fix.
-    if (_files === null) return false;
+    if (fileNames === null) return false;
 
     var bpmnFileName = fileName + '.bpmn';
-    for (var fIx = 0; fIx < _files.length; fIx++) {
-      if (_files[fIx] === bpmnFileName) return true;
+    for (var fIx = 0; fIx < fileNames.length; fIx++) {
+      if (fileNames[fIx] === bpmnFileName) return true;
     }
     return false;
   }

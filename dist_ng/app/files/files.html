@@ -20,6 +20,7 @@
               <tr>
                 <th>#</th>
                 <th>File name</th>
+                <th>Last modified</th>
                 <th><span class="pull-right">Actions</span></th>
               </tr>
             </thead>
@@ -27,9 +28,10 @@
               <tr ng-show="c.noFiles()">
                 <td><h4>No available files...</h4></td>
               </tr>
-              <tr ng-repeat="file in c.files()" ng-if="file.toLowerCase().indexOf(search.toLowerCase()) > -1">
+              <tr ng-repeat="file in c.getFileNames()" ng-if="file.toLowerCase().indexOf(search.toLowerCase()) > -1">
                 <td>{{$index+1}}</td>
                 <td>{{file}}</td>
+                <td>{{c.getFileModifiedDates()[$index]}}</td>
                 <td>
                   <div class="btn-group pull-right">
                     <button ng-click="c.editFile(file)" class="btn btn-success" type="submit">
