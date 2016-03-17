@@ -35,5 +35,10 @@
 }
 
 .buttons a:hover {
-  color: #24547D;
+  opacity: 1.0;
+}
+
+.separator {
+  color: #337ab7;
+  opacity: 0.3;
 }
