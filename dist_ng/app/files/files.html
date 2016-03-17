@@ -32,8 +32,8 @@
                 <td>{{file}}</td>
                 <td>
                   <div class="btn-group pull-right">
-                    <button ng-click="c.openFile(file)" class="btn btn-success" type="submit">
-                      <span class="glyphicon glyphicon-open-file"></span> Open
+                    <button ng-click="c.editFile(file)" class="btn btn-success" type="submit">
+                      <span class="glyphicon glyphicon-edit"></span> Edit
                     </button>
                     <button class="btn btn-default" type="submit">
                       <span class="glyphicon glyphicon-trash"></span> Delete
@@ -54,17 +54,23 @@
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">×</span>
                   </button>
-                  <h4 class="modal-title" id="fileNameLabel">File name</h4>
+                  <h4 class="modal-title" id="fileNameLabel">Create a new file</h4>
                 </div>
                 <div class="modal-body">
-                  <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Please insert the file name (without extension)">
-                    <div class="input-group-addon">.bpmn</div>
+                  <div class="form-group {{ c.isExistingFileName(fileName) ? 'has-error' : '' }}">
+                    <div class="input-group">
+                      <input type="text" class="form-control" ng-init="fileName = 'Untitled'" ng-model="fileName"
+                             aria-describedby="alreadyExists" placeholder="Please insert the file name (without extension)">
+                      <div class="input-group-addon">.bpmn</div>
+                    </div>
+                    <span id="alreadyExists" ng-if="c.isExistingFileName(fileName)" class="help-block">
+                      The file name already exists. Please insert a new file name.
+                    </span>
                   </div>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                  <button ng-click="" class="btn btn-success">
+                  <button ng-click="c.newFile(fileName+'.bpmn')" data-dismiss="modal" class="btn btn-success" ng-disabled="c.isExistingFileName(fileName)">
                     Create
                   </button>
                 </div>

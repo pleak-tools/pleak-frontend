@@ -16,21 +16,24 @@ var fileBpmnXml;
 //
 // If model name arrived - requesting the model from the server.
 //
+var parentEvent;
 window.addEventListener('message', function(event) {
+  parentEvent = event;
   var origin = event.origin || event.originalEvent.origin;
 
   if (origin !== domain)
     return;
+  fileName = event.data.fileName;
 
-  fileName = event.data;
-
-  request
-    .get(backend + '/pleak/open?fileName=' + fileName)
-    .withCredentials()
-    .end(function(err, res){
-      var diagram = JSON.parse(res.text).text;
-      openDiagram(diagram);
-    });
+  if (event.data.type === 'edit') {
+    request
+      .get(backend + '/pleak/open?fileName=' + fileName)
+      .withCredentials()
+      .end(function(err, res){
+        var diagram = JSON.parse(res.text).text;
+        openDiagram(diagram);
+      });
+  }
 }, false);
 
 //
@@ -62,6 +65,7 @@ saveButton.click( function(e) {
     .end(function(err, res){
       console.log(res);
     });
+  parentEvent.source.postMessage("received", parentEvent.origin);
 });
 
 //
