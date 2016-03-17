@@ -16,7 +16,6 @@
   display: inline-block;
   margin-right: 5px;
   margin-bottom: 0;
-
 }
 
 .buttons > li {
@@ -31,10 +30,6 @@
 }
 
 .buttons > li > a.active {
-  opacity: 1.0;
-}
-
-.buttons a:hover {
   opacity: 1.0;
 }
 
