@@ -111,7 +111,7 @@ $(document).on('ready', function() {
 
   var exportArtifacts = _.debounce(function() {
     saveSVG(function(err, svg) {
-      setEncoded(downloadSvgButton, fileName + '.svg', err ? null : svg);
+      setEncoded(downloadSvgButton, fileName.slice(0, -5) + '.svg', err ? null : svg);
     });
 
     saveDiagram(function(err, xml) {
