@@ -81,6 +81,16 @@ angular.module('pleaks.files', ['ngRoute'])
 
   controller.deleteFile = function(fileName) {
     // Delete stuff
+    http({
+      method: 'GET',
+      url: 'http://localhost:8080/pleak/delete?fileName=' + fileName
+    }).then(function(response) {
+      if (response.status === 200) {
+        var fIx = fileNames.indexOf(fileName);
+        fileNames.splice(fIx, 1);
+        fileModifiedDates.splice(fIx, 1);
+      }
+    });
   }
 
   controller.isExistingFileName = function(fileName) {
