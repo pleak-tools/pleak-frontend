@@ -11,6 +11,7 @@ var domain = 'http://localhost:8000';
 var backend = 'http://localhost:8080';
 
 var fileName;
+var fileMD5;
 var fileBpmnXml;
 
 //
@@ -30,8 +31,11 @@ window.addEventListener('message', function(event) {
       .get(backend + '/pleak/open?fileName=' + fileName)
       .withCredentials()
       .end(function(err, res){
-        var diagram = JSON.parse(res.text).text;
+        var resJson = JSON.parse(res.text);
+        var diagram = resJson.content;
+        fileMD5 = resJson.md5;
         openDiagram(diagram);
+        $('#fileName').val(fileName);
       });
   }
 }, false);
@@ -58,12 +62,23 @@ function openDiagram(diagram) {
 var saveButton = $('#save-diagram');
 
 saveButton.click( function(e) {
+  $('#fileNameError').hide();
   request
     .post(backend + '/pleak/save')
-    .field('fileName', fileName)
+    .field('fileName', $('#fileName').val())
+    .field('fileMD5', fileMD5)
     .field('file', fileBpmnXml)
     .end(function(err, res){
       console.log(res);
+      var resJson = JSON.parse(res.text);
+      if (res.statusCode === 200) {
+        $('#fileSaveSuccess').show();
+        $('#fileSaveSuccess').fadeOut(5000);
+        disableAllButtons();
+        fileMD5 = resJson.text;
+      } else if (res.statusCode === 409) {
+        $('#fileNameError').show();
+      }
     });
   parentEvent.source.postMessage("received", parentEvent.origin);
 });
@@ -79,6 +94,15 @@ function saveDiagram(done) {
   modeler.saveXML({ format: true }, function(err, xml) {
     done(err, xml);
   });
+}
+
+function disableAllButtons() {
+  var downloadButton = $('#download-diagram');
+  var downloadSvgButton = $('#download-svg');
+  var saveButton = $('#save-diagram');
+  downloadButton.removeClass('active');
+  downloadSvgButton.removeClass('active');
+  saveButton.removeClass('active');
 }
 
 $(document).on('ready', function() {

@@ -19,32 +19,43 @@
         crossorigin="anonymous">
 </head>
 <body>
+  <div class="row import-export">
+    <div class="col-xs-12">
+      <div class="row">
+        <div class="col-xs-6 form-group file-name-container">
+          <input type="text" class="form-control pull-right file-name-box" id="fileName" placeholder="File name">
+          <span id="fileNameError" class="help-block error-message" style="display: none;">File has changed on the server. Please set new file name to save a copy.</span>
+          <span id="fileSaveSuccess" class="help-block success-message" style="display: none;">Successfully saved the file.</span>
+        </div>
+        <div class="col-xs-6 buttons-container">
+          <ul class="buttons">
+            <li>
+              <a id="save-diagram" title="save BPMN diagram" href="#">
+                <span class="glyphicon glyphicon-floppy-disk"></span> Save diagram
+              </a>
+            </li>
+          </ul>
+          <ul class="buttons">
+            <li>
+              <a id="download-diagram" title="download BPMN diagram" href>
+                <span class="glyphicon glyphicon-cloud-download"/></span> BPMN diagram
+              </a>
+            </li>
+            <span class="separator">|</span>
+            <li>
+              <a id="download-svg" title="download as SVG image" href>
+                <span class="glyphicon glyphicon-cloud-download"/></span> SVG image
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div id="canvas"></div>
 
-  <div class="import-export">
-    <ul class="buttons">
-      <li>
-        <a id="save-diagram" title="save BPMN diagram" href="#">
-          <span class="glyphicon glyphicon-floppy-disk"></span> Save diagram
-        </a>
-      </li>
-    </ul>
-    <ul class="buttons">
-      <li>
-        <a id="download-diagram" title="download BPMN diagram" href>
-          <span class="glyphicon glyphicon-cloud-download"/></span> BPMN diagram
-        </a>
-      </li>
-      <span class="separator">|</span>
-      <li>
-        <a id="download-svg" title="download as SVG image" href>
-          <span class="glyphicon glyphicon-cloud-download"/></span> SVG image
-        </a>
-      </li>
-    </ul>
-  </div>
-
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
   <script src="./modeler.js"></script>
 </body>
 </html>

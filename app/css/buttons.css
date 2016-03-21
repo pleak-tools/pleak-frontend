@@ -1,10 +1,17 @@
+.djs-palette {
+  margin-top: 80px;
+}
+
 .import-export {
   position: fixed;
-  bottom: 20px;
+  top: 10px;
   left: 20px;
 
   padding: 0;
   margin: 0;
+
+  z-index: 3000;
+  min-width: 850px;
 }
 
 .buttons {
@@ -36,4 +43,26 @@
 .separator {
   color: #337ab7;
   opacity: 0.3;
+}
+
+.file-name-box {
+  padding: 20px!important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3)!important;
+  border: none!important;
+}
+
+.file-name-container {
+  padding-right: 0!important;
+}
+
+.buttons-container {
+  padding-left: 10px !important;
+}
+
+.error-message {
+  color: #D43535 !important;
+}
+
+.success-message {
+  color: #259825 !important;
 }
