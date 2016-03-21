@@ -37,10 +37,10 @@
                     <button ng-click="c.editFile(file)" class="btn btn-success" type="submit">
                       <span class="glyphicon glyphicon-edit"></span> Edit
                     </button>
-                    <button class="btn btn-default" type="submit" data-toggle="modal" data-target="#deleteFileModal">
+                    <button class="btn btn-default" type="submit" data-toggle="modal" data-target="#deleteFileModal{{$index}}">
                       <span class="glyphicon glyphicon-trash"></span> Delete
                     </button>
-                    <div class="modal fade" id="deleteFileModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+                    <div class="modal fade" id="deleteFileModal{{$index}}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
                       <div class="modal-dialog modal-sm">
                         <div class="modal-content">
                           <div class="modal-header">
