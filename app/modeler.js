@@ -37,6 +37,8 @@ window.addEventListener('message', function(event) {
         openDiagram(diagram);
         $('#fileName').val(fileName);
       });
+  } else {
+    $('#fileName').val(fileName);
   }
 }, false);
 
