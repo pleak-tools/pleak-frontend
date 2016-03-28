@@ -4,7 +4,8 @@
 angular.module('pleaks', [
   'ngRoute',
   'pleaks.splash',
-  'pleaks.files'
+  'pleaks.files',
+  'pleaks.view'
 ]).
 config(['$routeProvider', function($routeProvider) {
   $routeProvider.otherwise({redirectTo: '/splash'});

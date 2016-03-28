@@ -8,11 +8,12 @@ var request = require('superagent');
 var _ = require('lodash');
 
 var domain = 'http://localhost:8000';
-var backend = 'http://localhost:8080';
+var backend = 'http://localhost:8080/pleak-backend-maven';
 
-var fileName;
-var fileMD5;
-var fileBpmnXml;
+var file = {
+  id: -1,
+  userId: 1
+};
 
 //
 // If model name arrived - requesting the model from the server.
@@ -24,22 +25,32 @@ window.addEventListener('message', function(event) {
 
   if (origin !== domain)
     return;
-  fileName = event.data.fileName;
+  var id = event.data.id;
 
   if (event.data.type === 'edit') {
     request
-      .get(backend + '/pleak/open?fileName=' + fileName)
+      .get(backend + '/rest/file/' + id)
       .withCredentials()
       .end(function(err, res){
-        var resJson = JSON.parse(res.text);
-        var diagram = resJson.content;
-        fileMD5 = resJson.md5;
-        openDiagram(diagram);
-        $('#fileName').val(fileName);
+        file = res.body;
+        openDiagram(file.content);
+        $('#fileName').val(file.title);
+      });
+  } else if (event.data.type === 'view') {
+    request
+      .get(backend + '/rest/file' + file.id)
+      .withCredentials()
+      .end(function(err, res){
+        file = res.body;
+        openDiagram(file.content);
+        $('#fileName').val(file.title);
+        $('.djs-palette').hide();
+        $('.buttons').hide();
       });
   } else {
-    $('#fileName').val(fileName);
+    $('#fileName').val(event.data.title);
   }
+
 }, false);
 
 //
@@ -65,19 +76,18 @@ var saveButton = $('#save-diagram');
 
 saveButton.click( function(e) {
   $('#fileNameError').hide();
+  file.title = $('#fileName').val();
+
   request
-    .post(backend + '/pleak/save')
-    .field('fileName', $('#fileName').val())
-    .field('fileMD5', fileMD5)
-    .field('file', fileBpmnXml)
+    .post(backend + '/rest/file')
+    .send(file)
     .end(function(err, res){
       console.log(res);
-      var resJson = JSON.parse(res.text);
       if (res.statusCode === 200) {
         $('#fileSaveSuccess').show();
         $('#fileSaveSuccess').fadeOut(5000);
         disableAllButtons();
-        fileMD5 = resJson.text;
+        file.md5Hash = resJson.text;
       } else if (res.statusCode === 409) {
         $('#fileNameError').show();
       }
@@ -122,7 +132,7 @@ $(document).on('ready', function() {
     var encodedData = encodeURIComponent(data);
 
     if (data) {
-      fileBpmnXml = data;
+      file.content = data;
 
       saveButton.addClass('active');
       linkButton.addClass('active').attr({
@@ -136,12 +146,13 @@ $(document).on('ready', function() {
   }
 
   var exportArtifacts = _.debounce(function() {
+    file.title = $('#fileName').val();
     saveSVG(function(err, svg) {
-      setEncoded(downloadSvgButton, fileName.slice(0, -5) + '.svg', err ? null : svg);
+      setEncoded(downloadSvgButton, file.title.slice(0, -5) + '.svg', err ? null : svg);
     });
 
     saveDiagram(function(err, xml) {
-      setEncoded(downloadButton, fileName, err ? null : xml);
+      setEncoded(downloadButton, file.title, err ? null : xml);
     });
   }, 500);
 

@@ -28,13 +28,13 @@
               <tr ng-show="c.noFiles()">
                 <td><h4>No available files...</h4></td>
               </tr>
-              <tr ng-repeat="file in c.getFileNames()" ng-if="file.toLowerCase().indexOf(search.toLowerCase()) > -1">
+              <tr ng-repeat="file in c.getFiles()" ng-if="file.title.toLowerCase().indexOf(search.toLowerCase()) > -1">
                 <td>{{$index+1}}</td>
-                <td>{{file}}</td>
-                <td>{{c.getFileModifiedDates()[$index]}}</td>
+                <td>{{file.title}}</td>
+                <td>{{file.lastModified}}</td>
                 <td>
                   <div class="btn-group pull-right">
-                    <button ng-click="c.editFile(file)" class="btn btn-success" type="submit">
+                    <button ng-click="c.editFile(file.id)" class="btn btn-success" type="submit">
                       <span class="glyphicon glyphicon-edit"></span> Edit
                     </button>
                     <button class="btn btn-default" type="submit" data-toggle="modal" data-target="#deleteFileModal{{$index}}">
@@ -51,7 +51,7 @@
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                            <button  ng-click="c.deleteFile(file)" data-dismiss="modal" class="btn btn-success">
+                            <button  ng-click="c.deleteFile(file.id)" data-dismiss="modal" class="btn btn-success">
                               Confirm
                             </button>
                           </div>

@@ -11,18 +11,14 @@ angular.module('pleaks.files', ['ngRoute'])
 
 .controller('FilesController', ['$scope','$http', function(scope, http) {
   var controller = this;
-
-  var fileNames = null;
-  var fileModifiedDates = null;
-
   var domain = 'http://localhost:8000';
+  var files = null;
 
   http({
     method: 'GET',
-    url: 'http://localhost:8080/pleak/list'
+    url: 'http://localhost:8080/pleak-backend-maven/rest/file/'
   }).then(function(response) {
-    fileNames = response.data.fileNames;
-    fileModifiedDates = response.data.fileModifiedDates;
+    files = response.data.files;
   });
 
   // Refresh the page when user saves to display updated files.
@@ -35,19 +31,15 @@ angular.module('pleaks.files', ['ngRoute'])
     window.location.reload();
   }, false);
 
-  controller.getFileNames = function() {
-    return fileNames;
-  };
-
-  controller.getFileModifiedDates = function() {
-    return fileModifiedDates;
+  controller.getFiles = function() {
+    return files;
   };
 
   controller.noFiles = function() {
     // Console error fix.
-    if (fileNames === null) return true;
+    if (files === null) return true;
 
-    return fileNames.length == 0;
+    return files.length == 0;
   };
 
   controller.openFile = function(message) {
@@ -61,47 +53,54 @@ angular.module('pleaks.files', ['ngRoute'])
     }
   };
 
-  controller.newFile = function(fileName) {
+  controller.newFile = function(title) {
     var message = {
-      fileName: fileName,
+      title: title,
       type: 'new'
     };
 
     controller.openFile(message);
   };
 
-  controller.editFile = function(fileName) {
+  controller.editFile = function(id) {
     var message = {
-      fileName: fileName,
+      id: id,
       type: 'edit'
     };
 
     controller.openFile(message);
   }
 
-  controller.deleteFile = function(fileName) {
+  controller.deleteFile = function(id) {
     // Delete stuff
     http({
-      method: 'GET',
-      url: 'http://localhost:8080/pleak/delete?fileName=' + fileName
+      method: 'DELETE',
+      url: 'http://localhost:8080/pleak/delete/' + id
     }).then(function(response) {
       if (response.status === 200) {
-        var fIx = fileNames.indexOf(fileName);
-        fileNames.splice(fIx, 1);
-        fileModifiedDates.splice(fIx, 1);
+        files.splice(getFileIndexById(id), 1);
       }
     });
   }
 
   controller.isExistingFileName = function(fileName) {
     // Console error fix.
-    if (fileNames === null) return false;
+    if (files === null) return false;
 
     var bpmnFileName = fileName + '.bpmn';
-    for (var fIx = 0; fIx < fileNames.length; fIx++) {
-      if (fileNames[fIx] === bpmnFileName) return true;
+    for (var fIx = 0; fIx < files.length; fIx++) {
+      if (files[fIx].title === bpmnFileName) return true;
     }
     return false;
   }
+
+  var getFileIndexById = function(id) {
+    for (var fIx = 0; fIx < files.length; fIx++) {
+      if (files[fIx].id === id) {
+        return fIx;
+      }
+    }
+    return -1;
+  };
 
 }]);
