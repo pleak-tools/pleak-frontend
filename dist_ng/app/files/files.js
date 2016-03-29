@@ -16,7 +16,7 @@ angular.module('pleaks.files', ['ngRoute'])
 
   http({
     method: 'GET',
-    url: 'http://localhost:8080/pleak-backend-maven/rest/file/'
+    url: 'http://localhost:8080/pleak-backend/rest/files/'
   }).then(function(response) {
     files = response.data.files;
   });
@@ -75,7 +75,7 @@ angular.module('pleaks.files', ['ngRoute'])
     // Delete stuff
     http({
       method: 'DELETE',
-      url: 'http://localhost:8080/pleak/delete/' + id
+      url: 'http://localhost:8080/pleak-backend/rest/files/' + id
     }).then(function(response) {
       if (response.status === 200) {
         files.splice(getFileIndexById(id), 1);

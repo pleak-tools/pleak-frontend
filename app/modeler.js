@@ -8,7 +8,7 @@ var request = require('superagent');
 var _ = require('lodash');
 
 var domain = 'http://localhost:8000';
-var backend = 'http://localhost:8080/pleak-backend-maven';
+var backend = 'http://localhost:8080/pleak-backend';
 
 var file = {
   id: -1,
@@ -29,7 +29,7 @@ window.addEventListener('message', function(event) {
 
   if (event.data.type === 'edit') {
     request
-      .get(backend + '/rest/file/' + id)
+      .get(backend + '/rest/files/' + id)
       .withCredentials()
       .end(function(err, res){
         file = res.body;
@@ -38,7 +38,7 @@ window.addEventListener('message', function(event) {
       });
   } else if (event.data.type === 'view') {
     request
-      .get(backend + '/rest/file' + file.id)
+      .get(backend + '/rest/files' + file.id)
       .withCredentials()
       .end(function(err, res){
         file = res.body;
@@ -79,11 +79,11 @@ saveButton.click( function(e) {
   file.title = $('#fileName').val();
 
   request
-    .post(backend + '/rest/file')
+    .post(backend + '/rest/files')
     .send(file)
     .end(function(err, res){
       console.log(res);
-      if (res.statusCode === 200) {
+      if (res.statusCode === 200 || res.statusCode === 201) {
         $('#fileSaveSuccess').show();
         $('#fileSaveSuccess').fadeOut(5000);
         disableAllButtons();
