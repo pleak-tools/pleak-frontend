@@ -1,0 +1,113 @@
+<div class="container" ng-controller="MenuController as c">
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">Pleak</a>
+        <p class="navbar-text">Privacy Leakage Analysis Tools</p>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li ng-if="c.isAuthenticated()">
+            <p class="navbar-text">Signed in as {{c.getUserEmail()}}</p>
+          </li>
+          <li class="{{c.getClass('splash')}}">
+            <a href="#">Home</a>
+          </li>
+          <li ng-if="c.isAuthenticated()" class="{{c.getClass('files')}}">
+            <a href="#/files">Files</a>
+          </li>
+          <li ng-if="c.isAuthenticated()">
+            <a data-toggle="modal" data-target="#logoutModal">Log out</a>
+          </li>
+          <!-- Maybe useful in the future
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#/files">bpmn models</a></li>
+              <li role="separator" class="divider"></li>
+              <li class="dropdown-header">Nav header</li>
+              <li><a href="#">Separated link</a></li>
+              <li><a href="#">One more separated link</a></li>
+            </ul>
+          </li>
+          -->
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Register -->
+  <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          Register
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label for="userEmail">Email address</label>
+              <input type="email" class="form-control" id="userEmail" placeholder="Email" ng-model="user.email">
+            </div>
+            <div class="form-group">
+              <label for="userPassword">Password</label>
+              <input type="password" class="form-control" id="userPassword" placeholder="Password" ng-model="user.password">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button  ng-click="c.register()" data-dismiss="modal" class="btn btn-success">
+            Register
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Login -->
+  <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          Login
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label for="userEmail">Email address</label>
+              <input type="email" class="form-control" id="userEmail" placeholder="Email" ng-model="user.email">
+            </div>
+            <div class="form-group">
+              <label for="userPassword">Password</label>
+              <input type="password" class="form-control" id="userPassword" placeholder="Password" ng-model="user.password">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button  ng-click="c.login()" data-dismiss="modal" class="btn btn-success">
+            Login
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Logout -->
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          Log out
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to log out?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button ng-click="c.logout()" data-dismiss="modal" class="btn btn-success">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

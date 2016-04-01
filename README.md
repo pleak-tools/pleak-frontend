@@ -14,6 +14,13 @@ To install all project dependencies execute
 npm install
 ```
 
+Navigate to ```dist_ng/``` and execute again
+
+```
+npm install
+```
+
+
 Serve an app locally, build it with
 
 ```

@@ -3,10 +3,18 @@
 // Declare app level module which depends on views, and components
 angular.module('pleaks', [
   'ngRoute',
+  'LocalStorageModule',
   'pleaks.splash',
   'pleaks.files',
-  'pleaks.view'
+  'pleaks.view',
+  'pleaks.auth',
+  'pleaks.menu',
 ]).
-config(['$routeProvider', function($routeProvider) {
+config(['$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
   $routeProvider.otherwise({redirectTo: '/splash'});
-}]);
+}]).
+run(function($rootScope, AuthService) {
+  $rootScope.user = null;
+  // If the server has restarted then old tokens are obsolete. Must verify at startup.
+  AuthService.verifyToken();
+});

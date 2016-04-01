@@ -10,10 +10,9 @@ var _ = require('lodash');
 var domain = 'http://localhost:8000';
 var backend = 'http://localhost:8080/pleak-backend';
 
-var file = {
-  id: -1,
-  userId: 1
-};
+var file = {};
+
+var token = localStorage.getItem('ls.JSON-Web-Token').replace(/['"]+/g, '');
 
 //
 // If model name arrived - requesting the model from the server.
@@ -26,10 +25,10 @@ window.addEventListener('message', function(event) {
   if (origin !== domain)
     return;
   var id = event.data.id;
-
   if (event.data.type === 'edit') {
     request
       .get(backend + '/rest/files/' + id)
+      .set('JSON-Web-Token', token)
       .withCredentials()
       .end(function(err, res){
         file = res.body;
@@ -39,6 +38,7 @@ window.addEventListener('message', function(event) {
   } else if (event.data.type === 'view') {
     request
       .get(backend + '/rest/files' + file.id)
+      .set('JSON-Web-Token', token)
       .withCredentials()
       .end(function(err, res){
         file = res.body;
@@ -80,6 +80,7 @@ saveButton.click( function(e) {
 
   request
     .post(backend + '/rest/files')
+    .set('JSON-Web-Token', token)
     .send(file)
     .end(function(err, res){
       console.log(res);
@@ -87,7 +88,7 @@ saveButton.click( function(e) {
         $('#fileSaveSuccess').show();
         $('#fileSaveSuccess').fadeOut(5000);
         disableAllButtons();
-        file.md5Hash = resJson.text;
+        file.md5Hash = res.body.success;
       } else if (res.statusCode === 409) {
         $('#fileNameError').show();
       }

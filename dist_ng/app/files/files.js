@@ -14,6 +14,7 @@ angular.module('pleaks.files', ['ngRoute'])
   var domain = 'http://localhost:8000';
   var files = null;
 
+  // TODO: This request is fired multiple times due to Angular mechanisms, pls fix.
   http({
     method: 'GET',
     url: 'http://localhost:8080/pleak-backend/rest/files/'

@@ -21,36 +21,10 @@
   <![endif]-->
 
   <!-- Nav -->
-  <div class="container">
-    <nav class="navbar navbar-default">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="#">Pleak</a>
-          <p class="navbar-text">Privacy Leakage Analysis Tools</p>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#/files">Files</a></li>
-            <!-- Maybe useful in the future
-            <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="#/files">bpmn models</a></li>
-                <li role="separator" class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
-              </ul>
-            </li>
-            -->
-          </ul>
-        </div>
-      </div>
-    </nav>
-  </div>
+  <nav ng-include="'menu/menu.html'"></nav>
 
-  <div ng-view></div>
+  <!-- Main -->
+  <main ng-view></main>
 
   <!-- In production use:
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
@@ -58,11 +32,15 @@
 
   <script src="bower_components/angular/angular.js"></script>
   <script src="bower_components/angular-route/angular-route.js"></script>
+  <script src="bower_components/angular-local-storage/dist/angular-local-storage.min.js"></script>
+  <script src="bower_components/jwt-decode/build/jwt-decode.min.js"></script>
 
   <script src="app.js"></script>
+  <script src="menu/menu.js"></script>
   <script src="files/files.js"></script>
   <script src="splash/splash.js"></script>
   <script src="view/view.js"></script>
+  <script src="auth/auth.js"></script>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
