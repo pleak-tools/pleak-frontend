@@ -28,7 +28,6 @@ var buildMatrix = function(task, preds, succs, label, labelId) {
 
 module.exports = function(group, element) {
   if (is(element, 'bpmn:Task')) {
-    
     var predecessors = [];
     var successors = [];
     if (element.incoming) {
@@ -58,5 +57,15 @@ module.exports = function(group, element) {
             html: buildMatrix(element, predecessors, successors, 'Sensitivity', 'cMatrix')
             });
     }
+  } else if (is(element, 'bpmn:Process')) {
+      console.log(element);
+      group.entries.push({
+        id : 'pleak-dpbounds',
+        description : 'PA-BPMN differential privacy values',
+        label : 'PA-BPMN differential privacy values',
+        modelProperty : 'matrices',
+        html: '<div id="pabpmn-matrices"></div>'
+        });
+
   }
 };

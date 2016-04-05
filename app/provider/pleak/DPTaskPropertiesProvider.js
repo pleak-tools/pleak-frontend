@@ -9,7 +9,7 @@ var dptaskProps = require('./parts/DPTaskProps');
 function createPleakTabGroups(element, elementRegistry) {
   var pleakGroup = {
     id: 'pleak',
-    label: 'Pleak DPTask',
+    label: 'Pleak',
     entries: []
   };
   dptaskProps(pleakGroup, element);

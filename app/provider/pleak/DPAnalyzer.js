@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 const topologicalSorting = function (adjList, invAdjList, sources) {
     var order = new Array();
     
@@ -107,7 +109,26 @@ const computeDPMatrices = function (adjList, invAdjList, sources, sinks) {
             }
         }
     }
-
+    
+    var htmlStr = "<h3>Differential privacy</h3> <table class='matrix'>";
+    htmlStr += "<tr class='matrix'><td class='matrix'/>";
+    var targets = new Array();
+    for (let tgt of order)
+        if (tgt.$type == "bpmn:DataObjectReference" && !sources.has(tgt)) {
+            targets.push(tgt);
+            htmlStr += "<td class='matrix'>"+(tgt.name || j)+"</td>";
+        }
+    for (let src of order) {
+        if (src.$type == "bpmn:DataObjectReference" && sources.has(src)) {
+            htmlStr += "<tr class='matrix'><td class='matrix'>" + src.name +"</td>";
+            for (let tgt of targets) 
+                htmlStr += "<td class='matrix'><input class='matrix' id='"+src.id+","+tgt.id+"' value='"+ddp.get(src).get(tgt)+"' onfocus='focusTracker(this)' onblur='blurTracker(this)'/></td>";
+            htmlStr += "</tr>";
+        }
+    }
+    htmlStr += "</table>";
+    
+    $("div#pabpmn-matrices").html(htmlStr);
 }
 
 var analyzeDPOnProcessDef = function (procDef) {
