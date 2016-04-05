@@ -77,7 +77,6 @@ window.addEventListener('message', function(event) {
 //
 var newDiagramXML = fs.readFileSync(__dirname + '/../resources/newDiagram.bpmn', 'utf-8');
 
-// var newDiagramXML = require('../resources/newDiagram.bpmn');
 openDiagram(newDiagramXML);
 
 function openDiagram(diagram) {
@@ -98,8 +97,10 @@ function openDiagram(diagram) {
         })[0];
     }
 
-    $('#js-analyze-dp').click(function() {
+    $('#analyze-diagram').click(function(event) {
         dpAnalizer(elementRegistry);
+        event.stopPropagation();
+        event.preventDefault();
     });
         
     document.focusTracker = function(param) {
@@ -123,7 +124,7 @@ function openDiagram(diagram) {
         console.log(param.value);
         var ids = param.id.split(",");
         var element = elementRegistry.get(ids[2]);
-        element.matrices[ids[3]][ids[0]][ids[1]] = param.value;
+        element.businessObject.matrices[ids[3]][ids[0]][ids[1]] = param.value;
     };
         
     document.checkMatrices = function(element, preds, succs) {
@@ -134,9 +135,9 @@ function openDiagram(diagram) {
             for (var j in succs) {
                 var tgt = succs[j];
                 var value1 = '1.0', value2 = '1.0';                
-                if (element.matrices) {
-                    var _dpMatrix = element.matrices.dpMatrix,
-                        _cMatrix = element.matrices.cMatrix;
+                if (element.businessObject.matrices) {
+                    var _dpMatrix = element.businessObject.matrices.dpMatrix,
+                        _cMatrix = element.businessObject.matrices.cMatrix;
                     if (_dpMatrix[src.id] && _dpMatrix[src.id][tgt.id]) {
                         value1 = _dpMatrix[src.id][tgt.id];
                         value2 = _cMatrix[src.id][tgt.id];
@@ -148,7 +149,7 @@ function openDiagram(diagram) {
             matrices.dpMatrix[src.id] = row1;
             matrices.cMatrix[src.id] = row2;
         }
-        element.matrices = matrices;
+        element.businessObject.matrices = matrices;
         
         
         // ==============================================
@@ -214,11 +215,13 @@ function disableAllButtons() {
   downloadButton.removeClass('active');
   downloadSvgButton.removeClass('active');
   saveButton.removeClass('active');
+  $('#analyze-diagram').removeClass('active');
 }
 
 $(document).on('ready', function() {
   var downloadButton = $('#download-diagram');
   var downloadSvgButton = $('#download-svg');
+  var analyzeButton = $('#analyze-diagram');
 
   $('.buttons a').click(function(e) {
     if (!$(this).is('.active')) {
@@ -238,9 +241,11 @@ $(document).on('ready', function() {
         'href': 'data:application/bpmn20-xml;charset=UTF-8,' + encodedData,
         'download': name
       });
+      analyzeButton.addClass('active');
     } else {
       linkButton.removeClass('active');
       saveButton.removeClass('active');
+      analyzeButton.removeClass('active');
     }
   }
 

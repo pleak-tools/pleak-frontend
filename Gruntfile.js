@@ -112,17 +112,17 @@ module.exports = function(grunt) {
         tasks: [
           'less'
         ]
-      },
-
-      connect: {
-        options: {
-          livereload: 9014
-        },
-        files: [
-          '<%= config.dist %>/**/*.css'
-        ],
-        tasks: []
       }
+
+    //   connect: {
+    //     options: {
+    //       livereload: 9014
+    //     },
+    //     files: [
+    //       '<%= config.dist %>/**/*.css'
+    //     ],
+    //     tasks: []
+    //   }
     },
 
     connect: {
@@ -151,7 +151,7 @@ module.exports = function(grunt) {
     'copy',
     'less',
     'browserify:watch',
-    'connect:livereload',
+    //'connect:livereload',
     'watch'
   ]);
 

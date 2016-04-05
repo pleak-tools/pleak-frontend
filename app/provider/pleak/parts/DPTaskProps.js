@@ -17,7 +17,7 @@ var buildMatrix = function(task, preds, succs, label, labelId) {
         htmlStr += "<tr class='matrix'><td class='matrix'>" + (pred.name || i) +"</td>";
         for (var j in succs) {
             var succ = succs[j];
-            htmlStr += "<td class='matrix'><input class='matrix' id='"+pred.id+","+succ.id+","+task.id+","+labelId+"' value='"+task.matrices[labelId][pred.id][succ.id]+"' onchange='changeTracker(this)' onfocus='focusTracker(this)' onblur='blurTracker(this)'/></td>";
+            htmlStr += "<td class='matrix'><input class='matrix' id='"+pred.id+","+succ.id+","+task.id+","+labelId+"' value='"+task.businessObject.matrices[labelId][pred.id][succ.id]+"' onchange='changeTracker(this)' onfocus='focusTracker(this)' onblur='blurTracker(this)'/></td>";
         }
         htmlStr += "</tr>";
     }
