@@ -1,11 +1,30 @@
 'use strict';
 
+var fs = require('fs');
 var PleakModeler = require('./pleaks-modeler');
-var modeler = new PleakModeler({ container: '#canvas', keyboard: { bindTo: document } });
 
 var $ = require('jquery');
 var request = require('superagent');
+
+var propertiesPanelModule = require('bpmn-js-properties-panel'),
+    propertiesProviderModule = require('./provider/pleak'),
+    dpTaskModdleDescriptor = require('./descriptors/dptask'),
+    dpAnalizer = require('./provider/pleak/DPAnalyzer');
+
 var _ = require('lodash');
+
+var modeler = new PleakModeler({ container: '#canvas', keyboard: { bindTo: document },
+  propertiesPanel: {
+    parent: '#js-properties-panel'
+  },
+  additionalModules: [
+    propertiesPanelModule,
+    propertiesProviderModule
+  ],
+  moddleExtensions: {
+    dptask: dpTaskModdleDescriptor
+  } });
+
 
 var domain = 'http://localhost:8000';
 var backend = 'http://localhost:8080/pleak-backend';
@@ -56,7 +75,8 @@ window.addEventListener('message', function(event) {
 //
 // Loading a new blank bpmn diagram by default.
 //
-var newDiagramXML = require('../resources/newDiagram.bpmn');
+var newDiagramXML = fs.readFileSync(__dirname + '/../resources/newDiagram.bpmn', 'utf-8');
+
 openDiagram(newDiagramXML);
 
 function openDiagram(diagram) {
@@ -65,7 +85,95 @@ function openDiagram(diagram) {
       console.error('something went wrong:', err);
     }
 
-    modeler.get('canvas').zoom('fit-viewport');
+    var moddle = modeler.get('moddle');
+    var canvas = modeler.get('canvas');
+    var elementRegistry = modeler.get('elementRegistry');
+
+    canvas.zoom('fit-viewport');
+    function getExtension(element, type) {
+        if (!element.extensionElements) { return null; }
+        return element.extensionElements.filter(function(e) {
+            return e.$instanceOf(type);
+        })[0];
+    }
+
+    $('#analyze-diagram').click(function(event) {
+        dpAnalizer(elementRegistry);
+        event.stopPropagation();
+        event.preventDefault();
+    });
+        
+    document.focusTracker = function(param) {
+      console.log('got focus!!!');
+      var ids = param.id.split(",");
+      console.log(param.id);
+      canvas.addMarker(ids[0], 'highlight');
+      canvas.addMarker(ids[1], 'highlight');
+    };
+    
+    document.blurTracker = function(param) {
+      console.log('lost focus!!!');
+      var ids = param.id.split(",");
+      console.log(param.id);
+      canvas.removeMarker(ids[0], 'highlight');
+      canvas.removeMarker(ids[1], 'highlight');
+    };
+    
+    document.changeTracker = function(param) {
+        console.log('new value!!!');
+        console.log(param.value);
+        var ids = param.id.split(",");
+        var element = elementRegistry.get(ids[2]);
+        element.businessObject.matrices[ids[3]][ids[0]][ids[1]] = param.value;
+    };
+    
+    document.toggleDPTaskTracker = function (elementId) {
+        var element = elementRegistry.get(elementId);
+        element.dptask = !element.dptask;
+        if (element.dptask)
+            canvas.addMarker(elementId, 'highlight-dptask');
+        else
+            canvas.removeMarker(elementId, 'highlight-dptask');
+    };
+    
+    document.checkMatrices = function(element, preds, succs) {
+        var matrices = {dpMatrix: {}, cMatrix: {}};
+        for (var i in preds) {
+            var src = preds[i];
+            var row1 = {}, row2 = {};
+            for (var j in succs) {
+                var tgt = succs[j];
+                var value1 = '1.0', value2 = '1.0';                
+                if (element.businessObject.matrices) {
+                    var _dpMatrix = element.businessObject.matrices.dpMatrix,
+                        _cMatrix = element.businessObject.matrices.cMatrix;
+                    if (_dpMatrix[src.id] && _dpMatrix[src.id][tgt.id]) {
+                        value1 = _dpMatrix[src.id][tgt.id];
+                        value2 = _cMatrix[src.id][tgt.id];
+                    }
+                }
+                row1[tgt.id] = value1;
+                row2[tgt.id] = value2;
+            }
+            matrices.dpMatrix[src.id] = row1;
+            matrices.cMatrix[src.id] = row2;
+        }
+        element.businessObject.matrices = matrices;
+        
+        
+        // ==============================================
+        // === Do not remove the following lines (they will be used when saving the BPMN file)
+        // 
+        // var matrices = moddle.create('pleak:DPTaskDP');
+        // var dpMatrix = moddle.create('pleak:DPValues'),
+        //     cMatrix = moddle.create('pleak:CValues');
+        // console.log(matrices);
+        // console.log(dpMatrix);
+        // matrices.set('dpvalues', dpMatrix);
+        // matrices.set('cvalues', cMatrix);
+        // console.log(matrices);
+        // ===============================================
+    };
   });
 }
 
@@ -116,11 +224,13 @@ function disableAllButtons() {
   downloadButton.removeClass('active');
   downloadSvgButton.removeClass('active');
   saveButton.removeClass('active');
+  $('#analyze-diagram').removeClass('active');
 }
 
 $(document).on('ready', function() {
   var downloadButton = $('#download-diagram');
   var downloadSvgButton = $('#download-svg');
+  var analyzeButton = $('#analyze-diagram');
 
   $('.buttons a').click(function(e) {
     if (!$(this).is('.active')) {
@@ -140,9 +250,11 @@ $(document).on('ready', function() {
         'href': 'data:application/bpmn20-xml;charset=UTF-8,' + encodedData,
         'download': name
       });
+      analyzeButton.addClass('active');
     } else {
       linkButton.removeClass('active');
       saveButton.removeClass('active');
+      analyzeButton.removeClass('active');
     }
   }
 

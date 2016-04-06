@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = function(grunt) {
 
   require('load-grunt-tasks')(grunt);
@@ -32,26 +34,33 @@ module.exports = function(grunt) {
     browserify: {
       options: {
         browserifyOptions: {
-          debug: true,
-          insertGlobalVars: []
+          // make sure we do not include browser shims unnecessarily
+          builtins: false,
+          insertGlobalVars: {
+            process: function () {
+                return 'undefined';
+            },
+            Buffer: function () {
+                return 'undefined';
+            }
+          }
         },
-        transform: [ 'brfs' ]
+        transform: [ [ 'stringify', { extensions: [ '.bpmn', '.xml', '.css' ] } ] ]
       },
       watch: {
         options: {
           watch: true
         },
         files: {
-          '<%= config.dist %>/modeler.js': [ '<%= config.sources %>/**/*.js' ]
+          '<%= config.dist %>/modeler.js': [ '<%= config.sources %>/modeler.js' ]
         }
       },
       app: {
         files: {
-          '<%= config.dist %>/modeler.js': [ '<%= config.sources %>/**/*.js' ]
+          '<%= config.dist %>/modeler.js': [ '<%= config.sources %>/modeler.js' ]
         }
       }
     },
-
     copy: {
       diagram_js: {
         files: [
@@ -82,59 +91,21 @@ module.exports = function(grunt) {
         ]
       }
     },
-
-    less: {
-      options: {
-        dumpLineNumbers: 'comments',
-        paths: [
-          'node_modules'
-        ]
-      },
-
-      styles: {
-        files: {
-          'dist/css/app.css': 'styles/app.less'
-        }
-      }
-    },
-
     watch: {
       samples: {
         files: [ '<%= config.sources %>/**/*.*' ],
         tasks: [ 'copy:app' ]
       },
-
-      less: {
-        files: [
-          'styles/**/*.less',
-          'node_modules/bpmn-js-properties-panel/styles/**/*.less'
-        ],
-        tasks: [
-          'less'
-        ]
-      }
-
-    //   connect: {
-    //     options: {
-    //       livereload: 9014
-    //     },
-    //     files: [
-    //       '<%= config.dist %>/**/*.css'
-    //     ],
-    //     tasks: []
-    //   }
     },
-
     connect: {
       options: {
-        appName: 'Firefox', // name of the app that opens, ie: open, start, xdg-open
         port: 9013,
         livereload: 9014,
         hostname: 'localhost'
       },
       livereload: {
         options: {
-          open: { appName: 'google-chrome' },
+          open: true,
           base: [
             '<%= config.dist %>'
           ]
@@ -145,15 +116,19 @@ module.exports = function(grunt) {
 
   // tasks
 
-  grunt.registerTask('build', [ 'copy', 'less', 'browserify:app' ]);
+  grunt.registerTask('build', [ 'copy', 'browserify:app' ]);
+
+  /*
+
+  App is served now by ExpressJS server.
 
   grunt.registerTask('auto-build', [
     'copy',
-    'less',
     'browserify:watch',
-    //'connect:livereload',
+    'connect:livereload',
     'watch'
   ]);
+  */
 
   grunt.registerTask('default', [ 'jshint', 'build' ]);
 };

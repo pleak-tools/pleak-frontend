@@ -1,0 +1,49 @@
+{
+  "name": "PleakTools",
+  "prefix": "pleak",
+  "uri": "http://pleak.io",
+  "xml": {
+    "tagAlias": "lowerCase"
+  },
+  "associations": [],
+  "types": [
+    {
+      "name": "DPTaskDP",
+      "extends": [
+        "bpmn:Task"
+      ],
+      "properties": [
+        {
+          "name": "dpvalues",
+          "isMany": false,
+          "type": "DPValues"
+        },
+        {
+          "name": "cvalues",
+          "isMany": false,
+          "type": "CValues"
+        }
+      ]
+    },
+    {
+      "name": "DPValues",
+      "properties": [
+        {
+          "name": "text",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "CValues",
+      "properties": [
+        {
+          "name": "text",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    }
+  ]
+}
