@@ -126,7 +126,16 @@ function openDiagram(diagram) {
         var element = elementRegistry.get(ids[2]);
         element.businessObject.matrices[ids[3]][ids[0]][ids[1]] = param.value;
     };
-        
+    
+    document.toggleDPTaskTracker = function (elementId) {
+        var element = elementRegistry.get(elementId);
+        element.dptask = !element.dptask;
+        if (element.dptask)
+            canvas.addMarker(elementId, 'highlight-dptask');
+        else
+            canvas.removeMarker(elementId, 'highlight-dptask');
+    };
+    
     document.checkMatrices = function(element, preds, succs) {
         var matrices = {dpMatrix: {}, cMatrix: {}};
         for (var i in preds) {

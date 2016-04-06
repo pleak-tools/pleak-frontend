@@ -44,3 +44,7 @@ tr.matrix:first-child td.matrix, td.matrix:first-child {
 .highlight:not(.djs-connection) .djs-visual > :nth-child(1) {
   fill: #ffcc66 !important;
 }
+
+.highlight-dptask:not(.djs-connection) .djs-visual > :nth-child(1) {
+  stroke: #ff9966 !important;
+}

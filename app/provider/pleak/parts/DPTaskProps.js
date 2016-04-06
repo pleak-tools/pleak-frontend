@@ -42,6 +42,19 @@ module.exports = function(group, element) {
     var matrices = document.checkMatrices(element, predecessors, successors);
     
     if (predecessors.length > 0 && successors.length > 0) {
+        if (element.dptask == null) element.dptask = false;
+        var checked = element.dptask?"checked=true":"";
+        group.entries.push({
+            id : 'pleak-dpvalues',
+            description : 'DP-Task check box',
+            label : 'DP-Task',
+            modelProperty : 'dptask',
+            html: `
+                <div class="checkbox">
+                <label><input type="checkbox" value="" ${checked} onchange='toggleDPTaskTracker("${element.id}")'>DP-Task</label>
+                </div>
+            `
+        });
         group.entries.push({
             id : 'pleak-dpvalues',
             description : 'DP-Task differential privacy values',
