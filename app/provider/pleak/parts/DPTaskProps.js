@@ -49,11 +49,10 @@ module.exports = function(group, element) {
             description : 'DP-Task check box',
             label : 'DP-Task',
             modelProperty : 'dptask',
-            html: `
-                <div class="checkbox">
-                <label><input type="checkbox" value="" ${checked} onchange='toggleDPTaskTracker("${element.id}")'>DP-Task</label>
-                </div>
-            `
+            html: 
+                "<div class=\"checkbox\">"+
+                "<label><input type=\"checkbox\" value=\"\" ${checked} onchange='toggleDPTaskTracker(\""+element.id+"\")'>DP-Task</label>"+
+                "</div>"
         });
         group.entries.push({
             id : 'pleak-dpvalues',

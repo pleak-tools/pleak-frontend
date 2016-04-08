@@ -163,15 +163,19 @@ function openDiagram(diagram) {
         
         // ==============================================
         // === Do not remove the following lines (they will be used when saving the BPMN file)
-        // 
-        // var matrices = moddle.create('pleak:DPTaskDP');
-        // var dpMatrix = moddle.create('pleak:DPValues'),
-        //     cMatrix = moddle.create('pleak:CValues');
-        // console.log(matrices);
-        // console.log(dpMatrix);
-        // matrices.set('dpvalues', dpMatrix);
-        // matrices.set('cvalues', cMatrix);
-        // console.log(matrices);
+        
+        var dptask_matrices = moddle.create('pleak:DPTaskDP');
+        var dpMatrix = moddle.create('pleak:DPValues'),
+            cMatrix = moddle.create('pleak:CValues');
+        dpMatrix.text = JSON.stringify(matrices.dpMatrix);
+        cMatrix.text = JSON.stringify(matrices.cMatrix);
+        console.log(dptask_matrices);
+        console.log(dpMatrix);
+        dptask_matrices.set('dpvalues', dpMatrix);
+        dptask_matrices.set('cvalues', cMatrix);
+        
+        element.businessObject.DPTaskDP = dptask_matrices;
+        console.log(dptask_matrices);
         // ===============================================
     };
   });

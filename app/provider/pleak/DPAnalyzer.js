@@ -2,7 +2,7 @@
 
 var $ = require('jquery');
 
-const topologicalSorting = function (adjList, invAdjList, sources) {
+var topologicalSorting = function (adjList, invAdjList, sources) {
     var order = new Array();
     
     var sourcesp = new Set(sources);
@@ -14,7 +14,8 @@ const topologicalSorting = function (adjList, invAdjList, sources) {
         sourcesp.delete(n);
         order.push(n);
         if (adjList.get(n))
-            for (let m of adjList.get(n)) {
+            for (var _m in adjList.get(n)) {
+                var m = adjList.get(n)[_m];
                 invAdjListp.get(m).splice(invAdjListp.get(m).indexOf(n), 1);
                 if (invAdjListp.get(m).length == 0) {
                     sourcesp.add(m);
@@ -25,55 +26,62 @@ const topologicalSorting = function (adjList, invAdjList, sources) {
     return order;
 }
 
-const transitiveClosure = function (adjList, sources) {
+var transitiveClosure = function (adjList, sources) {
     var transClosure = new Map();
     
-    for (let source of sources) {
+    for (var src in sources) {
+        var source = sources[src]
         var visited = new Set();
         var open = new Array(source);
         while (open.length > 0) {
             var curr = open.pop();
             visited.add(curr);
             if (adjList.get(curr))
-                for (let succ of adjList.get(curr))
+                for (var _succ in adjList.get(curr)) {
+                    var succ = adjList.get(curr)[_succ];
                     if (!visited.has(succ) && open.indexOf(succ) < 0)
                         open.push(succ);
+                }
         }
         transClosure.set(source, visited);        
     }
     return transClosure;
 }
 
-const computeDPMatrices = function (adjList, invAdjList, sources, sinks) {
+var computeDPMatrices = function (adjList, invAdjList, sources, sinks) {
     var order = topologicalSorting(adjList, invAdjList, sources);
     var transClosure = transitiveClosure(adjList, sources);
     
     var ddp = new Map();
     var dc = new Map();
     
-    for (let p of order) {
+    for (var _p in order) {
+        var p = order[_p];
         if (p.$type !== "bpmn:DataObjectReference") {
-            console.log(`About to process: ${p.name}`);
-            for (let source of sources) {
-                console.log('--------------');
-                console.log(`Source: ${source.name}`);
+            // console.log(`About to process: ${p.name}`);
+            for (var _source in sources) {
+                var source = sources[_source];
+                // console.log('--------------');
+                // console.log(`Source: ${source.name}`);
                 if (!transClosure.get(source).has(p)) continue;
-                console.log(`Source: ${source.name}`);
-                console.log('..');
-                for (let pred of invAdjList.get(p)) {
+                // console.log(`Source: ${source.name}`);
+                // console.log('..');
+                for (var _pred in invAdjList.get(p)) {
+                    var pred = invAdjList.get(p)[_pred];
                     if (!transClosure.get(source).has(pred)) continue;
-                    console.log(`Predecessor: ${pred.name}`);
-                    for (let succ of adjList.get(p)) {
+                    // console.log(`Predecessor: ${pred.name}`);
+                    for (var _succ in adjList.get(p)) {
+                        var succ = adjList.get(p)[_succ];
                         if (!transClosure.get(source).has(succ)) continue;
-                        console.log(`Successor: ${succ.name}`);
+                        // console.log(`Successor: ${succ.name}`);
                         if (source === pred) {
                             var map1 = ddp.get(pred) || new Map();
                             map1.set(succ, p.matrices.dpMatrix[pred.id][succ.id]);
-                            console.log(`epsilon_{${p.name}}[${pred.name},${succ.name}] = ${p.matrices.dpMatrix[pred.id][succ.id]}`);
+                            // console.log(`epsilon_{${p.name}}[${pred.name},${succ.name}] = ${p.matrices.dpMatrix[pred.id][succ.id]}`);
                             ddp.set(pred, map1);
                             var map2 = dc.get(pred) || new Map();
                             map2.set(succ, p.matrices.cMatrix[pred.id][succ.id]);
-                            console.log(`c_{${p.name}}[${pred.name},${succ.name}] = ${p.matrices.cMatrix[pred.id][succ.id]}`);
+                            // console.log(`c_{${p.name}}[${pred.name},${succ.name}] = ${p.matrices.cMatrix[pred.id][succ.id]}`);
                             dc.set(pred, map2);                        
                         } else {
                             if (ddp.get(source) && ddp.get(source).has(pred)) {
@@ -101,28 +109,35 @@ const computeDPMatrices = function (adjList, invAdjList, sources, sinks) {
         }
     }
     
-    for (let src of sources) {
-        for (let snk of sinks) {
-            if (ddp.get(src) && ddp.get(src).has(snk)) {
-                console.log(`ddp(${src.name},${snk.name})= ${ddp.get(src).get(snk)}`);
-                console.log(`dc(${src.name},${snk.name})= ${dc.get(src).get(snk)}`);
-            }
-        }
-    }
+    // for (var _src in sources) {
+    //     var src = sources[_src];
+    //     for (var snk in sinks) {
+    //         var snk = sinks[_snk];
+    //         if (ddp.get(src) && ddp.get(src).has(snk)) {
+    //             console.log(`ddp(${src.name},${snk.name})= ${ddp.get(src).get(snk)}`);
+    //             console.log(`dc(${src.name},${snk.name})= ${dc.get(src).get(snk)}`);
+    //         }
+    //     }
+    // }
     
     var htmlStr = "<h3>Differential privacy</h3> <table class='matrix'>";
     htmlStr += "<tr class='matrix'><td class='matrix'/>";
     var targets = new Array();
-    for (let tgt of order)
+    for (var _tgt of order) {
+        var tgt = order[_tgt];
         if (tgt.$type == "bpmn:DataObjectReference" && !sources.has(tgt)) {
             targets.push(tgt);
             htmlStr += "<td class='matrix'>"+(tgt.name || j)+"</td>";
         }
-    for (let src of order) {
+    }
+    for (var _src in order) {
+        var src = order[_src];
         if (src.$type == "bpmn:DataObjectReference" && sources.has(src)) {
             htmlStr += "<tr class='matrix'><td class='matrix'>" + src.name +"</td>";
-            for (let tgt of targets) 
+            for (var _tgt in targets) {
+                var tgt = order[_tgt];
                 htmlStr += "<td class='matrix'><input class='matrix' id='"+src.id+","+tgt.id+"' value='"+ddp.get(src).get(tgt)+"' onfocus='focusTracker(this)' onblur='blurTracker(this)'/></td>";
+            }
             htmlStr += "</tr>";
         }
     }
@@ -135,18 +150,21 @@ var analyzeDPOnProcessDef = function (procDef) {
     var adjList = new Map();
     var invAdjList = new Map();
     var targets = new Set();
-    for (let flowElement of procDef.flowElements) {
+    for (var _flowElement in procDef.flowElements) {
+        var flowElement = procDef.flowElements[_flowElement];
         if (flowElement.dataInputAssociations) {
-            for (let sourceAssociation of flowElement.dataInputAssociations) {
-                let sourceNode = sourceAssociation.sourceRef[0];
+            for (var _sourceAssociation in flowElement.dataInputAssociations) {
+                var sourceAssociation = flowElement.dataInputAssociations[_sourceAssociation];
+                var sourceNode = sourceAssociation.sourceRef[0];
                 adjList.set(sourceNode, (adjList.get(sourceNode) || []).concat(flowElement));
                 invAdjList.set(flowElement, (invAdjList.get(flowElement) || []).concat(sourceNode));
                 targets.add(flowElement);
             }
         }
         if (flowElement.dataOutputAssociations) {
-            for (let targetAssociation of flowElement.dataOutputAssociations) {
-                let targetNode = targetAssociation.targetRef;
+            for (var _targetAssociation in flowElement.dataOutputAssociations) {
+                var targetAssociation = flowElement.dataOutputAssociations[_targetAssociation];
+                var targetNode = targetAssociation.targetRef;
                 adjList.set(flowElement, (adjList.get(flowElement) || []).concat(targetNode));
                 invAdjList.set(targetNode, (invAdjList.get(targetNode) || []).concat(flowElement));
                 targets.add(targetNode);
@@ -157,8 +175,10 @@ var analyzeDPOnProcessDef = function (procDef) {
     var sources = new Set();
     var sinks = new Set();
 
-    for (let node of adjList.keys()) if (!targets.has(node)) sources.add(node);
-    for (let node of targets) if (!adjList.has(node)) sinks.add(node);
+    for (var node of adjList.keys()) {
+        if (!targets.has(node)) sources.add(node);
+    }
+    for (var node of targets) if (!adjList.has(node)) sinks.add(node);
 
     computeDPMatrices(adjList, invAdjList, sources, sinks);
 }
