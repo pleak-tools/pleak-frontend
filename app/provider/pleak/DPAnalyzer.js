@@ -178,7 +178,11 @@ var analyzeDPOnProcessDef = function (procDef) {
 module.exports = function(elementRegistry) {
 for (var key in elementRegistry._elements) {
     var element = elementRegistry.get(key);
-    if (element.type == "bpmn:Process") {
+    if (element.type == "bpmn:Participant") {
+        var procDef = element.businessObject.processRef;
+        if (procDef.flowElements.length > 0)
+            analyzeDPOnProcessDef(procDef);        
+    } else if (element.type == "bpmn:Process") {
         analyzeDPOnProcessDef(element.businessObject);        
     }
 }};

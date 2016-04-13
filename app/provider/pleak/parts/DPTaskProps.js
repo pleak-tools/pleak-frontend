@@ -69,7 +69,7 @@ module.exports = function(group, element) {
             html: buildMatrix(element, predecessors, successors, 'Sensitivity', 'cMatrix')
             });
     }
-  } else if (is(element, 'bpmn:Process')) {
+  } else if (is(element, 'bpmn:Process') || is(element, 'bpmn:Participant') || is(element, 'bpmn:Collaboration')) {
       console.log(element);
       group.entries.push({
         id : 'pleak-dpbounds',
