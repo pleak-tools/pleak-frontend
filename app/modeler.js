@@ -143,7 +143,7 @@ function openDiagram(diagram) {
             var row1 = {}, row2 = {};
             for (var j in succs) {
                 var tgt = succs[j];
-                var value1 = '1.0', value2 = '1.0';                
+                var value1 = 1.0, value2 = 1.0;                
                 if (element.businessObject.matrices) {
                     var _dpMatrix = element.businessObject.matrices.dpMatrix,
                         _cMatrix = element.businessObject.matrices.cMatrix;
