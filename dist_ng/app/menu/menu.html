@@ -35,34 +35,6 @@
       </div>
     </div>
   </nav>
-  <!-- Register -->
-  <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm">
-      <div class="modal-content">
-        <div class="modal-header">
-          Register
-        </div>
-        <div class="modal-body">
-          <form>
-            <div class="form-group">
-              <label for="userEmail">Email address</label>
-              <input type="email" class="form-control" id="userEmail" placeholder="Email" ng-model="user.email">
-            </div>
-            <div class="form-group">
-              <label for="userPassword">Password</label>
-              <input type="password" class="form-control" id="userPassword" placeholder="Password" ng-model="user.password">
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button  ng-click="c.register()" data-dismiss="modal" class="btn btn-success">
-            Register
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
   <!-- Login -->
   <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-sm">
@@ -71,7 +43,7 @@
           Login
         </div>
         <div class="modal-body">
-          <form>
+          <form id="loginForm">
             <div class="form-group">
               <label for="userEmail">Email address</label>
               <input type="email" class="form-control" id="userEmail" placeholder="Email" ng-model="user.email">
@@ -79,12 +51,18 @@
             <div class="form-group">
               <label for="userPassword">Password</label>
               <input type="password" class="form-control" id="userPassword" placeholder="Password" ng-model="user.password">
+              <span id="loginHelp" class="help-block">Incorrect credentials. Please try again!</span>
             </div>
           </form>
+          <p></p>
+          <div class="spinner" id="loginLoading">
+            <div class="double-bounce1"></div>
+            <div class="double-bounce2"></div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button  ng-click="c.login()" data-dismiss="modal" class="btn btn-success">
+          <button  ng-click="c.login()" class="btn btn-success">
             Login
           </button>
         </div>
@@ -99,7 +77,11 @@
           Log out
         </div>
         <div class="modal-body">
-          <p>Are you sure you want to log out?</p>
+          <p id="logoutText">Are you sure you want to log out?</p>
+          <div class="spinner" id="logoutLoading">
+            <div class="double-bounce1"></div>
+            <div class="double-bounce2"></div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

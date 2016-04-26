@@ -15,8 +15,10 @@ angular.module('pleaks.menu', ['ngRoute'])
   };
 
   controller.login = function() {
-    AuthService.login(scope.user);
+    showLoginLoading();
+    AuthService.login(scope.user, loginSuccess, loginError);
   };
+
   controller.register = function() {
     AuthService.register(scope.user);
   };
@@ -30,7 +32,46 @@ angular.module('pleaks.menu', ['ngRoute'])
   }
 
   controller.logout = function() {
-    AuthService.logout();
+    showLogoutLoading();
+    AuthService.logout(hideLogoutLoading);
   }
 
+  var showLoginLoading = function() {
+    $('#loginLoading').show();
+    $('#loginForm').hide();
+  };
+
+  var loginSuccess = function() {
+    $('#loginLoading').fadeOut("slow", function(){
+      $('#loginForm').show();
+      $('#loginHelp').hide();
+      $('.form-group').removeClass('has-error');
+    });
+    $('#loginModal').modal('hide');
+  };
+
+  var loginError = function() {
+    $('#loginLoading').fadeOut("slow", function(){
+      $('#loginForm').show();
+      $('#loginHelp').show();
+      $('.form-group').addClass('has-error');
+    });
+  };
+
+  var showLogoutLoading = function() {
+    $('#logoutLoading').show();
+    $('#logoutText').hide();
+  };
+
+  var hideLogoutLoading = function() {
+    $('#logoutLoading').fadeOut("slow", function(){
+      $('#logoutText').show();
+    });
+    $('#logoutModal').modal('hide');
+    redirectHome();
+  };
+
+  var redirectHome = function() {
+    location.path('/splash');
+  };
 }]);

@@ -18,23 +18,34 @@ angular.module('pleaks.auth', ['ngRoute'])
     });
   };
 
-  this.login = function(user) {
+  this.login = function(user, success, error) {
     http({
       method: 'POST',
       url: 'http://localhost:8080/pleak-backend/rest/auth/login',
       data: user
     }).then(function(response) {
+      console.log(response.status);
       if (response.status === 200) rootScope.user = jwt_decode(response.data.token);
+      success();
+    }, function(response) {
+      if (response.status === 403) error(); // Wrong credentials
     });
   };
 
-  this.logout = function() {
+  this.logout = function(callback) {
     http({
       method: 'GET',
       url: 'http://localhost:8080/pleak-backend/rest/auth/logout'
-    }).then(function(response) {});
-    localStorageService.remove('JSON-Web-Token');
-    rootScope.user = null;
+    }).then(function(response) {
+      console.log("logged out");
+      localStorageService.remove('JSON-Web-Token');
+      rootScope.user = null;
+      callback();
+    }, function() {
+      localStorageService.remove('JSON-Web-Token');
+      rootScope.user = null;
+      callback();
+    });
   };
 
   this.isAuthenticated = function() {

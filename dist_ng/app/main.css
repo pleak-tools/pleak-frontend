@@ -18,3 +18,84 @@ body {
   margin-right: 20px;
   margin-bottom: 0;
 }
+
+.ng-fade {
+  transition: 1s ease-in;
+}
+.ng-fade.ng-enter {
+  transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1.0s;
+}
+.ng-fade.ng-leave {
+  transition: none;
+}
+.ng-fade.ng-enter,
+.ng-fade.ng-leave.ng-leave-active {
+  opacity: 0;
+}
+.ng-fade.ng-leave,
+.ng-fade.ng-enter.ng-enter-active {
+  opacity: 1;
+}
+
+#loginHelp {
+  display: none;
+}
+
+/** http://tobiasahlin.com/spinkit/ **/
+#loginLoading, #logoutLoading {
+    display: none;
+}
+
+#filesTable, #filesNew {
+    display: none;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+
+  position: relative;
+  margin: 50px auto;
+}
+
+.double-bounce1, .double-bounce2 {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #333;
+  opacity: 0.6;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
+  animation: sk-bounce 2.0s infinite ease-in-out;
+}
+
+.double-bounce2 {
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+
+@-webkit-keyframes sk-bounce {
+  0%, 100% { -webkit-transform: scale(0.0) }
+  50% { -webkit-transform: scale(1.0) }
+}
+
+@keyframes sk-bounce {
+  0%, 100% {
+    transform: scale(0.0);
+    -webkit-transform: scale(0.0);
+  } 50% {
+    transform: scale(1.0);
+    -webkit-transform: scale(1.0);
+  }
+}
+
+/* Bootstrap fix */
+.has-error span {
+  color: #a94442;
+}
+.has-error label {
+  color: #a94442;
+}

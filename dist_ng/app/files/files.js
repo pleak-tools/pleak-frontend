@@ -20,6 +20,11 @@ angular.module('pleaks.files', ['ngRoute'])
     url: 'http://localhost:8080/pleak-backend/rest/files/'
   }).then(function(response) {
     files = response.data.files;
+    $('#filesLoading').fadeOut('slow', function() {
+      $('#filesTable').fadeIn('slow');
+      $('#filesNew').fadeIn('slow');
+    });
+
   });
 
   // Refresh the page when user saves to display updated files.

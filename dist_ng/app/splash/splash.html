@@ -1,5 +1,5 @@
 <div class="container" ng-controller="SplashController as c">
-  <div ng-if="!c.isAuthenticated()" class="jumbotron">
+  <div class="jumbotron">
     <h1>Welcome!</h1>
     <p>
       PLEAK (Privacy LEAKage) is a next-generation analysis tool for the privacy audit of an existing system and the design of new privacy-aware systems. PLEAK lets you model your business process using the Business Process Model Notation (<a href="//en.wikipedia.org/wiki/Business_Process_Model_and_Notation" target="_blank">BPMN</a>) and privacy-preserving algorithms using the <a href="//sharemind-sdk.github.io/" target="_blank">SecreC</a> privacy-preserving programming language. PLEAK can then analyze the data flows using cryptographic privacy and differential privacy. PLEAK also supports the inclusion of Privacy Enhancing Technologies (PETs) in the business process models to reduce the leakage of private information.
@@ -13,19 +13,18 @@
       <img src="./inc/img/ut.png" width="300" class="img-responsive inline-b">
     </p>
 
-    <!-- <p>Please log in or register a new user</p> -->
-    <p>
+    <div ng-if="!c.isAuthenticated()" id="guestJumbotron" class="ng-fade">
       <!-- These modals can be found in menu.html -->
       <button class="btn btn-lg btn-primary" data-toggle="modal" data-target="#loginModal">Login »</button>
-      <!-- <button class="btn btn-lg btn-primary" data-toggle="modal" data-target="#registerModal">Register »</button> -->
-    </p>
-  </div>
-  <div ng-if="c.isAuthenticated()" class="jumbotron">
-    <h1>Welcome!</h1>
-    <p>You can view, edit and create new files here</p>
-    <p>
-      <!-- These modals can be found in menu.html -->
-      <a class="btn btn-lg btn-primary" href="#/files">Files »</a>
-    </p>
+      <!--<button class="btn btn-lg btn-primary" data-toggle="modal" data-target="#registerModal">Register »</button>-->
+    </div>
+
+    <div ng-if="c.isAuthenticated()" id="userJumbotron" class="ng-fade">
+      <p>You can view, edit and create new files here</p>
+      <p>
+        <!-- These modals can be found in menu.html -->
+        <a class="btn btn-lg btn-primary" href="#/files">Files »</a>
+      </p>
+    </div>
   </div>
 </div>
