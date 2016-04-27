@@ -6,26 +6,25 @@ angular.module('pleaks.auth', ['ngRoute'])
   $httpProvider.interceptors.push('AuthInterceptor');
 }])
 
-.service('AuthService', ['$http', '$rootScope', 'localStorageService', function(http, rootScope, localStorageService) {
+.service('AuthService', ['$http', '$rootScope', 'localStorageService', function(http, root, localStorageService) {
 
   this.register = function(user) {
     http({
       method: 'POST',
-      url: 'http://localhost:8080/pleak-backend/rest/auth/register',
+      url: root.config.backend.host + '/rest/auth/register',
       data: user
     }).then(function(response) {
-      if (response.status === 201) rootScope.user = jwt_decode(response.data.token);
+      if (response.status === 201) root.user = jwt_decode(response.data.token);
     });
   };
 
   this.login = function(user, success, error) {
     http({
       method: 'POST',
-      url: 'http://localhost:8080/pleak-backend/rest/auth/login',
+      url: root.config.backend.host + '/rest/auth/login',
       data: user
     }).then(function(response) {
-      console.log(response.status);
-      if (response.status === 200) rootScope.user = jwt_decode(response.data.token);
+      if (response.status === 200) root.user = jwt_decode(response.data.token);
       success();
     }, function(response) {
       error(response.status);
@@ -35,36 +34,36 @@ angular.module('pleaks.auth', ['ngRoute'])
   this.logout = function(callback) {
     http({
       method: 'GET',
-      url: 'http://localhost:8080/pleak-backend/rest/auth/logout'
+      url: root.config.backend.host + '/rest/auth/logout'
     }).then(function(response) {
       console.log("logged out");
       localStorageService.remove('JSON-Web-Token');
-      rootScope.user = null;
+      root.user = null;
       callback();
     }, function() {
       localStorageService.remove('JSON-Web-Token');
-      rootScope.user = null;
+      root.user = null;
       callback();
     });
   };
 
   this.isAuthenticated = function() {
-    return rootScope.user !== null;
+    return root.user !== null;
   };
 
   this.getUserEmail = function() {
-    return rootScope.user.email;
+    return root.user.email;
   };
 
   this.verifyToken = function() {
     http({
       method: 'GET',
-      url: 'http://localhost:8080/pleak-backend/rest/auth'
+      url: root.config.backend.host + '/rest/auth'
     }).then(function(response) {
       // Token is still valid
     }, function(response) {
       // Token is not valid
-      rootScope.user = null;
+      root.user = null;
       localStorageService.remove('JSON-Web-Token');
     });
   }

@@ -1,0 +1,9 @@
+{
+    "backend": {
+        "host": "http://localhost:8080/pleak-backend"
+    },
+    "frontend": {
+        "host": "http://localhost:8000",
+        "port": 8000
+    }
+}

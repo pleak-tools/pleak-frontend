@@ -9,15 +9,14 @@ angular.module('pleaks.files', ['ngRoute'])
   });
 }])
 
-.controller('FilesController', ['$scope','$http', function(scope, http) {
+.controller('FilesController', ['$rootScope', '$scope','$http', function(root, scope, http) {
   var controller = this;
-  var domain = 'http://localhost:8000';
   var files = null;
 
   // TODO: This request is fired multiple times due to Angular mechanisms, pls fix.
   http({
     method: 'GET',
-    url: 'http://localhost:8080/pleak-backend/rest/files/'
+    url: root.config.backend.host + '/rest/files/'
   }).then(function(response) {
     files = response.data.files;
     $('#filesLoading').fadeOut('slow', function() {
@@ -31,7 +30,7 @@ angular.module('pleaks.files', ['ngRoute'])
   window.addEventListener('message', function(event) {
     var origin = event.origin || event.originalEvent.origin;
 
-    if (origin !== domain)
+    if (origin !== root.config.frontend.host)
       return;
 
     window.location.reload();
@@ -49,7 +48,7 @@ angular.module('pleaks.files', ['ngRoute'])
   };
 
   controller.openFile = function(message) {
-    var modelerAddress = "http://localhost:8000/modeler.html";
+    var modelerAddress = root.config.frontend.host + "/modeler.html";
 
     //var bpmnEditor = window.open(modelerAddress, "pleaks modeler", "toolbar=yes, scrollbars=yes");
     var bpmnEditor = window.open(modelerAddress);
@@ -81,7 +80,7 @@ angular.module('pleaks.files', ['ngRoute'])
     // Delete stuff
     http({
       method: 'DELETE',
-      url: 'http://localhost:8080/pleak-backend/rest/files/' + id
+      url: root.config.backend.host + '/rest/files/' + id
     }).then(function(response) {
       if (response.status === 200) {
         files.splice(getFileIndexById(id), 1);

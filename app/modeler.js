@@ -25,9 +25,10 @@ var modeler = new PleakModeler({ container: '#canvas', keyboard: { bindTo: docum
     dptask: dpTaskModdleDescriptor
   } });
 
+var config = JSON.parse(fs.readFileSync(__dirname + '/../config.json', 'utf8'));
 
-var domain = 'http://localhost:8000';
-var backend = 'http://localhost:8080/pleak-backend';
+var domain = config.frontend.host;
+var backend = config.backend.host;
 
 var file = {};
 
@@ -48,7 +49,6 @@ window.addEventListener('message', function(event) {
     request
       .get(backend + '/rest/files/' + id)
       .set('JSON-Web-Token', token)
-      .withCredentials()
       .end(function(err, res){
         file = res.body;
         openDiagram(file.content);
@@ -58,7 +58,6 @@ window.addEventListener('message', function(event) {
     request
       .get(backend + '/rest/files' + file.id)
       .set('JSON-Web-Token', token)
-      .withCredentials()
       .end(function(err, res){
         file = res.body;
         openDiagram(file.content);
@@ -102,7 +101,7 @@ function openDiagram(diagram) {
         event.stopPropagation();
         event.preventDefault();
     });
-        
+
     document.focusTracker = function(param) {
       console.log('got focus!!!');
       var ids = param.id.split(",");
@@ -110,7 +109,7 @@ function openDiagram(diagram) {
       canvas.addMarker(ids[0], 'highlight');
       canvas.addMarker(ids[1], 'highlight');
     };
-    
+
     document.blurTracker = function(param) {
       console.log('lost focus!!!');
       var ids = param.id.split(",");
@@ -118,7 +117,7 @@ function openDiagram(diagram) {
       canvas.removeMarker(ids[0], 'highlight');
       canvas.removeMarker(ids[1], 'highlight');
     };
-    
+
     document.changeTracker = function(param) {
         console.log('new value!!!');
         console.log(param.value);
@@ -126,7 +125,7 @@ function openDiagram(diagram) {
         var element = elementRegistry.get(ids[2]);
         element.businessObject.matrices[ids[3]][ids[0]][ids[1]] = param.value;
     };
-    
+
     document.toggleDPTaskTracker = function (elementId) {
         var element = elementRegistry.get(elementId);
         element.dptask = !element.dptask;
@@ -135,7 +134,7 @@ function openDiagram(diagram) {
         else
             canvas.removeMarker(elementId, 'highlight-dptask');
     };
-    
+
     document.checkMatrices = function(element, preds, succs) {
         var matrices = {dpMatrix: {}, cMatrix: {}};
         for (var i in preds) {
@@ -143,7 +142,7 @@ function openDiagram(diagram) {
             var row1 = {}, row2 = {};
             for (var j in succs) {
                 var tgt = succs[j];
-                var value1 = 1.0, value2 = 1.0;                
+                var value1 = 1.0, value2 = 1.0;
                 if (element.businessObject.matrices) {
                     var _dpMatrix = element.businessObject.matrices.dpMatrix,
                         _cMatrix = element.businessObject.matrices.cMatrix;
@@ -159,11 +158,11 @@ function openDiagram(diagram) {
             matrices.cMatrix[src.id] = row2;
         }
         element.businessObject.matrices = matrices;
-        
-        
+
+
         // ==============================================
         // === Do not remove the following lines (they will be used when saving the BPMN file)
-        
+
         var dptask_matrices = moddle.create('pleak:DPTaskDP');
         var dpMatrix = moddle.create('pleak:DPValues'),
             cMatrix = moddle.create('pleak:CValues');
@@ -173,7 +172,7 @@ function openDiagram(diagram) {
         console.log(dpMatrix);
         dptask_matrices.set('dpvalues', dpMatrix);
         dptask_matrices.set('cvalues', cMatrix);
-        
+
         element.businessObject.DPTaskDP = dptask_matrices;
         console.log(dptask_matrices);
         // ===============================================

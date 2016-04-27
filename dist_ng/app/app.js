@@ -14,8 +14,17 @@ angular.module('pleaks', [
 config(['$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
   $routeProvider.otherwise({redirectTo: '/splash'});
 }]).
-run(function($rootScope, AuthService) {
+run(function($rootScope, $http, AuthService) {
   $rootScope.user = null;
-  // If the server has restarted then old tokens are obsolete. Must verify at startup.
-  AuthService.verifyToken();
+
+  // Read config
+  $http.get('config.json')
+    .success(function(data, status, headers, config) {
+      $rootScope.config = data;
+      // If the server has restarted then old tokens are obsolete. Must verify at startup.
+      AuthService.verifyToken();
+  })
+    .error(function(data, status, headers, config) {
+  });
+
 });

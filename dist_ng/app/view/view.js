@@ -9,9 +9,9 @@ angular.module('pleaks.view', ['ngRoute'])
   });
 }])
 
-.controller('ViewController', ['$scope','$http','$routeParams', function(scope, http, routeParams) {
+.controller('ViewController', ['$scope', '$rootScope', '$http', '$routeParams', function(scope, root, http, routeParams) {
   var controller = this;
-  var modelerAddress = "http://localhost:8000/modeler.html";
+  var modelerAddress = root.config.frontend.host + "/modeler.html";
   scope.fileName = routeParams.fileName;
 
   controller.openFile = function() {
