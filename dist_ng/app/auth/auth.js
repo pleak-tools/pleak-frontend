@@ -28,7 +28,7 @@ angular.module('pleaks.auth', ['ngRoute'])
       if (response.status === 200) rootScope.user = jwt_decode(response.data.token);
       success();
     }, function(response) {
-      if (response.status === 403) error(); // Wrong credentials
+      error(response.status);
     });
   };
 

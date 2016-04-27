@@ -25,16 +25,16 @@ angular.module('pleaks.menu', ['ngRoute'])
 
   controller.isAuthenticated = function() {
     return AuthService.isAuthenticated();
-  }
+  };
 
   controller.getUserEmail = function() {
     return AuthService.getUserEmail();
-  }
+  };
 
   controller.logout = function() {
     showLogoutLoading();
     AuthService.logout(hideLogoutLoading);
-  }
+  };
 
   var showLoginLoading = function() {
     $('#loginLoading').show();
@@ -44,17 +44,21 @@ angular.module('pleaks.menu', ['ngRoute'])
   var loginSuccess = function() {
     $('#loginLoading').fadeOut("slow", function(){
       $('#loginForm').show();
-      $('#loginHelp').hide();
+      $('.help-block').hide();
       $('.form-group').removeClass('has-error');
     });
     $('#loginModal').modal('hide');
   };
 
-  var loginError = function() {
+  var loginError = function(code) {
     $('#loginLoading').fadeOut("slow", function(){
       $('#loginForm').show();
-      $('#loginHelp').show();
       $('.form-group').addClass('has-error');
+      if (code === 403) {
+        $('#loginHelpCredentials').show();
+      } else {
+        $('#loginHelpServer').show();
+      }
     });
   };
 
@@ -74,4 +78,9 @@ angular.module('pleaks.menu', ['ngRoute'])
   var redirectHome = function() {
     location.path('/splash');
   };
+
+  // Every time a modal is shown, if it has an autofocus element, focus on it.
+  $('.modal').on('shown.bs.modal', function() {
+    $(this).find('[autofocus]').focus();
+  });
 }]);

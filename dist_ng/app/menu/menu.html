@@ -19,6 +19,9 @@
           <li ng-if="c.isAuthenticated()">
             <a data-toggle="modal" data-target="#logoutModal">Log out</a>
           </li>
+          <li ng-if="!c.isAuthenticated()">
+            <a data-toggle="modal" data-target="#loginModal">Log in</a>
+          </li>
           <!-- Maybe useful in the future
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools <span class="caret"></span></a>
@@ -46,15 +49,16 @@
           <form id="loginForm">
             <div class="form-group">
               <label for="userEmail">Email address</label>
-              <input type="email" class="form-control" id="userEmail" placeholder="Email" ng-model="user.email">
+              <input type="email" class="form-control" id="userEmail" placeholder="Email" ng-model="user.email" autofocus>
             </div>
             <div class="form-group">
               <label for="userPassword">Password</label>
               <input type="password" class="form-control" id="userPassword" placeholder="Password" ng-model="user.password">
-              <span id="loginHelp" class="help-block">Incorrect credentials. Please try again!</span>
+              <button type="submit" ng-click="c.login()" class="btn btn-success" style="display:none;">Login</button>
+              <span id="loginHelpCredentials" class="help-block">Incorrect credentials. Please try again.</span>
+              <span id="loginHelpServer" class="help-block">Could not reach the server. Please try again <b>later</b>.</span>
             </div>
           </form>
-          <p></p>
           <div class="spinner" id="loginLoading">
             <div class="double-bounce1"></div>
             <div class="double-bounce2"></div>
@@ -62,7 +66,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button  ng-click="c.login()" class="btn btn-success">
+          <button type="submit" ng-click="c.login()" class="btn btn-success">
             Login
           </button>
         </div>
