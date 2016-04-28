@@ -2,6 +2,11 @@ body {
   padding-top: 25px;
 }
 
+.brand {
+  width: 90px;
+  float: left;
+}
+
 #filesTable {
   margin-bottom: 0px;
 }
