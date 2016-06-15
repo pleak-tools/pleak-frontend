@@ -46,7 +46,7 @@
 }
 
 .file-name-box {
-  padding: 20px!important;
+  height: 40px!important;
   box-shadow: 0 1px 4px rgba(0,0,0,0.3)!important;
   border: none!important;
 }
