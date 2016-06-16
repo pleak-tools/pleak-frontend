@@ -4,8 +4,7 @@ angular.module('pleaks.files', ['ngRoute'])
 
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/files', {
-    templateUrl: 'files/files.html',
-    controller: 'FilesController'
+    templateUrl: 'files/files.html'
   });
 }])
 
