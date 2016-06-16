@@ -34,9 +34,23 @@ var file = {};
 
 var token = localStorage.getItem('ls.JSON-Web-Token').replace(/['"]+/g, '');
 
+var modelId = window.location.pathname.split('/')[2];
+request.get(backend + '/rest/files/' + modelId)
+  .set('JSON-Web-Token', token)
+  .end(function(err, res) {
+    file = res.body;
+
+    if (file.content.length === 0) {
+      file.content = fs.readFileSync(__dirname + '/../resources/newDiagram.bpmn', 'utf-8');
+    }
+    openDiagram(file.content);
+
+    $('#fileName').val(file.title);
+});
 //
 // If model name arrived - requesting the model from the server.
 //
+/*
 var parentEvent;
 window.addEventListener('message', function(event) {
   parentEvent = event;
@@ -70,13 +84,12 @@ window.addEventListener('message', function(event) {
   }
 
 }, false);
+*/
 
 //
 // Loading a new blank bpmn diagram by default.
 //
-var newDiagramXML = fs.readFileSync(__dirname + '/../resources/newDiagram.bpmn', 'utf-8');
 
-openDiagram(newDiagramXML);
 
 function openDiagram(diagram) {
   modeler.importXML(diagram, function(err) {
@@ -188,7 +201,6 @@ var saveButton = $('#save-diagram');
 saveButton.click( function(e) {
   $('#fileNameError').hide();
   file.title = $('#fileName').val();
-
   request
     .post(backend + '/rest/files')
     .set('JSON-Web-Token', token)
@@ -204,7 +216,6 @@ saveButton.click( function(e) {
         $('#fileNameError').show();
       }
     });
-  parentEvent.source.postMessage("received", parentEvent.origin);
 });
 
 //

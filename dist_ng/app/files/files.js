@@ -8,7 +8,7 @@ angular.module('pleaks.files', ['ngRoute'])
   });
 }])
 
-.controller('FilesController', ['$rootScope', '$scope','$http', function(root, scope, http) {
+.controller('FilesController', ['$rootScope', '$scope', '$http', '$window', function(root, scope, http, window) {
   var controller = this;
   var files = null;
 
@@ -55,34 +55,33 @@ angular.module('pleaks.files', ['ngRoute'])
     return files.length == 0;
   };
 
-  controller.openFile = function(message) {
-    var modelerAddress = root.config.frontend.host + "/modeler.html";
-
-    //var bpmnEditor = window.open(modelerAddress, "pleaks modeler", "toolbar=yes, scrollbars=yes");
-    var bpmnEditor = window.open(modelerAddress);
-
-    bpmnEditor.onload = function(e) {
-      bpmnEditor.postMessage(message, "*");
-    }
+  controller.openFile = function(id) {
+    var modelerAddress = root.config.frontend.host + "/modeler/" + id;
+    window.open(modelerAddress, '_blank');
   };
 
   controller.newFile = function(title) {
-    var message = {
+    var file = {
       title: title,
-      type: 'new'
+      content: ''
     };
 
-    controller.openFile(message);
+    http({
+      method: 'POST',
+      data: file,
+      url: root.config.backend.host + '/rest/files/'
+    }).then(
+      function success(response) {
+        requestFiles();
+        controller.openFile(response.data.id);
+      },
+      function error(response) {
+        console.log(response);
+        //
+    });
+
+    //controller.openFile(message);
   };
-
-  controller.editFile = function(id) {
-    var message = {
-      id: id,
-      type: 'edit'
-    };
-
-    controller.openFile(message);
-  }
 
   controller.deleteFile = function(id) {
     // Delete stuff
