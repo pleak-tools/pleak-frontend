@@ -46,6 +46,7 @@ request.get(backend + '/rest/files/' + modelId)
     openDiagram(file.content);
 
     $('#fileName').val(file.title);
+    document.title += ' - ' + file.title;
 });
 //
 // If model name arrived - requesting the model from the server.
