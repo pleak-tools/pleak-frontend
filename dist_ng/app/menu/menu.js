@@ -2,7 +2,7 @@
 
 angular.module('pleaks.menu', ['ngRoute'])
 
-.controller('MenuController', ['$scope','$location', 'AuthService', function(scope, location, AuthService) {
+.controller('MenuController', ['$scope','$rootScope', '$location', 'AuthService', function(scope, root, location, AuthService) {
   var controller = this;
 
   scope.user = {
@@ -48,6 +48,7 @@ angular.module('pleaks.menu', ['ngRoute'])
       $('.form-group').removeClass('has-error');
     });
     $('#loginModal').modal('hide');
+    root.$broadcast("userAuthenticated", {});
   };
 
   var loginError = function(code) {

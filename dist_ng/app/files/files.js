@@ -12,17 +12,26 @@ angular.module('pleaks.files', ['ngRoute'])
   var controller = this;
   var files = null;
 
-  // TODO: This request is fired multiple times due to Angular mechanisms, pls fix.
-  http({
-    method: 'GET',
-    url: root.config.backend.host + '/rest/files/'
-  }).then(function(response) {
-    files = response.data.files;
-    $('#filesLoading').fadeOut('slow', function() {
-      $('#filesTable').fadeIn('slow');
-      $('#filesNew').fadeIn('slow');
+  var requestFiles = function() {
+    http({
+      method: 'GET',
+      url: root.config.backend.host + '/rest/files/'
+    }).then(
+      function success(response) {
+        files = response.data.files;
+        $('#filesLoading').fadeOut('slow', function() {
+          $('#filesTable').fadeIn('slow');
+          $('#filesNew').fadeIn('slow');
+        });
+      },
+      function error(response) {
+        $('#loginModal').modal();
     });
+  };
 
+  requestFiles();
+  root.$on("userAuthenticated", function (args) {
+    requestFiles();
   });
 
   // Refresh the page when user saves to display updated files.
