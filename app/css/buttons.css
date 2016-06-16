@@ -40,6 +40,18 @@
   opacity: 1.0;
 }
 
+.analyze {
+  background-color: #337ab7;
+}
+
+.analyze a {
+  color: #fff;
+}
+
+.analyze > li > a {
+  opacity: 1;
+}
+
 .separator {
   color: #337ab7;
   opacity: 0.3;
