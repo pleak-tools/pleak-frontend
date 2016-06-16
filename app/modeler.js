@@ -3,7 +3,10 @@
 var fs = require('fs');
 var PleakModeler = require('./pleaks-modeler');
 
-var $ = require('jquery');
+// Bootstrap modals did not work with the reqular var
+var $ = window.$ = window.jQuery = require('jquery');
+var bs = require('bootstrap');
+
 var request = require('superagent');
 
 var propertiesPanelModule = require('bpmn-js-properties-panel'),
@@ -32,22 +35,87 @@ var backend = config.backend.host;
 
 var file = {};
 
-var token = localStorage.getItem('ls.JSON-Web-Token').replace(/['"]+/g, '');
+var getToken = function() {
+  var token = localStorage.getItem('ls.JSON-Web-Token');
+  if (token !== null) token = token.replace(/['"]+/g, '');
+  return token;
+};
 
 var modelId = window.location.pathname.split('/')[2];
-request.get(backend + '/rest/files/' + modelId)
-  .set('JSON-Web-Token', token)
+
+request.get(backend + '/rest/auth')
+  .set('JSON-Web-Token', getToken())
   .end(function(err, res) {
-    file = res.body;
-
-    if (file.content.length === 0) {
-      file.content = fs.readFileSync(__dirname + '/../resources/newDiagram.bpmn', 'utf-8');
-    }
-    openDiagram(file.content);
-
-    $('#fileName').val(file.title);
-    document.title += ' - ' + file.title;
+  if (err) {
+    $('.buttons').hide();
+    $('#login-container').show();
+    $('#loginModal').modal();
+  } else {
+    getFile();
+  }
 });
+
+$('#loginButton').click(function() {
+  $('#loginHelpCredentials').hide();
+  $('#loginHelpServer').hide();
+  $('.form-group').removeClass('has-error');
+  $('#loginLoading').show();
+  $('#loginForm').hide();
+  var user = {
+    'email': $('#userEmail').val(),
+    'password': $('#userPassword').val()
+  };
+  request.post(backend + '/rest/auth/login/')
+    .send(user)
+    .set('Accept', 'application/json')
+    .end(function(err, res) {
+      $('#loginLoading').hide();
+      $('#loginForm').show();
+      if (!err) {
+        localStorage.setItem("ls.JSON-Web-Token", res.body.token);
+        getFile();
+        $('#loginLoading').fadeOut("slow", function(){
+          $('#loginForm').show();
+          $('.help-block').hide();
+          $('.form-group').removeClass('has-error');
+        });
+        $('#loginModal').modal('hide');
+        $('.buttons').show();
+        $('#login-container').hide();
+      } else {
+        $('.buttons').hide();
+        $('#login-container').show();
+        $('#loginLoading').fadeOut("slow", function(){
+          $('#loginForm').show();
+          $('.form-group').addClass('has-error');
+          if (err.status === 403) {
+            $('#loginHelpCredentials').show();
+          } else {
+            $('#loginHelpServer').show();
+          }
+        });
+      }
+  });
+});
+
+var getFile = function() {
+  request.get(backend + '/rest/files/' + modelId)
+    .set('JSON-Web-Token', getToken())
+    .end(function(err, res) {
+      if (!err) {
+        file = res.body;
+
+        if (file.content.length === 0) {
+          file.content = fs.readFileSync(__dirname + '/../resources/newDiagram.bpmn', 'utf-8');
+        }
+        openDiagram(file.content);
+
+        $('#fileName').val(file.title);
+        document.title += ' - ' + file.title;
+      }
+  });
+};
+
 //
 // If model name arrived - requesting the model from the server.
 //
@@ -204,7 +272,7 @@ saveButton.click( function(e) {
   file.title = $('#fileName').val();
   request
     .post(backend + '/rest/files')
-    .set('JSON-Web-Token', token)
+    .set('JSON-Web-Token', getToken())
     .send(file)
     .end(function(err, res){
       console.log(res);
@@ -213,6 +281,8 @@ saveButton.click( function(e) {
         $('#fileSaveSuccess').fadeOut(5000);
         disableAllButtons();
         file.md5Hash = res.body.success;
+      } else if (res.statusCode === 401) {
+        $('#loginModal').modal();
       } else if (res.statusCode === 409) {
         $('#fileNameError').show();
       }
