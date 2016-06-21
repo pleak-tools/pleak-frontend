@@ -55,12 +55,25 @@ request.get(backend + '/rest/auth')
   }
 });
 
-$('#loginButton').click(function() {
+$('#loginForm').submit(function(event) {
+  event.preventDefault();
+});
+
+$('#loginModal').on('hidden.bs.modal', function (e) {
+  $('.credentials').show();
+  $('.help-block').hide();
+  $('.form-group').removeClass('has-error');
+});
+
+$('#loginModal').on('show.bs.modal', function (e) {
   $('#loginHelpCredentials').hide();
   $('#loginHelpServer').hide();
   $('.form-group').removeClass('has-error');
+});
+
+$('#loginButton').click(function() {
   $('#loginLoading').show();
-  $('#loginForm').hide();
+  $('.credentials').hide();
   var user = {
     'email': $('#userEmail').val(),
     'password': $('#userPassword').val()
@@ -69,24 +82,19 @@ $('#loginButton').click(function() {
     .send(user)
     .set('Accept', 'application/json')
     .end(function(err, res) {
-      $('#loginLoading').hide();
-      $('#loginForm').show();
       if (!err) {
         localStorage.setItem("ls.JSON-Web-Token", res.body.token);
         getFile();
         $('#loginLoading').fadeOut("slow", function(){
-          $('#loginForm').show();
-          $('.help-block').hide();
-          $('.form-group').removeClass('has-error');
+          $('.buttons').show();
+          $('#login-container').hide();
         });
         $('#loginModal').modal('hide');
-        $('.buttons').show();
-        $('#login-container').hide();
       } else {
         $('.buttons').hide();
         $('#login-container').show();
         $('#loginLoading').fadeOut("slow", function(){
-          $('#loginForm').show();
+          $('.credentials').show();
           $('.form-group').addClass('has-error');
           if (err.status === 403) {
             $('#loginHelpCredentials').show();
