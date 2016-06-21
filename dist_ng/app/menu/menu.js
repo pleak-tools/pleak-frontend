@@ -55,7 +55,7 @@ angular.module('pleaks.menu', ['ngRoute'])
     $('#loginLoading').fadeOut("slow", function(){
       $('#loginForm').show();
       $('.form-group').addClass('has-error');
-      if (code === 403) {
+      if (code === 403 || code === 404) {
         $('#loginHelpCredentials').show();
       } else {
         $('#loginHelpServer').show();

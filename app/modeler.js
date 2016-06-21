@@ -288,6 +288,7 @@ saveButton.click( function(e) {
         $('#fileSaveSuccess').show();
         $('#fileSaveSuccess').fadeOut(5000);
         disableAllButtons();
+        if (file.id !== res.body.id) window.location = domain + '/modeler/' + res.body.id;
         file.md5Hash = res.body.success;
       } else if (res.statusCode === 401) {
         $('#loginModal').modal();

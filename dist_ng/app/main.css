@@ -110,3 +110,26 @@ body {
   font-weight: 100;
   font-size: 16px;
 }
+
+.table .sharing > tbody > tr > td {
+  vertical-align: middle;
+}
+
+.sharing button {
+  border: none;
+}
+
+.icon-link {
+  color: #777;
+}
+
+.has-error > .input-group-btn > button {
+  border-color: #a94442;
+  color: #a94442;
+}
+
+.error-block {
+  display: block;
+  color: #a94442;
+  display: none; /* so we can .show() and it's block */
+}

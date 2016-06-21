@@ -24,6 +24,7 @@
               <tr>
                 <th>#</th>
                 <th>File name</th>
+                <th>File owner</th>
                 <th>Last modified</th>
                 <th><span class="pull-right">Actions</span></th>
               </tr>
@@ -37,30 +38,108 @@
               <tr ng-repeat="file in c.getFiles()" ng-if="file.title.toLowerCase().indexOf(search.toLowerCase()) > -1">
                 <td>{{$index+1}}</td>
                 <td>{{file.title}}</td>
+                <td>{{c.getOwner(file.user.email)}}</td>
                 <td>{{file.lastModified}}</td>
                 <td>
                   <div class="btn-group pull-right">
-                    <button ng-click="c.openFile(file.id)" class="btn btn-success" type="submit">
+                    <button ng-click="c.openFile(file.id)" class="btn btn-success" type="submit"
+                            ng-if="c.canEdit(file)">
                       <span class="glyphicon glyphicon-edit"></span> Edit
                     </button>
-                    <button class="btn btn-default" type="submit" data-toggle="modal" data-target="#deleteFileModal{{$index}}">
+                    <button ng-click="c.openFile(file.id)" class="btn btn-success" type="submit"
+                            ng-if="!c.canEdit(file) && c.canView(file)">
+                      <span class="glyphicon glyphicon-eye-open"></span> View
+                    </button>
+                    <button class="btn btn-default" type="submit"
+                            data-toggle="modal" data-target="#shareFileModal{{$index}}"
+                            ng-if="c.canShare(file)">
+                      <span class="glyphicon glyphicon-share"></span> Share
+                    </button>
+                    <button class="btn btn-default" type="submit"
+                            data-toggle="modal" data-target="#deleteFileModal{{$index}}"
+                            ng-if="c.canDelete(file)">
                       <span class="glyphicon glyphicon-trash"></span> Delete
                     </button>
-                    <div class="modal fade" id="deleteFileModal{{$index}}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-                      <div class="modal-dialog modal-sm">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            Delete file
-                          </div>
-                          <div class="modal-body">
-                            Are you sure you want to delete this file: {{file.title}}?
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                            <button  ng-click="c.deleteFile(file.id)" data-dismiss="modal" class="btn btn-success">
-                              Confirm
-                            </button>
-                          </div>
+                  </div>
+
+                  <!-- Share modal -->
+                  <div class="modal fade" id="shareFileModal{{$index}}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+                    <div class="modal-dialog modal-md">
+                      <div class="modal-content">
+                        <div class="modal-body">
+                          <p>Shared with:</p>
+                          <table class="table sharing" id="sharedTable{{id}}">
+                            <tbody>
+                              <tr ng-repeat="fp in file.filePermissions">
+                                <td>{{fp.user.email}}</td>
+                                <td style="text-align: right;">
+                                  <div class="dropdown">
+                                    <button class="btn btn-default dropdown-toggle sharing" type="button"
+                                            id="dropdownMenu1" data-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="true">
+                                      {{fp.action.title}}
+                                      <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                      <li><a ng-click="fp.action.title = 'view'">view</a></li>
+                                      <li><a ng-click="fp.action.title = 'edit'">edit</a></li>
+                                    </ul>
+                                  </div>
+                                </td>
+                                <td style="text-align: right;">
+                                  <a class="icon-link" ng-click="file.filePermissions.splice($index, 1);">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                  </a>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                          <form>
+                            <div class="form-group input-group">
+                              <input type="email" class="form-control" ng-model="c.userEmail" placeholder="Enter e-mail address">
+                              <input type="text" ng-model="userRights" ng-init="userRights = 'view'" hidden>
+                              <div class="input-group-btn">
+                                <button type="button" class="btn btn-default dropdown-toggle" style="border-radius:0px"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        {{userRights}} <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                  <li><a ng-click="userRights = 'view'">view</a></li>
+                                  <li><a ng-click="userRights = 'edit'">edit</a></li>
+                                </ul>
+                                <button type="submit" class="btn btn-default" ng-click="c.addRights(file, userRights)">
+                                  <span class="glyphicon glyphicon-plus"></span>
+                                </button>
+                              </div>
+                            </div>
+                            <span id="not-existing-email" class="error-block">Email not found.</span>
+                          </form>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                          <button ng-click="c.submitNewFileRights(file)" data-dismiss="modal" class="btn btn-success">
+                            Confirm
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Delete modal -->
+                  <div class="modal fade" id="deleteFileModal{{$index}}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+                    <div class="modal-dialog modal-sm">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          Delete file
+                        </div>
+                        <div class="modal-body">
+                          Are you sure you want to delete this file: {{file.title}}?
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                          <button  ng-click="c.deleteFile(file.id)" data-dismiss="modal" class="btn btn-success">
+                            Confirm
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -73,38 +152,38 @@
           <button id="filesNew" class="btn btn-success" data-toggle="modal" data-target=".bs-example-modal-md">
             <span class="glyphicon glyphicon-plus"></span> New
           </button>
-          <div class="modal fade bs-example-modal-md" tabindex="-1" role="dialog" aria-labelledby="fileNameLabel">
-            <div class="modal-dialog modal-md">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                  </button>
-                  <h4 class="modal-title" id="fileNameLabel">Create a new file</h4>
-                </div>
-                <div class="modal-body">
-                  <div class="form-group {{ c.isExistingFileName(fileName) ? 'has-error' : '' }}">
-                    <div class="input-group">
-                      <input type="text" class="form-control" ng-init="fileName = 'Untitled'" ng-model="fileName"
-                             aria-describedby="alreadyExists" placeholder="Please insert the file name (without extension)">
-                      <div class="input-group-addon">.bpmn</div>
-                    </div>
-                    <span id="alreadyExists" ng-if="c.isExistingFileName(fileName)" class="help-block">
-                      The file name already exists. Please insert a new file name.
-                    </span>
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                  <button ng-click="c.newFile(fileName+'.bpmn')" data-dismiss="modal" class="btn btn-success" ng-disabled="c.isExistingFileName(fileName)">
-                    Create
-                  </button>
-                </div>
-              </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade bs-example-modal-md" tabindex="-1" role="dialog" aria-labelledby="fileNameLabel">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+          <h4 class="modal-title" id="fileNameLabel">Create a new file</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group {{ c.isExistingFileName(fileName) ? 'has-error' : '' }}">
+            <div class="input-group">
+              <input type="text" class="form-control" ng-init="fileName = 'Untitled'" ng-model="fileName"
+                     aria-describedby="alreadyExists" placeholder="Please insert the file name (without extension)">
+              <div class="input-group-addon">.bpmn</div>
             </div>
+            <span id="alreadyExists" ng-if="c.isExistingFileName(fileName)" class="help-block">
+              The file name already exists. Please insert a new file name.
+            </span>
           </div>
         </div>
-
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button ng-click="c.newFile(fileName+'.bpmn')" data-dismiss="modal" class="btn btn-success" ng-disabled="c.isExistingFileName(fileName)">
+            Create
+          </button>
+        </div>
       </div>
     </div>
   </div>
