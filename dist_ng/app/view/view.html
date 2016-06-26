@@ -1,13 +1,17 @@
 <div class="container" ng-controller="ViewController as c">
   <div class="row topMargin">
     <div class="col-sm-12">
-      <div class="jumbotron">
-        <h1>Pleak</h1>
-          <p>Privacy Leakage Analysis Tools</p>
-          <p>
-            <a class="btn btn-lg btn-primary" ng-click="c.openFile()" role="button">{{fileName}} »</a>
-          </p>
-      </div>
+      
+      <div class="panel panel-default">
+        <div class="panel-heading">
+           <h4 ng-if="!c.nothingFound()">{{c.getFileName()}}</h4>
+        </div>
+
+        <div class="panel-body">    
+          <h2 ng-if="c.nothingFound()">Oops, nothing found.</h2>   
+          <div id="canvas"></div>   
+        </div>
+            
     </div>
   </div>
 </div>

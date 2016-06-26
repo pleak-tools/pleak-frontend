@@ -3,30 +3,49 @@
 angular.module('pleaks.view', ['ngRoute'])
 
 .config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/view/:fileName', {
+  $routeProvider.when('/view/:fileUri', {
     templateUrl: 'view/view.html'
   });
 }])
 
 .controller('ViewController', ['$scope', '$rootScope', '$http', '$routeParams', function(scope, root, http, routeParams) {
   var controller = this;
-  var modelerAddress = root.config.frontend.host + "/modeler.html";
-  scope.fileName = routeParams.fileName;
+  
+  scope.fileUri = routeParams.fileUri;
+  
+  console.log("Loading " + scope.fileUri);
+  
+  var BpmnViewer = window.BpmnJS;
+  var viewer;
+  
+  var file;
+  var noFile = false;
 
-  controller.openFile = function() {
-    var message = {
-      fileName: scope.fileName,
-      type: 'view'
-    };
-
-    //var bpmnEditor = window.open(modelerAddress, "pleaks modeler", "toolbar=no, scrollbars=yes");
-    var bpmnEditor = window.open(modelerAddress);
-
-    bpmnEditor.onload = function(e) {
-      bpmnEditor.postMessage(message, "*");
-    }
-  };
-
-
+  http({
+    method: 'GET',
+    url: root.config.backend.host + '/rest/view/' + scope.fileUri
+  }).then(function(response) {
+    file = response.data;
+    
+    viewer = new BpmnViewer({ container: '#canvas' });
+    viewer.importXML(file.content, function(err) {
+      if (!err) {
+        console.log('success!');
+        viewer.get('canvas').zoom('fit-viewport');
+      } else {
+        console.log('something went wrong:', err);
+      }
+    });
+  }, function(error) {
+    noFile = true;
+  });
+  
+  controller.getFileName = function() {
+    return file.title;
+  }
+  
+  controller.nothingFound = function() {
+    return noFile;
+  }
 
 }]);

@@ -111,7 +111,7 @@ angular.module('pleaks.files', ['ngRoute'])
     return file.user.id === parseInt(root.user.sub);
   }
 
-  // Only owner can delete at the moment
+  // Only owner can share at the moment
   controller.canShare = function(file) {
     return file.user.id === parseInt(root.user.sub);
   }
@@ -200,6 +200,45 @@ angular.module('pleaks.files', ['ngRoute'])
       if (files[fIx].title === bpmnFileName) return true;
     }
     return false;
+  }
+  
+  controller.publishFile = function(file) {
+    var file = {
+     id: file.id
+    };
+
+    http({
+      method: 'POST',
+      data: file,
+      url: root.config.backend.host + '/rest/view/'
+    }).then(
+      function success(response) {
+        requestFiles();
+        scope.$apply();
+        console.log(response);
+      },
+      function error(response) {
+        console.log(response);
+    });
+  }
+  
+  controller.buildPublicUri = function(fileUri) {
+    // TODO: Somehow obtain view.html adress automatically.
+    return root.config.frontend.host + "/app/#/view/" + fileUri;
+  }
+  
+  controller.removePublicUri = function(fileUri, fileId) {
+    http({
+      method: 'DELETE',
+      url: root.config.backend.host + '/rest/view/' + fileUri
+    }).then(function(response) {
+      if (response.status === 200) {
+        requestFiles();
+        scope.$apply();
+        
+        console.log("file public uri " + fileUri + " deleted.");
+      }
+    });
   }
 
   var getFileIndexById = function(id) {
