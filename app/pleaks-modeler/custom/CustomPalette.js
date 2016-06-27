@@ -117,10 +117,10 @@ PaletteProvider.prototype.getPaletteEntries = function(element) {
     'custom-separator': {
       group: 'custom',
       separator: true
-    },
-    'custom-query': createAction(
-      'custom:query', 'custom', 'icon-pleaks-query'
-    )
+    }
+    //'custom-query': createAction(
+    //  'custom:query', 'custom', 'icon-pleaks-query'
+    //)
   });
 
   return actions;
