@@ -20,6 +20,12 @@ Navigate to ```dist_ng/``` and execute again
 npm install
 ```
 
+Also execute
+
+```
+bower install
+```
+
 
 Serve an app locally, build it with
 
