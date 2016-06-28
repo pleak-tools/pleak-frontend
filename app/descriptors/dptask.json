@@ -1,7 +1,7 @@
 {
   "name": "PleakTools",
   "prefix": "pleak",
-  "uri": "http://pleak.io",
+  "uri": "https://pleak.io",
   "xml": {
     "tagAlias": "lowerCase"
   },
