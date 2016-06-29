@@ -1,5 +1,6 @@
 body {
   padding-top: 25px;
+  height: 100%;
 }
 
 .brand {
@@ -132,4 +133,8 @@ body {
   display: block;
   color: #a94442;
   display: none; /* so we can .show() and it's block */
+}
+
+.model-viewer, .model-viewer > div{
+  height: 85vh;
 }

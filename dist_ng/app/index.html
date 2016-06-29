@@ -21,7 +21,7 @@
   <![endif]-->
 
   <!-- Nav -->
-  <nav ng-include="'menu/menu.html'"></nav>
+  <nav ng-include="'menu/menu.html'" ng-if="menuVisible(location)"></nav>
 
   <!-- Main -->
   <main ng-view></main>

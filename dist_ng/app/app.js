@@ -14,8 +14,14 @@ angular.module('pleaks', [
 config(['$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
   $routeProvider.otherwise({redirectTo: '/splash'});
 }]).
-run(function($rootScope, $http, AuthService) {
+run(function($rootScope, $http, $location, AuthService) {
   $rootScope.user = null;
+
+  $rootScope.location = $location;
+
+  $rootScope.menuVisible = function (location) {
+    return (location.path().indexOf('/view') === -1);
+  }
 
   // Read config
   $http.get('config.json')

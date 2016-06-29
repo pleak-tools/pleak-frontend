@@ -5,13 +5,12 @@
       <div class="panel panel-default">
         <div class="panel-heading">
            <h4 ng-if="!c.nothingFound()">{{c.getFileName()}}</h4>
+           <h4 ng-if="c.nothingFound()">Oops, nothing found.</h4> 
         </div>
+      </div>
+        
+      <div id="viewer-canvas" class="model-viewer"></div>   
 
-        <div class="panel-body">    
-          <h2 ng-if="c.nothingFound()">Oops, nothing found.</h2>   
-          <div id="canvas"></div>   
-        </div>
-            
     </div>
   </div>
 </div>

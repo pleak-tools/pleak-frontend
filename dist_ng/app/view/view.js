@@ -27,11 +27,11 @@ angular.module('pleaks.view', ['ngRoute'])
   }).then(function(response) {
     file = response.data;
     
-    viewer = new BpmnViewer({ container: '#canvas' });
+    viewer = new BpmnViewer({ container: '#viewer-canvas' });
     viewer.importXML(file.content, function(err) {
       if (!err) {
         console.log('success!');
-        viewer.get('canvas').zoom('fit-viewport');
+        viewer.get('#viewer-canvas').zoom('fit-viewport');
       } else {
         console.log('something went wrong:', err);
       }
