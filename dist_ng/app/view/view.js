@@ -19,14 +19,12 @@ angular.module('pleaks.view', ['ngRoute'])
   var viewer;
   
   var file;
-  var noFile = true;
 
   http({
     method: 'GET',
     url: root.config.backend.host + '/rest/view/' + scope.fileUri
   }).then(function(response) {
     file = response.data;
-    noFile = false;
     viewer = new BpmnViewer({ container: '#viewer-canvas' });
     viewer.importXML(file.content, function(err) {
       if (!err) {
@@ -37,7 +35,6 @@ angular.module('pleaks.view', ['ngRoute'])
       }
     });
   }, function(error) {
-    noFile = true;
   });
   
   controller.getFileName = function() {
@@ -45,7 +42,7 @@ angular.module('pleaks.view', ['ngRoute'])
   }
   
   controller.nothingFound = function() {
-    return noFile;
+    return file === undefined;
   }
 
 }]);
