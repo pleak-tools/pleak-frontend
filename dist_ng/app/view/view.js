@@ -10,14 +10,12 @@ angular.module('pleaks.view', ['ngRoute'])
 
 .controller('ViewController', ['$scope', '$rootScope', '$http', '$routeParams', function(scope, root, http, routeParams) {
   var controller = this;
-  
+
   scope.fileUri = routeParams.fileUri;
-  
-  console.log("Loading " + scope.fileUri);
-  
+
   var BpmnViewer = window.BpmnJS;
   var viewer;
-  
+
   var file;
 
   http({
@@ -28,19 +26,19 @@ angular.module('pleaks.view', ['ngRoute'])
     viewer = new BpmnViewer({ container: '#viewer-canvas' });
     viewer.importXML(file.content, function(err) {
       if (!err) {
-        console.log('success!');
         viewer.get('#viewer-canvas').zoom('fit-viewport');
       } else {
-        console.log('something went wrong:', err);
+        // error
       }
     });
   }, function(error) {
+    // error
   });
-  
+
   controller.getFileName = function() {
     return file.title;
   }
-  
+
   controller.nothingFound = function() {
     return file === undefined;
   }

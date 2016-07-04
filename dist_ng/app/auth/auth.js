@@ -36,7 +36,6 @@ angular.module('pleaks.auth', ['ngRoute'])
       method: 'GET',
       url: root.config.backend.host + '/rest/auth/logout'
     }).then(function(response) {
-      console.log("logged out");
       localStorageService.remove('JSON-Web-Token');
       root.user = null;
       callback();

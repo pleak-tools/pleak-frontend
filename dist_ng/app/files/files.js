@@ -21,7 +21,6 @@ angular.module('pleaks.files', ['ngRoute'])
     }).then(
       function success(response) {
         files = response.data.files;
-        console.log(files);
         $('#filesLoading').fadeOut('slow', function() {
           $('#filesTable').fadeIn('slow');
           $('#filesNew').fadeIn('slow');
@@ -80,10 +79,10 @@ angular.module('pleaks.files', ['ngRoute'])
       data: file
     }).then(
       function success(response) {
-        console.log(response);
+        //
       },
       function error(response) {
-        console.log(response);
+        //
     });
   };
 
@@ -119,8 +118,6 @@ angular.module('pleaks.files', ['ngRoute'])
   controller.canEdit = function(file) {
     if (file.user.id === parseInt(root.user.sub)) return true;
     for (var pIx = 0; pIx < file.filePermissions.length; pIx++) {
-      console.log(file.filePermissions[pIx].action);
-      console.log(file.filePermissions[pIx].user.id);
       if (file.filePermissions[pIx].action.title === 'edit' &&
           file.filePermissions[pIx].user.id === parseInt(root.user.sub)) {
         return true;
@@ -172,7 +169,6 @@ angular.module('pleaks.files', ['ngRoute'])
         controller.openFile(response.data.id);
       },
       function error(response) {
-        console.log(response);
         //
     });
 
@@ -201,7 +197,7 @@ angular.module('pleaks.files', ['ngRoute'])
     }
     return false;
   }
-  
+
   controller.publishFile = function(file) {
     var file = {
      id: file.id
@@ -215,18 +211,17 @@ angular.module('pleaks.files', ['ngRoute'])
       function success(response) {
         requestFiles();
         scope.$apply();
-        console.log(response);
       },
       function error(response) {
-        console.log(response);
+        //
     });
   }
-  
+
   controller.buildPublicUri = function(fileUri) {
     // TODO: Somehow obtain view.html adress automatically.
     return root.config.frontend.host + "/app/#/view/" + fileUri;
   }
-  
+
   controller.removePublicUri = function(fileUri, fileId) {
     http({
       method: 'DELETE',
@@ -235,8 +230,6 @@ angular.module('pleaks.files', ['ngRoute'])
       if (response.status === 200) {
         requestFiles();
         scope.$apply();
-        
-        console.log("file public uri " + fileUri + " deleted.");
       }
     });
   }
