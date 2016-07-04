@@ -34,6 +34,7 @@ var domain = config.frontend.host;
 var backend = config.backend.host;
 
 var file = {};
+var saveFailed = false;
 
 var getToken = function() {
   var token = localStorage.getItem('ls.JSON-Web-Token');
@@ -61,7 +62,8 @@ $('#loginForm').submit(function(event) {
 
 $('#loginModal').on('hidden.bs.modal', function (e) {
   $('.credentials').show();
-  $('.help-block').hide();
+  $('#loginHelpCredentials').hide();
+  $('#loginHelpServer').hide();
   $('.form-group').removeClass('has-error');
 });
 
@@ -84,12 +86,13 @@ $('#loginButton').click(function() {
     .end(function(err, res) {
       if (!err) {
         localStorage.setItem("ls.JSON-Web-Token", res.body.token);
-        getFile();
+        if ($.isEmptyObject(file)) getFile();
         $('#loginLoading').fadeOut("slow", function(){
           $('.buttons').show();
           $('#login-container').hide();
         });
         $('#loginModal').modal('hide');
+        if (saveFailed) save();
       } else {
         $('.buttons').hide();
         $('#login-container').show();
@@ -105,6 +108,7 @@ $('#loginButton').click(function() {
       }
   });
 });
+
 
 var getFile = function() {
   request.get(backend + '/rest/files/' + modelId)
@@ -274,8 +278,11 @@ function openDiagram(diagram) {
 // Saving the model.
 //
 var saveButton = $('#save-diagram');
-
 saveButton.click( function(e) {
+  save();
+});
+
+var save = function() {
   $('#fileNameError').hide();
   file.title = $('#fileName').val();
   request
@@ -290,13 +297,16 @@ saveButton.click( function(e) {
         disableAllButtons();
         if (file.id !== res.body.id) window.location = domain + '/modeler/' + res.body.id;
         file.md5Hash = res.body.success;
+        saveFailed = false;
       } else if (res.statusCode === 401) {
+        saveFailed = true;
         $('#loginModal').modal();
       } else if (res.statusCode === 409) {
+        saveFailed = true;
         $('#fileNameError').show();
       }
     });
-});
+};
 
 //
 // Downloading the model.
