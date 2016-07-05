@@ -21,6 +21,7 @@ angular.module('pleaks.files', ['ngRoute'])
     }).then(
       function success(response) {
         files = response.data.files;
+        createPublicUrls();
         $('#filesLoading').fadeOut('slow', function() {
           $('#filesTable').fadeIn('slow');
           $('#filesNew').fadeIn('slow');
@@ -103,17 +104,17 @@ angular.module('pleaks.files', ['ngRoute'])
 
   controller.getOwner = function(email) {
     return email === root.user.email ? 'Myself' : email;
-  }
+  };
 
   // Only owner can delete at the moment
   controller.canDelete = function(file) {
     return file.user.id === parseInt(root.user.sub);
-  }
+  };
 
   // Only owner can share at the moment
   controller.canShare = function(file) {
     return file.user.id === parseInt(root.user.sub);
-  }
+  };
 
   controller.canEdit = function(file) {
     if (file.user.id === parseInt(root.user.sub)) return true;
@@ -124,7 +125,7 @@ angular.module('pleaks.files', ['ngRoute'])
       }
     }
     return false;
-  }
+  };
 
   controller.canView = function(file) {
     if (file.user.id === parseInt(root.user.sub)) return true;
@@ -135,7 +136,7 @@ angular.module('pleaks.files', ['ngRoute'])
       }
     }
     return false;
-  }
+  };
 
   controller.getFiles = function() {
     return files;
@@ -185,7 +186,7 @@ angular.module('pleaks.files', ['ngRoute'])
         files.splice(getFileIndexById(id), 1);
       }
     });
-  }
+  };
 
   controller.isExistingFileName = function(fileName) {
     // Console error fix.
@@ -196,31 +197,35 @@ angular.module('pleaks.files', ['ngRoute'])
       if (files[fIx].title === bpmnFileName) return true;
     }
     return false;
-  }
+  };
 
   controller.publishFile = function(file) {
-    var file = {
+    var data = {
      id: file.id
     };
 
     http({
       method: 'POST',
-      data: file,
+      data: data,
       url: root.config.backend.host + '/rest/view/'
     }).then(
       function success(response) {
-        requestFiles();
-        scope.$apply();
+        file.uri = response.data.uri;
+        file.published = response.data.published;
+        file.publicUrl = root.config.frontend.host + "/app/#/view/" + file.uri;
       },
       function error(response) {
         //
     });
-  }
+  };
 
-  controller.buildPublicUri = function(fileUri) {
-    // TODO: Somehow obtain view.html adress automatically.
-    return root.config.frontend.host + "/app/#/view/" + fileUri;
-  }
+  var createPublicUrls = function() {
+    for (var fIx = 0; fIx < files.length; fIx++) {
+      if (files[fIx].published) {
+        files[fIx].publicUrl = root.config.frontend.host + "/app/#/view/" + files[fIx].uri;
+      }
+    }
+  };
 
   controller.removePublicUri = function(fileUri, fileId) {
     http({
@@ -229,10 +234,9 @@ angular.module('pleaks.files', ['ngRoute'])
     }).then(function(response) {
       if (response.status === 200) {
         requestFiles();
-        scope.$apply();
       }
     });
-  }
+  };
 
   var getFileIndexById = function(id) {
     for (var fIx = 0; fIx < files.length; fIx++) {
