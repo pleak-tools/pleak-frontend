@@ -74,10 +74,15 @@ angular.module('pleaks.files', ['ngRoute'])
   };
 
   controller.submitNewFileRights = function(file) {
+    var data = {
+      id: file.id,
+      title: file.title,
+      filePermissions: file.filePermissions
+    };
     http({
       method: 'POST',
       url: root.config.backend.host + '/rest/files/' + file.id + '/permissions',
-      data: file
+      data: data
     }).then(
       function success(response) {
         //
@@ -150,8 +155,11 @@ angular.module('pleaks.files', ['ngRoute'])
   };
 
   controller.openFile = function(id) {
-    var modelerAddress = root.config.frontend.host + "/modeler/" + id;
-    window.open(modelerAddress, '_blank');
+    window.open(controller.getFileUrl(id), '_blank');
+  };
+
+  controller.getFileUrl = function(id) {
+    return root.config.frontend.host + "/modeler/" + id;
   };
 
   controller.newFile = function(title) {
@@ -191,7 +199,7 @@ angular.module('pleaks.files', ['ngRoute'])
   controller.renameFile = function(title, file) {
     var data = {
       id: file.id,
-      title: title
+      title: addBpmn(title)
     };
 
     http({
@@ -200,19 +208,31 @@ angular.module('pleaks.files', ['ngRoute'])
       url: root.config.backend.host + '/rest/files/' + file.id + '/rename'
     }).then(
       function success(response) {
-        file.title = title;
+        file.title = addBpmn(title);
+        $('.form-group.input-group').removeClass('has-error');
+        $('#incorrect-file-name').hide();
+        $('#renameFileModal' + file.id).modal('hide');
       },
       function error(response) {
-
+        $('.form-group.input-group').addClass('has-error');
+        $('#incorrect-file-name').show();
       }
     );
   };
+
+  controller.removeBpmn = function(title) {
+    return title.replace(/.bpmn$/, "");
+  };
+
+  var addBpmn = function(title) {
+    return title + '.bpmn';
+  }
 
   controller.isExistingFileName = function(fileName) {
     // Console error fix.
     if (files === null) return false;
 
-    var bpmnFileName = fileName + '.bpmn';
+    var bpmnFileName = addBpmn(fileName);
     for (var fIx = 0; fIx < files.length; fIx++) {
       if (files[fIx].title === bpmnFileName) return true;
     }
@@ -233,9 +253,12 @@ angular.module('pleaks.files', ['ngRoute'])
         file.uri = response.data.uri;
         file.published = response.data.published;
         file.publicUrl = root.config.frontend.host + "/app/#/view/" + file.uri;
+        $('#server-error').hide();
+        $('.form-group.input-group').removeClass('has-error');
       },
       function error(response) {
-        //
+        $('#server-error').show();
+        $('.form-group.input-group').addClass('has-error');
     });
   };
 

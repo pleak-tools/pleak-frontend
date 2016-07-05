@@ -37,7 +37,7 @@
               </tr>
               <tr ng-repeat="file in c.getFiles()" ng-if="file.title.toLowerCase().indexOf(search.toLowerCase()) > -1">
                 <td>{{$index+1}}</td>
-                <td>{{file.title}}</td>
+                <td><a target="_blank" href="{{c.getFileUrl(file.id)}}">{{file.title}}</a></td>
                 <td>{{c.getOwner(file.user.email)}}</td>
                 <td>{{file.lastModified}}</td>
                 <td>
@@ -53,28 +53,27 @@
                         <a ng-click="c.openFile(file.id)" ng-if="!c.canEdit(file) && c.canView(file)">View</a>
                       </li>
                       <li>
-                        <a data-toggle="modal" data-target="#renameFileModal{{$index}}"
+                        <a data-toggle="modal" data-target="#renameFileModal{{file.id}}"
                            ng-if="c.canEdit(file)">Rename</a>
                       </li>
                       <li>
-                        <a data-toggle="modal" data-target="#deleteFileModal{{$index}}"
+                        <a data-toggle="modal" data-target="#deleteFileModal{{file.id}}"
                           ng-if="c.canDelete(file)">Delete</a>
                       </li>
-                      <li role="separator" class="divider"></li>
+                      <li ng-if="c.canShare(file)" role="separator" class="divider"></li>
                       <li>
-                        <a data-toggle="modal" data-target="#shareFileModal{{$index}}"
+                        <a data-toggle="modal" data-target="#shareFileModal{{file.id}}"
                           ng-if="c.canShare(file)">Share</a>
                       </li>
                       <li>
-                        <a data-toggle="modal" data-target="#publishFileModal{{$index}}"
+                        <a data-toggle="modal" data-target="#publishFileModal{{file.id}}"
                           ng-if="c.canShare(file)">Publish</a>
                       </li>
-
                     </ul>
                   </div>
 
                   <!-- Share modal -->
-                  <div class="modal fade" id="shareFileModal{{$index}}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+                  <div class="modal fade" id="shareFileModal{{file.id}}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
                     <div class="modal-dialog modal-md">
                       <div class="modal-content">
                         <div class="modal-body">
@@ -137,19 +136,21 @@
                   </div>
 
                   <!-- Rename modal -->
-                  <div class="modal fade" id="renameFileModal{{$index}}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+                  <div class="modal fade" id="renameFileModal{{file.id}}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
                     <div class="modal-dialog modal-md">
                       <div class="modal-content">
                         <div class="modal-header">
                           Rename file
                         </div>
                         <div class="modal-body">
-                          <div class="form-group">
-                            <input type="text" class="form-control" ng-init="newTitle = file.title" ng-model="newTitle"/>
+                          <div class="form-group input-group">
+                            <input type="text" class="form-control" ng-init="newTitle = c.removeBpmn(file.title)" ng-model="newTitle"/>
+                            <div class="input-group-addon">.bpmn</div>
                           </div>
+                          <span id="incorrect-file-name" class="error-block">Incorrect file name.</span>
                         </div>
                         <div class="modal-footer">
-                          <button type="button" class="btn btn-success" data-dismiss="modal" ng-click="c.renameFile(newTitle, file)">Rename</button>
+                          <button type="button" class="btn btn-success" ng-click="c.renameFile(newTitle, file)">Rename</button>
                           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                         </div>
                       </div>
@@ -157,7 +158,7 @@
                   </div>
 
                   <!-- Public link modal -->
-                  <div class="modal fade" id="publishFileModal{{$index}}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+                  <div class="modal fade" id="publishFileModal{{file.id}}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
                     <div class="modal-dialog modal-md">
                       <div class="modal-content">
                         <div class="modal-header">
@@ -178,6 +179,7 @@
                               </button>
                             </div>
                           </div>
+                          <span id="server-error" class="error-block">Server error, please try again later!</span>
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -187,7 +189,7 @@
                   </div>
 
                   <!-- Delete modal -->
-                  <div class="modal fade" id="deleteFileModal{{$index}}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+                  <div class="modal fade" id="deleteFileModal{{file.id}}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
                     <div class="modal-dialog modal-sm">
                       <div class="modal-content">
                         <div class="modal-header">
