@@ -26,7 +26,7 @@
                 <th>File name</th>
                 <th>File owner</th>
                 <th>Last modified</th>
-                <th><span class="pull-right">Actions</span></th>
+                <th><!-- Placeholder/fix --></th>
               </tr>
             </thead>
             <tbody>
@@ -42,34 +42,35 @@
                 <td>{{file.lastModified}}</td>
                 <td>
                   <div class="btn-group pull-right">
-                    <button ng-click="c.openFile(file.id)" class="btn btn-success" type="submit"
-                            ng-if="c.canEdit(file)">
-                      <span class="glyphicon glyphicon-edit"></span> Edit
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Actions <span class="caret"></span>
                     </button>
-                    <button ng-click="c.openFile(file.id)" class="btn btn-success" type="submit"
-                            ng-if="!c.canEdit(file) && c.canView(file)">
-                      <span class="glyphicon glyphicon-eye-open"></span> View
-                    </button>
-                    <button class="btn btn-default" type="submit"
-                            data-toggle="modal" data-target="#renameFileModal{{$index}}"
-                            ng-if="c.canEdit(file)">
-                      <span class="glyphicon glyphicon-pencil"></span> Rename
-                    </button>
-                    <button class="btn btn-default" type="submit"
-                            data-toggle="modal" data-target="#shareFileModal{{$index}}"
-                            ng-if="c.canShare(file)">
-                      <span class="glyphicon glyphicon-share"></span> Share
-                    </button>
-                    <button class="btn btn-default" type="submit"
-                            data-toggle="modal" data-target="#publishFileModal{{$index}}"
-                            ng-if="c.canShare(file)">
-                      <span class="glyphicon glyphicon-link"></span> Publish
-                    </button>
-                    <button class="btn btn-default" type="submit"
-                            data-toggle="modal" data-target="#deleteFileModal{{$index}}"
-                            ng-if="c.canDelete(file)">
-                      <span class="glyphicon glyphicon-trash"></span> Delete
-                    </button>
+                    <ul class="dropdown-menu">
+                      <li>
+                        <a ng-click="c.openFile(file.id)" ng-if="c.canEdit(file)">Edit</a>
+                      </li>
+                      <li>
+                        <a ng-click="c.openFile(file.id)" ng-if="!c.canEdit(file) && c.canView(file)">View</a>
+                      </li>
+                      <li>
+                        <a data-toggle="modal" data-target="#renameFileModal{{$index}}"
+                           ng-if="c.canEdit(file)">Rename</a>
+                      </li>
+                      <li>
+                        <a data-toggle="modal" data-target="#deleteFileModal{{$index}}"
+                          ng-if="c.canDelete(file)">Delete</a>
+                      </li>
+                      <li role="separator" class="divider"></li>
+                      <li>
+                        <a data-toggle="modal" data-target="#shareFileModal{{$index}}"
+                          ng-if="c.canShare(file)">Share</a>
+                      </li>
+                      <li>
+                        <a data-toggle="modal" data-target="#publishFileModal{{$index}}"
+                          ng-if="c.canShare(file)">Publish</a>
+                      </li>
+
+                    </ul>
                   </div>
 
                   <!-- Share modal -->
