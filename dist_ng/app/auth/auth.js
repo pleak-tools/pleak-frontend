@@ -6,7 +6,7 @@ angular.module('pleaks.auth', ['ngRoute'])
   $httpProvider.interceptors.push('AuthInterceptor');
 }])
 
-.service('AuthService', ['$http', '$rootScope', 'localStorageService', function(http, root, localStorageService) {
+.service('AuthService', ['$http', '$rootScope', '$localStorage', function(http, root, localStorage) {
 
   this.register = function(user) {
     http({
@@ -36,11 +36,11 @@ angular.module('pleaks.auth', ['ngRoute'])
       method: 'GET',
       url: root.config.backend.host + '/rest/auth/logout'
     }).then(function(response) {
-      localStorageService.remove('JSON-Web-Token');
+      delete localStorage.jwt;
       root.user = null;
       callback();
     }, function() {
-      localStorageService.remove('JSON-Web-Token');
+      delete localStorage.jwt;
       root.user = null;
       callback();
     });
@@ -63,19 +63,19 @@ angular.module('pleaks.auth', ['ngRoute'])
     }, function(response) {
       // Token is not valid
       root.user = null;
-      localStorageService.remove('JSON-Web-Token');
+      delete localStorage.jwt;
     });
-  }
+  };
 }])
 
-.factory('AuthInterceptor', function($q, $rootScope, localStorageService) {
+.factory('AuthInterceptor', function($q, $rootScope, $localStorage) {
   return {
     'request': function(config) {
       console.log('Request:');
       console.log(config);
 
-      var token = localStorageService.get('JSON-Web-Token');
-      if (token !== null && token !== "") $rootScope.user = jwt_decode(token);
+      var token = $localStorage.jwt;
+      if (token !== null && token !== undefined && token !== "") $rootScope.user = jwt_decode(token);
       config.headers['JSON-Web-Token'] = token;
       return config;
     },
@@ -84,7 +84,7 @@ angular.module('pleaks.auth', ['ngRoute'])
       console.log(config);
 
       if (config.data.token) {
-        localStorageService.set('JSON-Web-Token', config.data.token);
+        $localStorage.jwt = config.data.token;
       }
       return config;
     }

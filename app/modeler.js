@@ -37,7 +37,7 @@ var file = {};
 var saveFailed = false;
 
 var getToken = function() {
-  var token = localStorage.getItem('ls.JSON-Web-Token');
+  var token = localStorage.getItem('ngStorage-jwt');
   if (token !== null) token = token.replace(/['"]+/g, '');
   return token;
 };
@@ -85,7 +85,7 @@ $('#loginButton').click(function() {
     .set('Accept', 'application/json')
     .end(function(err, res) {
       if (!err) {
-        localStorage.setItem("ls.JSON-Web-Token", res.body.token);
+        localStorage.setItem("ngStorage-jwt", '"' + res.body.token + '"');
         if ($.isEmptyObject(file)) getFile();
         $('#loginLoading').fadeOut("slow", function(){
           $('.buttons').show();

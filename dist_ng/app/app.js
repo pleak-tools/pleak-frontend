@@ -4,7 +4,7 @@
 angular.module('pleaks', [
   'ngRoute',
   'ngAnimate',
-  'LocalStorageModule',
+  'ngStorage',
   'pleaks.splash',
   'pleaks.files',
   'pleaks.view',
@@ -14,7 +14,7 @@ angular.module('pleaks', [
 config(['$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
   $routeProvider.otherwise({redirectTo: '/splash'});
 }]).
-run(function($rootScope, $http, $location, AuthService) {
+run(function($rootScope, $http, $location, AuthService, $localStorage) {
   $rootScope.user = null;
 
   $rootScope.location = $location;
@@ -31,6 +31,15 @@ run(function($rootScope, $http, $location, AuthService) {
       AuthService.verifyToken();
   })
     .error(function(data, status, headers, config) {
+  });
+
+  // Watch token for changes
+  $rootScope.$watch(function () {
+    return $localStorage.jwt;
+  }, function(newVal, oldVal) {
+    if (oldVal !== newVal) {
+      AuthService.verifyToken();
+    }
   });
 
 });
