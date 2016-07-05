@@ -188,6 +188,26 @@ angular.module('pleaks.files', ['ngRoute'])
     });
   };
 
+  controller.renameFile = function(title, file) {
+    var data = {
+      id: file.id,
+      title: title
+    };
+
+    http({
+      method: 'POST',
+      data: data,
+      url: root.config.backend.host + '/rest/files/' + file.id + '/rename'
+    }).then(
+      function success(response) {
+        file.title = title;
+      },
+      function error(response) {
+
+      }
+    );
+  };
+
   controller.isExistingFileName = function(fileName) {
     // Console error fix.
     if (files === null) return false;

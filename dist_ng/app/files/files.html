@@ -51,6 +51,11 @@
                       <span class="glyphicon glyphicon-eye-open"></span> View
                     </button>
                     <button class="btn btn-default" type="submit"
+                            data-toggle="modal" data-target="#renameFileModal{{$index}}"
+                            ng-if="c.canEdit(file)">
+                      <span class="glyphicon glyphicon-pencil"></span> Rename
+                    </button>
+                    <button class="btn btn-default" type="submit"
                             data-toggle="modal" data-target="#shareFileModal{{$index}}"
                             ng-if="c.canShare(file)">
                       <span class="glyphicon glyphicon-share"></span> Share
@@ -125,6 +130,26 @@
                           <button ng-click="c.submitNewFileRights(file)" data-dismiss="modal" class="btn btn-success">
                             Confirm
                           </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Rename modal -->
+                  <div class="modal fade" id="renameFileModal{{$index}}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+                    <div class="modal-dialog modal-md">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          Rename file
+                        </div>
+                        <div class="modal-body">
+                          <div class="form-group">
+                            <input type="text" class="form-control" ng-init="newTitle = file.title" ng-model="newTitle"/>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-success" data-dismiss="modal" ng-click="c.renameFile(newTitle, file)">Rename</button>
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                         </div>
                       </div>
                     </div>
