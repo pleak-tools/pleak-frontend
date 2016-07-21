@@ -52,8 +52,8 @@ body {
     display: none;
 }
 
-#filesTable, #filesNew {
-    display: none;
+.loading-container {
+  border-bottom: 1px solid #ddd;
 }
 
 .spinner {
@@ -112,6 +112,11 @@ body {
   font-size: 16px;
 }
 
+.panel {
+  border-top: none;
+  border-top-left-radius: 0px;
+}
+
 .table .sharing > tbody > tr > td {
   vertical-align: middle;
 }
@@ -137,4 +142,106 @@ body {
 
 .model-viewer, .model-viewer > div{
   height: 85vh;
+}
+
+.files-list {
+  border: 1px solid #ddd;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+.files-list ul {
+  padding-left: 0;
+  margin-bottom: 0;
+}
+.files-list .fhead {
+  background: #f8f8f8;
+}
+.files-list li {
+  list-style-type: none;
+}
+.files-list .fluid {
+  display: table;
+  width: 100%;
+}
+.files-list .col {
+  display: table-cell;
+  height: 50px;
+  padding: 10px 15px;
+  vertical-align: middle;
+  border-bottom: 1px solid #ddd;
+}
+.files-list .col:first-of-type {
+  width: 50%;
+}
+.files-list .col .full {
+  width: 100%;
+}
+.files-list .group {
+  cursor: pointer;
+}
+.files-list .group .col {
+  width: 100%;
+}
+.files-list .glyphicon {
+  margin-right: 10px;
+}
+.files-list .subgroup .title:before, .move-container .subgroup .element-title:before {
+  position: relative;
+  top: -4px;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 10px;
+  margin-left: 5px;
+  border-left: 1px solid #333;
+  border-bottom: 1px solid #333;
+  content: '';
+}
+.files-list ul ul ul .title {
+  margin-left: 30px;
+}
+.files-list ul ul ul ul .title {
+  margin-left: 60px;
+}
+.files-list .group:hover {
+  background: #f5f5f5;
+}
+.files-list .active {
+  background: #f5f5f5;
+}
+.files-list {
+  border-bottom: none;
+}
+.hidden {
+  display: none;
+}
+.files-list .no-files {
+  display: table-cell;
+  height: 50px;
+  padding: 10px 15px;
+  vertical-align: middle;
+  border-bottom: 1px solid #ddd;
+  width: 100%;
+}
+.move-container {
+  border-bottom: 1px solid #ddd;
+}
+.move-container ul ul .element-title {
+  margin-left: 30px;
+}
+.move-container ul ul ul .element-title {
+  margin-left: 60px;
+}
+.move-element {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-bottom: none;
+}
+.files-list .highlight, .files-list .highlight:hover {
+  background-color: #d4d4d4
+}
+
+#viewer-canvas {
+  border: 1px solid #eee;
 }

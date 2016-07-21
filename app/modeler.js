@@ -111,7 +111,7 @@ $('#loginButton').click(function() {
 
 
 var getFile = function() {
-  request.get(backend + '/rest/files/' + modelId)
+  request.get(backend + '/rest/directories/files/' + modelId)
     .set('JSON-Web-Token', getToken())
     .end(function(err, res) {
       if (!err) {
@@ -286,7 +286,7 @@ var save = function() {
   $('#fileNameError').hide();
   file.title = $('#fileName').val();
   request
-    .post(backend + '/rest/files')
+    .put(backend + '/rest/directories/files/' + file.id)
     .set('JSON-Web-Token', getToken())
     .send(file)
     .end(function(err, res){
@@ -296,14 +296,17 @@ var save = function() {
         $('#fileSaveSuccess').fadeOut(5000);
         disableAllButtons();
         if (file.id !== res.body.id) window.location = domain + '/modeler/' + res.body.id;
-        file.md5Hash = res.body.success;
+        file.md5Hash = res.body.md5Hash;
         saveFailed = false;
+      } else if (res.statusCode === 400) {
+        saveFailed = true;
+        $('#fileNameError').show();
       } else if (res.statusCode === 401) {
         saveFailed = true;
         $('#loginModal').modal();
       } else if (res.statusCode === 409) {
         saveFailed = true;
-        $('#fileNameError').show();
+        $('#fileContentError').show();
       }
     });
 };

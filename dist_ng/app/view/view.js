@@ -18,22 +18,24 @@ angular.module('pleaks.view', ['ngRoute'])
 
   var file;
 
-  http({
-    method: 'GET',
-    url: root.config.backend.host + '/rest/view/' + scope.fileUri
-  }).then(function(response) {
-    file = response.data;
-    viewer = new BpmnViewer({ container: '#viewer-canvas' });
-    viewer.importXML(file.content, function(err) {
-      if (!err) {
-        viewer.get('#viewer-canvas').zoom('fit-viewport');
-      } else {
-        // error
-      }
+  var getPublishedFile = function(uri) {
+    http({
+      method: 'GET',
+      url: root.config.backend.host + '/rest/directories/files/public/' + uri
+    }).then(function success(response) {
+      file = response.data;
+      viewer = new BpmnViewer({ container: '#viewer-canvas' });
+      viewer.importXML(file.content, function(err) {
+        if (!err) {
+          viewer.get('#viewer-canvas').zoom('fit-viewport');
+        } else {
+          // error
+        }
+      });
+    }, function failure(response) {
+
     });
-  }, function(error) {
-    // error
-  });
+  };
 
   controller.getFileName = function() {
     return file.title;
@@ -43,4 +45,5 @@ angular.module('pleaks.view', ['ngRoute'])
     return file === undefined;
   }
 
+  getPublishedFile(scope.fileUri);
 }]);

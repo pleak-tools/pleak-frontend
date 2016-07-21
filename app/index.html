@@ -29,8 +29,15 @@
       <div class="row">
         <div class="col-xs-4 form-group file-name-container">
           <input type="text" class="form-control pull-right file-name-box" id="fileName" placeholder="File name">
-          <span id="fileNameError" class="help-block error-message" style="display: none;">File has changed on the server. Please set new file name to save a copy.</span>
-          <span id="fileSaveSuccess" class="help-block success-message" style="display: none;">Successfully saved the file.</span>
+          <span id="fileNameError" class="help-block error-message" style="display: none;">
+            Incorrect file name, please use symbols: a-z, A-Z, 0-9, ".", "-", "_"
+          </span>
+          <span id="fileContentError" class="help-block error-message" style="display: none;">
+            File has changed on the server. Please set new file name to save a copy.
+          </span>
+          <span id="fileSaveSuccess" class="help-block success-message" style="display: none;">
+            Successfully saved the file.
+          </span>
         </div>
         <div class="col-xs-8 buttons-container">
           <ul class="buttons">
