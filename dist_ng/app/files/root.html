@@ -25,51 +25,43 @@
         Actions <span class="caret"></span>
       </button>
       <ul class="dropdown-menu">
-        <li>
-          <a ng-click="c.openFile(pobject)"
-             ng-if="c.canEdit(pobject) && c.isPobjectFile(pobject)">Edit</a>
+        <li ng-if="c.canEdit(pobject) && c.isPobjectFile(pobject)">
+          <a ng-click="c.openFile(pobject)">Edit</a>
         </li>
-        <li>
-          <a ng-click="c.openFile(pobject)"
-             ng-if="!c.canEdit(pobject) && c.canView(pobject) && c.isPobjectFile(pobject)">View</a>
+        <li ng-if="!c.canEdit(pobject) && c.canView(pobject) && c.isPobjectFile(pobject)">
+          <a ng-click="c.openFile(pobject)">View</a>
         </li>
-        <li>
-          <a data-toggle="modal" data-target="#createFileModal{{pobject.id}}"
-             ng-if="c.canEdit(pobject) && c.isPobjectDirectory(pobject)">New file</a>
+        <li ng-if="c.canEdit(pobject) && c.isPobjectDirectory(pobject)">
+          <a data-toggle="modal" data-target="#createFileModal{{pobject.id}}">New file</a>
         </li>
-        <li>
-          <a data-toggle="modal" data-target="#createDirectoryModal{{pobject.id}}"
-             ng-if="c.canEdit(pobject) && c.isPobjectDirectory(pobject) &&
-                    c.getInversePobjectDepth(pobject) < 4">New directory</a>
+        <li ng-if="c.canEdit(pobject) && c.isPobjectDirectory(pobject) &&
+                   c.getInversePobjectDepth(pobject) < 4">
+          <a data-toggle="modal" data-target="#createDirectoryModal{{pobject.id}}">New directory</a>
         </li>
-        <li>
-          <a data-toggle="modal" data-target="#renameFileModal{{pobject.id}}"
-             ng-if="c.canEdit(pobject) && c.isPobjectFile(pobject)">Rename</a>
+        <li ng-if="c.canEdit(pobject) && c.isPobjectFile(pobject)">
+          <a data-toggle="modal" data-target="#renameFileModal{{pobject.id}}">Rename</a>
         </li>
-        <li>
-          <a data-toggle="modal" data-target="#renameDirectoryModal{{pobject.id}}"
-             ng-if="c.canEdit(pobject) && c.isPobjectDirectory(pobject)">Rename</a>
+        <li ng-if="c.canEdit(pobject) && c.isPobjectDirectory(pobject)">
+          <a data-toggle="modal" data-target="#renameDirectoryModal{{pobject.id}}">Rename</a>
         </li>
-        <li>
-          <a data-toggle="modal" data-target="#moveModal{{pobject.id}}"
-             ng-if="c.canEdit(pobject)">Move</a>
+        <li ng-if="c.isPobjectFile(pobject)">
+          <a ng-click="c.copyFile(pobject)">Copy</a>
         </li>
-        <li>
-          <a data-toggle="modal" data-target="#deleteFileModal{{pobject.id}}"
-            ng-if="c.canDelete(pobject) && c.isPobjectFile(pobject)">Delete</a>
+        <li ng-if="c.canEdit(pobject)">
+          <a data-toggle="modal" data-target="#moveModal{{pobject.id}}">Move</a>
         </li>
-        <li>
-          <a data-toggle="modal" data-target="#deleteDirectoryModal{{pobject.id}}"
-            ng-if="c.canDelete(pobject) && c.isPobjectDirectory(pobject)">Delete</a>
+        <li ng-if="c.canDelete(pobject) && c.isPobjectFile(pobject)">
+          <a data-toggle="modal" data-target="#deleteFileModal{{pobject.id}}">Delete</a>
+        </li>
+        <li ng-if="c.canDelete(pobject) && c.isPobjectDirectory(pobject)">
+          <a data-toggle="modal" data-target="#deleteDirectoryModal{{pobject.id}}">Delete</a>
         </li>
         <li ng-if="c.canShare(pobject)" role="separator" class="divider"></li>
-        <li>
-          <a data-toggle="modal" data-target="#shareModal{{pobject.id}}"
-            ng-if="c.canShare(pobject)">Share</a>
+        <li ng-if="c.canShare(pobject)">
+          <a data-toggle="modal" data-target="#shareModal{{pobject.id}}">Share</a>
         </li>
-        <li>
-          <a data-toggle="modal" data-target="#publishFileModal{{pobject.id}}"
-            ng-if="c.canPublish(pobject) && c.isPobjectFile(pobject)">Publish</a>
+        <li ng-if="c.canPublish(pobject) && c.isPobjectFile(pobject)">
+          <a data-toggle="modal" data-target="#publishFileModal{{pobject.id}}">Publish</a>
         </li>
       </ul>
     </div>

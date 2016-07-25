@@ -1,13 +1,13 @@
 <div class="container" ng-controller="FilesController as c">
-  <ul class="nav nav-tabs" ng-init="tab = 'root'">
-    <li role="presentation" class="{{tab === 'root' ? 'active' : ''}}" ng-click="tab = 'root'">
+  <ul class="nav nav-tabs">
+    <li role="presentation" class="{{c.tab === 'root' ? 'active' : ''}}" ng-click="c.tab = 'root'">
       <a>My models</a>
     </li>
-    <li role="presentation" class="{{tab === 'shared' ? 'active' : ''}}" ng-click="tab = 'shared'">
+    <li role="presentation" class="{{c.tab === 'shared' ? 'active' : ''}}" ng-click="c.tab = 'shared'">
       <a>Shared models</a>
     </li>
   </ul>
-  <div class="row topMargin" ng-show="tab === 'root'">
+  <div class="row topMargin" ng-show="c.tab === 'root'">
     <div class="col-sm-12">
       <div class="panel panel-default">
         <div class="panel-body">
@@ -67,8 +67,7 @@
               </li>
               <li id="pobjects" class="ng-fade"
                   ng-if="!c.loading" ng-repeat="pobject in c.getRoot().pobjects"
-                  ng-include="'files/root.html'"
-                  ng-init="depth = 1"></li>
+                  ng-include="'files/root.html'"></li>
             </ul>
           </div>
         </div>
@@ -76,7 +75,7 @@
     </div>
   </div>
 
-  <div class="row topMargin" ng-show="tab === 'shared'">
+  <div class="row topMargin" ng-show="c.tab === 'shared'">
     <div class="col-sm-12">
       <div class="panel panel-default">
         <div class="panel-body">
@@ -106,8 +105,7 @@
                 <div class="no-files">No available files...</div>
               </li>
               <li id="pobjects" ng-repeat="pobject in c.getShared().pobjects"
-                  ng-include="'files/shared.html'"
-                  ng-init="depth = 1"></li>
+                  ng-include="'files/shared.html'"></li>
             </ul>
           </div>
         </div>

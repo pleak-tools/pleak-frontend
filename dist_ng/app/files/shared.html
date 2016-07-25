@@ -25,13 +25,14 @@
         Actions <span class="caret"></span>
       </button>
       <ul class="dropdown-menu">
-        <li>
-          <a ng-click="c.openFile(pobject)"
-             ng-if="c.canEdit(pobject)">Edit</a>
+        <li ng-if="c.canEdit(pobject)">
+          <a ng-click="c.openFile(pobject)">Edit</a>
+        </li>
+        <li ng-if="!c.canEdit(pobject) && c.canView(pobject)">
+          <a ng-click="c.openFile(pobject)">View</a>
         </li>
         <li>
-          <a ng-click="c.openFile(pobject)"
-             ng-if="!c.canEdit(pobject) && c.canView(pobject)">View</a>
+          <a ng-click="c.copyFile(pobject)">Copy</a>
         </li>
       </ul>
     </div>

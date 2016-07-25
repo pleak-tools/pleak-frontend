@@ -15,6 +15,7 @@ angular.module('pleaks.files', ['ngRoute'])
   var rootDir = null;
   var sharedDir = null;
 
+  controller.tab = 'root';
   controller.userEmail = '';
   controller.search = '';
   controller.newPobjectTitle = '';
@@ -131,6 +132,21 @@ angular.module('pleaks.files', ['ngRoute'])
     });
   };
 
+  var copyFile = function(newFile, oldFile, callback) {
+    http({
+      method: 'PUT',
+      url: root.config.backend.host + '/rest/directories/files/' + oldFile.id,
+      data: newFile
+    }).then(function success(response) {
+      createPublicUrl(newFile);
+      getPobjectById(response.data.directory.id, rootDir).pobjects.unshift(response.data);
+      controller.tab = 'root';
+      callback.success(response);
+    }, function failure(response) {
+      callback.error(response);
+    });
+  };
+
   var deleteFile = function(id) {
     http({
       method: 'DELETE',
@@ -232,6 +248,21 @@ angular.module('pleaks.files', ['ngRoute'])
     deleteFile(id);
   };
 
+  controller.copyFile = function(oldFile) {
+    var newFile = angular.copy(oldFile);
+    delete newFile.id;
+    delete newFile.publicUrl;
+    delete newFile.open;
+    if (!isOwner(oldFile)) {
+      delete newFile.directory.id;
+      newFile.directory.title = 'root';
+    }
+    newFile.title = addBpmn(removeBpmn(newFile.title) + " (copy)");
+    newFile.permissions = [];
+    newFile.published = false;
+    copyFile(newFile, oldFile, callbacks.copyFile);
+  };
+
   var callbacks = {
     createDirectory: {
       success: function(response) {
@@ -323,6 +354,10 @@ angular.module('pleaks.files', ['ngRoute'])
         $('.form-group.input-group').addClass('has-error');
       }
     },
+    copyFile: {
+      success: function() {},
+      error: function() {}
+    }
   };
 
   /* OTHER TEMPLATE FUNCTIONS */
