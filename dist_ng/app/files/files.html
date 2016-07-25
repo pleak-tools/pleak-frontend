@@ -13,10 +13,12 @@
         <div class="panel-body">
           <div class="row" style="margin-bottom: 15px;">
             <div class="col-xs-8">
-              <button class="btn btn-success" data-toggle="modal" data-target="#createFileModal{{c.getRoot().id}}">
+              <button class="btn btn-success" data-toggle="modal" data-target="#newFileModal{{c.getRoot().id}}"
+                      ng-click="c.focusInput('#newFileModal' + c.getRoot().id)">
                 <span class="glyphicon glyphicon-file"></span> New model
               </button>
-              <button class="btn btn-success" data-toggle="modal" data-target="#createDirectoryModal{{c.getRoot().id}}">
+              <button class="btn btn-success" data-toggle="modal" data-target="#newDirectoryModal{{c.getRoot().id}}"
+                      ng-click="c.focusInput('#newDirectoryModal' + c.getRoot().id)">
                 <span class="glyphicon glyphicon-folder-open"></span> New directory
               </button>
             </div>
@@ -114,7 +116,7 @@
   </div>
 
   <!-- New directory modal -->
-  <div class="modal fade" id="createDirectoryModal{{c.getRoot().id}}"
+  <div class="modal fade" id="newDirectoryModal{{c.getRoot().id}}"
        tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-md">
       <div class="modal-content">
@@ -123,7 +125,7 @@
         </div>
         <div class="modal-body">
           <div class="form-group directory-name-input">
-            <input type="text" class="form-control" ng-model="c.newPobjectTitle" focus/>
+            <input type="text" class="form-control" ng-model="c.newPobjectTitle"/>
             <span class="error-block directory-name-error">Incorrect directory name.</span>
           </div>
         </div>
@@ -136,7 +138,7 @@
   </div>
 
   <!-- New file modal -->
-  <div class="modal fade" id="createFileModal{{c.getRoot().id}}"
+  <div class="modal fade" id="newFileModal{{c.getRoot().id}}"
        tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-md">
       <div class="modal-content">
@@ -145,7 +147,7 @@
         </div>
         <div class="modal-body">
           <div class="form-group input-group file-name-input">
-            <input type="text" class="form-control" ng-model="c.newPobjectTitle" focus/>
+            <input type="text" class="form-control" ng-model="c.newPobjectTitle"/>
             <div class="input-group-addon">.bpmn</div>
           </div>
           <span class="error-block file-name-error">Incorrect model name.</span>

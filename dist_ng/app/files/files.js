@@ -493,6 +493,12 @@ angular.module('pleaks.files', ['ngRoute'])
     });
   };
 
+  controller.focusInput = function(id) {
+    $(id).on('shown.bs.modal', function (e) {
+      $(id + ' input').focus();
+    });
+  };
+
   controller.isMatchingSearch = function(pobject) {
     // If search string is empty stop here
     if (controller.search.length === 0) {
