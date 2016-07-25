@@ -311,6 +311,18 @@ var save = function() {
     });
 };
 
+// metakey is windows key/mac cmd key
+$(window).bind('keydown', function(event) {
+    if (event.ctrlKey || event.metaKey) {
+        switch (String.fromCharCode(event.which).toLowerCase()) {
+        case 's':
+            event.preventDefault();
+            save();
+            break;
+        }
+    }
+});
+
 //
 // Downloading the model.
 //
