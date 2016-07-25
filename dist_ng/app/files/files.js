@@ -20,6 +20,7 @@ angular.module('pleaks.files', ['ngRoute'])
   controller.newPobjectTitle = '';
   controller.loading = true;
   controller.selected = null;
+  controller.sort = 0;
 
   var createDirectory = function(directory, parent, callback) {
     http({
@@ -481,6 +482,23 @@ angular.module('pleaks.files', ['ngRoute'])
     return getInversePobjectDepth(pobject);
   };
 
+  controller.sortPobjectsByTitleAsc = function() {
+    controller.sort = 1;
+    sortPobjects(rootDir, sortByTitleDesc);
+  };
+  controller.sortPobjectsByTitleDesc = function() {
+    controller.sort = 2;
+    sortPobjects(rootDir, sortByTitle);
+  };
+  controller.sortPobjectsByLastModifiedAsc = function() {
+    controller.sort = 3;
+    sortPobjects(rootDir, sortByLastModifiedDesc);
+  };
+  controller.sortPobjectsByLastModifiedDesc = function() {
+    controller.sort = 4;
+    sortPobjects(rootDir, sortByLastModified);
+  };
+
   /* LOCAL FUNCTIONS */
 
   // Searches all children recursively for id
@@ -666,6 +684,62 @@ angular.module('pleaks.files', ['ngRoute'])
 
   var getFileUrl = function(pobject) {
     return root.config ? root.config.frontend.host + "/modeler/" + pobject.id : '';
+  };
+
+  var sortPobjects = function(dir, sortFunction) {
+    if (!isPobjectDirectory(dir)) return;
+    dir.pobjects.sort(sortFunction);
+    for (var pIx = 0; pIx < dir.pobjects.length; pIx++) {
+      if (isPobjectDirectory(dir.pobjects[pIx])) {
+        sortPobjects(dir.pobjects[pIx], sortFunction);
+      }
+    }
+  };
+
+  var sortByTitle = function(a, b) {
+    if (a.title < b.title)
+      return -1;
+    if (a.title > b.title)
+      return 1;
+    return 0;
+  };
+
+  var sortByTitleDesc = function(a, b) {
+    if (a.title < b.title)
+      return 1;
+    if (a.title > b.title)
+      return -1;
+    return 0;
+  };
+
+  var sortByLastModified = function(a, b) {
+    if (a.lastModified === undefined && b.lastModified === undefined) {
+      return 0;
+    } else if (a.lastModified === undefined) {
+      return 1;
+    } else if (b.lastModified === undefined) {
+      return -1;
+    }
+    if (a.lastModified < b.lastModified)
+      return -1;
+    if (a.lastModified > b.lastModified)
+      return 1;
+    return 0;
+  };
+
+  var sortByLastModifiedDesc = function(a, b) {
+    if (a.lastModified === undefined && b.lastModified === undefined) {
+      return 0;
+    } else if (a.lastModified === undefined) {
+      return -1;
+    } else if (b.lastModified === undefined) {
+      return 1;
+    }
+    if (a.lastModified < b.lastModified)
+      return 1;
+    if (a.lastModified > b.lastModified)
+      return -1;
+    return 0;
   };
 
   // Refresh the page when user saves to display updated files.

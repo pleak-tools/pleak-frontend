@@ -17,10 +17,24 @@
               <li class="fhead">
                 <div class="fluid">
                   <div class="col">
-                    <b>File Name</b>
+                    <b ng-mouseenter="showTitle = true" ng-mouseleave="showTitle = false">File Name
+                      <span ng-click="c.sortPobjectsByTitleDesc()"
+                            ng-show="c.sort !== 2"
+                            class="glyphicon glyphicon-chevron-up clickable {{c.sort > 0 && c.sort < 3 || showTitle ? '' : 'invisible'}}"></span>
+                      <span ng-click="c.sortPobjectsByTitleAsc()"
+                            ng-show="c.sort === 2"
+                            class="glyphicon glyphicon-chevron-down clickable"></span>
+                    </b>
                   </div>
                   <div class="col hidden-xs">
-                    <b>Last Modified</b>
+                    <b ng-mouseenter="showLastModified = true" ng-mouseleave="showLastModified = false">Last Modified
+                      <span ng-click="c.sortPobjectsByLastModifiedDesc()"
+                            ng-show="c.sort !== 4"
+                            class="glyphicon glyphicon-chevron-up clickable {{c.sort > 2 || showLastModified ? '' : 'invisible'}}"></span>
+                      <span ng-click="c.sortPobjectsByLastModifiedAsc()"
+                            ng-show="c.sort === 4"
+                            class="glyphicon glyphicon-chevron-down clickable"></span>
+                    </b>
                   </div>
                   <div class="col">
                     <input ng-model="c.search" type="search" class="form-control pull-right" placeholder="Search files">
