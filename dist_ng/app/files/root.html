@@ -13,8 +13,11 @@
       <a ng-click="c.openFile(pobject)">{{pobject.title}}</a>
     </span>
   </div>
-  <div class="col hidden-xs" ng-if="c.isPobjectFile(pobject)">
+  <div class="col hidden-xs hidden-sm" ng-if="c.isPobjectFile(pobject)">
     <span>{{pobject.lastModified}}</span>
+  </div>
+  <div class="col">
+     <span ng-if="pobject.published" class="glyphicon glyphicon-ok"></span>
   </div>
   <div class="col text-right">
     <div class="btn-group pull-right">

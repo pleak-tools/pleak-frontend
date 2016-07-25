@@ -171,8 +171,22 @@ body {
   vertical-align: middle;
   border-bottom: 1px solid #ddd;
 }
-.files-list .col:first-of-type {
+.files-list .col:nth-child(1) {
   width: 50%;
+}
+.files-list .col:nth-child(2) {
+  width: 25%;
+}
+.files-list .col:nth-child(3), .files-list .col:nth-child(4) {
+  width: 12.5%;
+}
+@media only screen and (max-width: 991px) {
+  .files-list .col:nth-child(2) {
+    width: 25%;
+  }
+  .files-list .col:nth-child(3), .files-list .col:nth-child(4) {
+    width: 25%;
+  }
 }
 .files-list .col .full {
   width: 100%;

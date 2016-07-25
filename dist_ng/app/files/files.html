@@ -11,6 +11,19 @@
     <div class="col-sm-12">
       <div class="panel panel-default">
         <div class="panel-body">
+          <div class="row" style="margin-bottom: 15px;">
+            <div class="col-xs-8">
+              <button class="btn btn-success" data-toggle="modal" data-target="#createFileModal{{c.getRoot().id}}">
+                <span class="glyphicon glyphicon-file"></span> New model
+              </button>
+              <button class="btn btn-success" data-toggle="modal" data-target="#createDirectoryModal{{c.getRoot().id}}">
+                <span class="glyphicon glyphicon-folder-open"></span> New directory
+              </button>
+            </div>
+            <div class="col-xs-4">
+              <input ng-model="c.search" type="search" class="form-control pull-right" placeholder="Search files">
+            </div>
+          </div>
           <!-- Table -->
           <div class="files-list" id="filesList">
             <ul>
@@ -26,7 +39,7 @@
                             class="glyphicon glyphicon-chevron-down clickable"></span>
                     </b>
                   </div>
-                  <div class="col hidden-xs">
+                  <div class="col hidden-xs hidden-sm">
                     <b ng-mouseenter="showLastModified = true" ng-mouseleave="showLastModified = false">Last Modified
                       <span ng-click="c.sortPobjectsByLastModifiedDesc()"
                             ng-show="c.sort !== 4"
@@ -37,7 +50,9 @@
                     </b>
                   </div>
                   <div class="col">
-                    <input ng-model="c.search" type="search" class="form-control pull-right" placeholder="Search files">
+                    <b>Published</b>
+                  </div>
+                  <div class="col">
                   </div>
                 </div>
               </li>
@@ -57,14 +72,6 @@
             </ul>
           </div>
         </div>
-        <div class="panel-footer">
-          <button class="btn btn-success" data-toggle="modal" data-target="#createFileModal{{c.getRoot().id}}">
-            <span class="glyphicon glyphicon-file"></span> New model
-          </button>
-          <button class="btn btn-success" data-toggle="modal" data-target="#createDirectoryModal{{c.getRoot().id}}">
-            <span class="glyphicon glyphicon-folder-open"></span> New directory
-          </button>
-        </div>
       </div>
     </div>
   </div>
@@ -73,6 +80,11 @@
     <div class="col-sm-12">
       <div class="panel panel-default">
         <div class="panel-body">
+          <div class="row" style="margin-bottom: 15px;">
+            <div class="col-xs-4 col-xs-offset-8">
+              <input ng-model="c.search" type="search" class="form-control pull-right" placeholder="Search files">
+            </div>
+          </div>
           <div class="files-list" id="filesList">
             <ul>
               <li class="fhead">
@@ -80,11 +92,13 @@
                   <div class="col">
                     <b>File Name</b>
                   </div>
-                  <div class="col hidden-xs">
+                  <div class="col hidden-xs hidden-sm">
                     <b>Last Modified</b>
                   </div>
                   <div class="col">
-                    <input ng-model="c.search" type="search" class="form-control pull-right" placeholder="Search files">
+                    <b>Published</b>
+                  </div>
+                  <div class="col">
                   </div>
                 </div>
               </li>
