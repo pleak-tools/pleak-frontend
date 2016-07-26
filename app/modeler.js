@@ -35,6 +35,7 @@ var backend = config.backend.host;
 
 var file = {};
 var saveFailed = false;
+var lastContent = '';
 
 var getToken = function() {
   var token = localStorage.getItem('ngStorage-jwt');
@@ -121,7 +122,7 @@ var getFile = function() {
           file.content = fs.readFileSync(__dirname + '/../resources/newDiagram.bpmn', 'utf-8');
         }
         openDiagram(file.content);
-
+        lastContent = file.content;
         $('#fileName').val(file.title);
         document.title += ' - ' + file.title;
       }
@@ -297,6 +298,7 @@ var save = function() {
         disableAllButtons();
         if (file.id !== res.body.id) window.location = domain + '/modeler/' + res.body.id;
         file.md5Hash = res.body.md5Hash;
+        lastContent = file.content;
         saveFailed = false;
       } else if (res.statusCode === 400) {
         saveFailed = true;
@@ -324,7 +326,9 @@ $(window).bind('keydown', function(event) {
 });
 
 $(window).bind('beforeunload', function(event) {
-  return 'Are you sure you want to close this tab? Unsaved progress will be lost.';
+  if (file.content != lastContent) {
+    return 'Are you sure you want to close this tab? Unsaved progress will be lost.';
+  }
 });
 
 //
