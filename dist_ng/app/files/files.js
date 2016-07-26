@@ -102,7 +102,7 @@ angular.module('pleaks.files', ['ngRoute'])
       url: root.config.backend.host + '/rest/directories/files/',
       data: file
     }).then(function success(response) {
-      parent.pobjects.push(response.data);
+      parent.pobjects.unshift(response.data);
       parent.open = true;
       callback.success(response);
     }, function failure(response) {
@@ -127,21 +127,6 @@ angular.module('pleaks.files', ['ngRoute'])
       oldFile.user = response.data.user;
       createPublicUrl(oldFile);
       callback.success(response, oldParentId);
-    }, function failure(response) {
-      callback.error(response);
-    });
-  };
-
-  var copyFile = function(newFile, oldFile, callback) {
-    http({
-      method: 'PUT',
-      url: root.config.backend.host + '/rest/directories/files/' + oldFile.id,
-      data: newFile
-    }).then(function success(response) {
-      createPublicUrl(newFile);
-      getPobjectById(response.data.directory.id, rootDir).pobjects.unshift(response.data);
-      controller.tab = 'root';
-      callback.success(response);
     }, function failure(response) {
       callback.error(response);
     });
@@ -254,7 +239,7 @@ angular.module('pleaks.files', ['ngRoute'])
 
   controller.copyFile = function(oldFile) {
     var newFile = angular.copy(oldFile);
-    delete newFile.id;
+    var parent = getPobjectById(oldFile.directory.id, rootDir);
     delete newFile.publicUrl;
     delete newFile.open;
     if (!isOwner(oldFile)) {
@@ -264,7 +249,7 @@ angular.module('pleaks.files', ['ngRoute'])
     newFile.title = addBpmn(removeBpmn(newFile.title) + " (copy)");
     newFile.permissions = [];
     newFile.published = false;
-    copyFile(newFile, oldFile, callbacks.copyFile);
+    createFile(newFile, parent, callbacks.copyFile);
   };
 
   var callbacks = {
@@ -273,7 +258,7 @@ angular.module('pleaks.files', ['ngRoute'])
         controller.newPobjectTitle = '';
         $('.directory-name-input').removeClass('has-error');
         $('.directory-name-error').hide();
-        $('#createDirectoryModal' + response.data.directory.id).modal('hide');
+        $('#newDirectoryModal' + response.data.directory.id).modal('hide');
       },
       error: function(response) {
         $('.directory-name-input').addClass('has-error');
@@ -313,7 +298,7 @@ angular.module('pleaks.files', ['ngRoute'])
         controller.newPobjectTitle = '';
         $('.file-name-input').removeClass('has-error');
         $('.file-name-error').hide();
-        $('#createFileModal' + response.data.directory.id).modal('hide');
+        $('#newFileModal' + response.data.directory.id).modal('hide');
       },
       error: function(response) {
         $('.file-name-input').addClass('has-error');
