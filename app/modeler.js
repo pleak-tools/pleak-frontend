@@ -323,6 +323,10 @@ $(window).bind('keydown', function(event) {
     }
 });
 
+$(window).bind('beforeunload', function(event) {
+  return 'Are you sure you want to close this tab? Unsaved progress will be lost.';
+});
+
 //
 // Downloading the model.
 //
