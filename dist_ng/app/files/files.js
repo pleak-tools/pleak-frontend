@@ -160,27 +160,31 @@ angular.module('pleaks.files', ['ngRoute'])
 
   /* TEMPLATE BACK-END RELATED FUNCTIONS */
 
-  controller.sharePobject = function(pobject) {
-    if (isPobjectFile(pobject)) {
-      updateFile(pobject, pobject, callbacks.shareFile);
-    } else if (isPobjectDirectory(pobject)) {
-      var newDirectory = angular.copy(pobject);
-      // sending generic classes as JSON to java is not smart enough, TODO: get better JSON<->POJO lib?
-      newDirectory.pobjects = [];
-      delete newDirectory.open;
-      updateDirectory(newDirectory, pobject, callbacks.shareDirectory);
+  controller.sharePobject = function(pobject, userRights) {
+    if (controller.userEmail.length > 0) {
+      controller.addRights(pobject, userRights, controller.sharePobject);
+    } else {
+      var newPobject = angular.copy(pobject);
+      delete newPobject.open;
+      if (isPobjectFile(pobject)) {
+        delete newPobject.publicUrl;
+        updateFile(newPobject, pobject, callbacks.shareFile);
+      } else if (isPobjectDirectory(pobject)) {
+        // sending generic classes as JSON to java is not smart enough, TODO: get better JSON<->POJO lib?
+        newPobject.pobjects = [];
+        updateDirectory(newPobject, pobject, callbacks.shareDirectory);
+      }
     }
   };
 
   controller.movePobject = function(pobject) {
     var newPobject = angular.copy(pobject);
     newPobject.directory.id = controller.selected.id
+    delete newPobject.open;
     if (isPobjectFile(pobject)) {
       delete newPobject.publicUrl;
-      delete newPobject.open;
       updateFile(newPobject, pobject, callbacks.moveFile);
     } else if (isPobjectDirectory(pobject)) {
-      delete newPobject.open;
       newPobject.pobjects = [];
       updateDirectory(newPobject, pobject, callbacks.moveDirectory);
     }
@@ -370,7 +374,7 @@ angular.module('pleaks.files', ['ngRoute'])
     return sharedDir;
   };
 
-  controller.addRights = function(file, rights) {
+  controller.addRights = function(file, rights, callback) {
     http({
       method: 'POST',
       url: root.config.backend.host + '/rest/user/exists',
@@ -380,6 +384,7 @@ angular.module('pleaks.files', ['ngRoute'])
         $('.form-group.input-group').removeClass('has-error');
         $('.error-block').hide();
         sharePobjectWithUser(file, rights);
+        if (callback) callback(file, rights);
       },
       function error(response) {
         $('.form-group.input-group').addClass('has-error');
@@ -496,6 +501,9 @@ angular.module('pleaks.files', ['ngRoute'])
   controller.focusInput = function(id) {
     $(id).on('shown.bs.modal', function (e) {
       $(id + ' input').focus();
+      if ($(id + ' input:text').length > 0) {
+        $(id + ' input:text')[0].setSelectionRange(0, $(id + ' input').val().length);
+      }
     });
   };
 

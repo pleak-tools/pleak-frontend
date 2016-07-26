@@ -32,17 +32,29 @@
           <a ng-click="c.openFile(pobject)">View</a>
         </li>
         <li ng-if="c.canEdit(pobject) && c.isPobjectDirectory(pobject)">
-          <a data-toggle="modal" data-target="#createFileModal{{pobject.id}}">New file</a>
+          <a data-toggle="modal" data-target="#newFileModal{{pobject.id}}"
+             ng-click="c.focusInput('#newFileModal' + pobject.id)">
+            New file
+          </a>
         </li>
         <li ng-if="c.canEdit(pobject) && c.isPobjectDirectory(pobject) &&
                    c.getInversePobjectDepth(pobject) < 4">
-          <a data-toggle="modal" data-target="#createDirectoryModal{{pobject.id}}">New directory</a>
+          <a data-toggle="modal" data-target="#newDirectoryModal{{pobject.id}}"
+             ng-click="c.focusInput('#newDirectoryModal' + pobject.id)">
+            New directory
+          </a>
         </li>
         <li ng-if="c.canEdit(pobject) && c.isPobjectFile(pobject)">
-          <a data-toggle="modal" data-target="#renameFileModal{{pobject.id}}">Rename</a>
+          <a data-toggle="modal" data-target="#renameFileModal{{pobject.id}}"
+             ng-click="c.focusInput('#renameFileModal' + pobject.id)">
+            Rename
+          </a>
         </li>
         <li ng-if="c.canEdit(pobject) && c.isPobjectDirectory(pobject)">
-          <a data-toggle="modal" data-target="#renameDirectoryModal{{pobject.id}}">Rename</a>
+          <a data-toggle="modal" data-target="#renameDirectoryModal{{pobject.id}}"
+             ng-click="c.focusInput('#renameDirectoryModal' + pobject.id)">
+            Rename
+          </a>
         </li>
         <li ng-if="c.isPobjectFile(pobject)">
           <a ng-click="c.copyFile(pobject)">Copy</a>
@@ -58,17 +70,23 @@
         </li>
         <li ng-if="c.canShare(pobject)" role="separator" class="divider"></li>
         <li ng-if="c.canShare(pobject)">
-          <a data-toggle="modal" data-target="#shareModal{{pobject.id}}">Share</a>
+          <a data-toggle="modal" data-target="#shareModal{{pobject.id}}"
+             ng-click="c.focusInput('#shareModal' + pobject.id)">
+            Share
+          </a>
         </li>
         <li ng-if="c.canPublish(pobject) && c.isPobjectFile(pobject)">
-          <a data-toggle="modal" data-target="#publishFileModal{{pobject.id}}">Publish</a>
+          <a data-toggle="modal" data-target="#publishFileModal{{pobject.id}}"
+             ng-click="c.focusInput('#publishFileModal' + pobject.id)">
+            Publish
+          </a>
         </li>
       </ul>
     </div>
   </div>
 
   <!-- New directory modal -->
-  <div ng-if="c.isPobjectDirectory(pobject)" class="modal fade" id="createDirectoryModal{{pobject.id}}"
+  <div ng-if="c.isPobjectDirectory(pobject)" class="modal fade" id="newDirectoryModal{{pobject.id}}"
        tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-md">
       <div class="modal-content">
@@ -88,7 +106,7 @@
   </div>
 
   <!-- New file modal -->
-  <div ng-if="c.isPobjectDirectory(pobject)" class="modal fade" id="createFileModal{{pobject.id}}"
+  <div ng-if="c.isPobjectDirectory(pobject)" class="modal fade" id="newFileModal{{pobject.id}}"
        tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-md">
       <div class="modal-content">
@@ -145,7 +163,7 @@
           <form>
             <div class="form-group input-group">
               <input type="email" class="form-control" ng-model="c.userEmail" placeholder="Enter e-mail address">
-              <input type="text" ng-model="userRights" ng-init="userRights = 'view'" hidden>
+              <input type="hidden" ng-model="userRights" ng-init="userRights = 'view'" hidden>
               <div class="input-group-btn">
                 <button type="button" class="btn btn-default dropdown-toggle" style="border-radius:0px"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -165,7 +183,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button ng-click="c.sharePobject(pobject)" data-dismiss="modal" class="btn btn-success">
+          <button ng-click="c.sharePobject(pobject, userRights)" class="btn btn-success">
             Confirm
           </button>
         </div>
