@@ -7,17 +7,19 @@
     <span ng-if="c.isPobjectDirectory(pobject)" class="title">
       <span ng-if="!pobject.open" class="glyphicon glyphicon-folder-close"></span>
       <span ng-if="pobject.open" class="glyphicon glyphicon-folder-open"></span>
-      <span>{{pobject.title}}</span>
+      <span class="clickable">{{pobject.title}}</span>
+      <span ng-if="pobject.open && pobject.pobjects.length === 0">(empty)</span>
     </span>
     <span ng-if="c.isPobjectFile(pobject)" class="title">
-      <a ng-click="c.openFile(pobject)">{{pobject.title}}</a>
+      <a class="clickable" ng-click="c.openFile(pobject)">{{pobject.title}}</a>
     </span>
   </div>
-  <div class="col hidden-xs hidden-sm" ng-if="c.isPobjectFile(pobject)">
-    <span>{{pobject.lastModified}}</span>
+  <div class="col hidden-xs hidden-sm">
+    <span ng-if="c.isPobjectFile(pobject)">{{pobject.lastModified}}</span>
   </div>
   <div class="col">
-     <span ng-if="pobject.published" class="glyphicon glyphicon-ok"></span>
+    <span ng-if="pobject.permissions.length > 0" class="glyphicon glyphicon-user"></span>
+    <span ng-if="pobject.published" class="glyphicon glyphicon-globe"></span>
   </div>
   <div class="col text-right">
     <div class="btn-group pull-right">
@@ -90,17 +92,19 @@
        tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-md">
       <div class="modal-content">
-        <div class="modal-header">
-          New directory
-        </div>
-        <div class="modal-body directory-name-input">
-          <input type="text" class="form-control" ng-model="c.newPobjectTitle"/>
-          <span class="error-block directory-name-error">Incorrect directory name.</span>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-success" ng-click="c.createDirectory(pobject)">Create</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        </div>
+        <form>
+          <div class="modal-header">
+            New directory
+          </div>
+          <div class="modal-body directory-name-input">
+            <input type="text" class="form-control" ng-model="c.newPobjectTitle"/>
+            <span class="error-block directory-name-error">Incorrect directory name.</span>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success" ng-click="c.createDirectory(pobject)">Create</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -110,20 +114,22 @@
        tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-md">
       <div class="modal-content">
-        <div class="modal-header">
-          New file
-        </div>
-        <div class="modal-body">
-          <div class="form-group input-group file-name-input">
-            <input type="text" class="form-control" ng-model="c.newPobjectTitle"/>
-            <div class="input-group-addon">.bpmn</div>
+        <form>
+          <div class="modal-header">
+            New file
           </div>
-          <span class="error-block file-name-error">Incorrect file name.</span>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-success" ng-click="c.createFile(pobject)">Create</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        </div>
+          <div class="modal-body">
+            <div class="form-group input-group file-name-input">
+              <input type="text" class="form-control" ng-model="c.newPobjectTitle"/>
+              <div class="input-group-addon">.bpmn</div>
+            </div>
+            <span class="error-block file-name-error">Incorrect file name.</span>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success" ng-click="c.createFile(pobject)">Create</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -195,19 +201,21 @@
   <div class="modal fade" id="renameDirectoryModal{{pobject.id}}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-md">
       <div class="modal-content">
-        <div class="modal-header">
-          Rename directory
-        </div>
-        <div class="modal-body">
-          <div class="form-group directory-name-input">
-            <input type="text" class="form-control" ng-init="newTitle = pobject.title" ng-model="newTitle"/>
-            <span class="error-block directory-name-error">Incorrect directory name.</span>
+        <form>
+          <div class="modal-header">
+            Rename directory
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-success" ng-click="c.renameDirectory(pobject, newTitle)">Rename</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        </div>
+          <div class="modal-body">
+            <div class="form-group directory-name-input">
+              <input type="text" class="form-control" ng-init="newTitle = pobject.title" ng-model="newTitle"/>
+              <span class="error-block directory-name-error">Incorrect directory name.</span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success" ng-click="c.renameDirectory(pobject, newTitle)">Rename</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </div>
+        </forM>
       </div>
     </div>
   </div>
@@ -216,20 +224,22 @@
   <div class="modal fade" id="renameFileModal{{pobject.id}}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-md">
       <div class="modal-content">
-        <div class="modal-header">
-          Rename file
-        </div>
-        <div class="modal-body">
-          <div class="form-group input-group file-name-input">
-            <input type="text" class="form-control" ng-init="newTitle = c.removeBpmn(pobject.title)" ng-model="newTitle"/>
-            <div class="input-group-addon">.bpmn</div>
+        <form>
+          <div class="modal-header">
+            Rename file
           </div>
-          <span class="error-block file-name-error">Incorrect file name.</span>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-success" ng-click="c.renameFile(pobject, newTitle)">Rename</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        </div>
+          <div class="modal-body">
+            <div class="form-group input-group file-name-input">
+              <input type="text" class="form-control" ng-init="newTitle = c.removeBpmn(pobject.title)" ng-model="newTitle"/>
+              <div class="input-group-addon">.bpmn</div>
+            </div>
+            <span class="error-block file-name-error">Incorrect file name.</span>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success" ng-click="c.renameFile(pobject, newTitle)">Rename</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -266,7 +276,7 @@
             <span class="input-group-addon">
               <span class=" glyphicon glyphicon-link"></span>
             </span>
-            <input type="text" class="form-control" placeholder="No public link (yet)" value="{{pobject.publicUrl}}"/>
+            <input type="text" class="form-control" placeholder="No public link (yet)" ng-model="pobject.publicUrl" readonly/>
             <div class="input-group-btn">
               <button ng-click="c.publishFile(pobject)" class="btn btn-success" ng-if="!pobject.published">
                 Create public link

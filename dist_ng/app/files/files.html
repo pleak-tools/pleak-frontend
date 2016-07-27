@@ -1,17 +1,18 @@
 <div class="container" ng-controller="FilesController as c">
   <ul class="nav nav-tabs">
-    <li role="presentation" class="{{c.tab === 'root' ? 'active' : ''}}" ng-click="c.tab = 'root'">
-      <a>My models</a>
+    <li role="presentation" class="{{c.getRoot().open ? 'active' : ''}}" ng-click="c.getRoot().open = true; c.getShared().open = false">
+      <a class="clickable">My models</a>
     </li>
-    <li role="presentation" class="{{c.tab === 'shared' ? 'active' : ''}}" ng-click="c.tab = 'shared'">
-      <a>Shared models</a>
+    <li role="presentation" class="{{c.getShared().open ? 'active' : ''}}" ng-click="c.getShared().open = true; c.getRoot().open = false">
+      <a class="clickable">Shared models</a>
     </li>
   </ul>
-  <div class="row topMargin" ng-show="c.tab === 'root'">
+  <div class="row topMargin" ng-show="c.getRoot().open">
     <div class="col-sm-12">
       <div class="panel panel-default">
         <div class="panel-body">
           <div class="row" style="margin-bottom: 15px;">
+            <!--
             <div class="col-xs-8">
               <button class="btn btn-success" data-toggle="modal" data-target="#newFileModal{{c.getRoot().id}}"
                       ng-click="c.focusInput('#newFileModal' + c.getRoot().id)">
@@ -21,9 +22,25 @@
                       ng-click="c.focusInput('#newDirectoryModal' + c.getRoot().id)">
                 <span class="glyphicon glyphicon-folder-open"></span> New directory
               </button>
-            </div>
+            </div>-->
             <div class="col-xs-4">
               <input ng-model="c.search" type="search" class="form-control pull-right" placeholder="Search files">
+            </div>
+            <div class="col-xs-8">
+              <div class="btn-group pull-right">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Root actions <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a data-toggle="modal" data-target="#newFileModal{{c.getRoot().id}}"
+                       ng-click="c.focusInput('#newFileModal' + c.getRoot().id)">New model</a>
+                  </li>
+                  <li  data-toggle="modal" data-target="#newDirectoryModal{{c.getRoot().id}}">
+                    <a ng-click="c.focusInput('#newDirectoryModal' + c.getRoot().id)">New directory</a>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
           <!-- Table -->
@@ -52,7 +69,7 @@
                     </b>
                   </div>
                   <div class="col">
-                    <b>Published</b>
+                    <b>Status</b>
                   </div>
                   <div class="col">
                   </div>
@@ -77,12 +94,12 @@
     </div>
   </div>
 
-  <div class="row topMargin" ng-show="c.tab === 'shared'">
+  <div class="row topMargin" ng-show="c.getShared().open">
     <div class="col-sm-12">
       <div class="panel panel-default">
         <div class="panel-body">
           <div class="row" style="margin-bottom: 15px;">
-            <div class="col-xs-4 col-xs-offset-8">
+            <div class="col-xs-4">
               <input ng-model="c.search" type="search" class="form-control pull-right" placeholder="Search files">
             </div>
           </div>
@@ -97,7 +114,7 @@
                     <b>Last Modified</b>
                   </div>
                   <div class="col">
-                    <b>Published</b>
+                    <b>Status</b>
                   </div>
                   <div class="col">
                   </div>
@@ -120,19 +137,21 @@
        tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-md">
       <div class="modal-content">
-        <div class="modal-header">
-          New directory
-        </div>
-        <div class="modal-body">
-          <div class="form-group directory-name-input">
-            <input type="text" class="form-control" ng-model="c.newPobjectTitle"/>
-            <span class="error-block directory-name-error">Incorrect directory name.</span>
+        <form>
+          <div class="modal-header">
+            New directory
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-success" ng-click="c.createDirectory(c.getRoot())">Create</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        </div>
+          <div class="modal-body">
+            <div class="form-group directory-name-input">
+              <input type="text" class="form-control" ng-model="c.newPobjectTitle"/>
+              <span class="error-block directory-name-error">Incorrect directory name.</span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success" ng-click="c.createDirectory(c.getRoot())">Create</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -142,20 +161,22 @@
        tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-md">
       <div class="modal-content">
-        <div class="modal-header">
-          New model
-        </div>
-        <div class="modal-body">
-          <div class="form-group input-group file-name-input">
-            <input type="text" class="form-control" ng-model="c.newPobjectTitle"/>
-            <div class="input-group-addon">.bpmn</div>
+        <form>
+          <div class="modal-header">
+            New model
           </div>
-          <span class="error-block file-name-error">Incorrect model name.</span>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-success" ng-click="c.createFile(c.getRoot())">Create</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        </div>
+          <div class="modal-body">
+            <div class="form-group input-group file-name-input">
+              <input type="text" class="form-control" ng-model="c.newPobjectTitle"/>
+              <div class="input-group-addon">.bpmn</div>
+            </div>
+            <span class="error-block file-name-error">Incorrect model name.</span>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success" ng-click="c.createFile(c.getRoot())">Create</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

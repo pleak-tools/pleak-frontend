@@ -8,7 +8,10 @@ angular.module('pleaks.files', ['ngRoute'])
   });
 }])
 
-.controller('FilesController', ['$rootScope', '$scope', '$http', '$window', function(root, scope, http, $window) {
+.controller('FilesController',
+            ['$rootScope', '$scope', '$http', '$window', '$localStorage',
+            function(root, scope, http, $window, localStorage) {
+
   var controller = this;
   var files = null;
   var pobjects = null;
@@ -44,7 +47,7 @@ angular.module('pleaks.files', ['ngRoute'])
     }).then(function success(response) {
       rootDir = response.data;
       createPublicUrls(rootDir);
-
+      rootDir.open = true;
       $('#loading').fadeOut('slow', function() {
         controller.loading = false;
         scope.$apply();
@@ -239,7 +242,10 @@ angular.module('pleaks.files', ['ngRoute'])
 
   controller.copyFile = function(oldFile) {
     var newFile = angular.copy(oldFile);
-    var parent = getPobjectById(oldFile.directory.id, rootDir);
+    var parent = rootDir;
+    if (!sharedDir.open) {
+      var parent = getPobjectById(oldFile.directory.id, rootDir);
+    }
     delete newFile.publicUrl;
     delete newFile.open;
     if (!isOwner(oldFile)) {
@@ -337,6 +343,10 @@ angular.module('pleaks.files', ['ngRoute'])
       success: function(response) {
         $('#server-error').hide();
         $('.form-group.input-group').removeClass('has-error');
+        $('#publishFileModal' + response.data.id + ' input:text')[0].setSelectionRange(
+          0,
+          $('#publishFileModal' + response.data.id + ' input').val().length
+        );
       },
       error: function(response) {
         $('#server-error').show();
@@ -344,7 +354,10 @@ angular.module('pleaks.files', ['ngRoute'])
       }
     },
     copyFile: {
-      success: function() {},
+      success: function() {
+        rootDir.open = true;
+        sharedDir.open = false;
+      },
       error: function() {}
     }
   };
@@ -588,7 +601,6 @@ angular.module('pleaks.files', ['ngRoute'])
     if (title === undefined || pobject === undefined) return false;
 
     if (isMatchingPartialTitle(getPobjectById(pobject.directory.id, rootDir), title)) {
-      getPobjectById(pobject.directory.id, rootDir).open = true;
       return true;
     } else if (inverseContainsByPartialTitle(getPobjectById(pobject.directory.id, rootDir), title)) {
       return true;
@@ -776,6 +788,26 @@ angular.module('pleaks.files', ['ngRoute'])
     return 0;
   };
 
+  var getActiveBaseDirectory = function() {
+    if (rootDir.open) {
+      return rootDir;
+    } else if (sharedDir.open) {
+      return sharedDir;
+    }
+  };
+
+  var updateFile = function(oldFile, newFile) {
+    oldFile.directory = newFile.directory;
+    oldFile.id = newFile.id;
+    oldFile.lastModified = newFile.lastModified;
+    oldFile.permissions = newFile.permissions;
+    oldFile.published = newFile.published;
+    oldFile.uri = newFile.uri;
+    oldFile.title = newFile.title;
+    oldFile.user = newFile.user;
+    createPublicUrl(oldFile);
+  };
+
   // Refresh the page when user saves to display updated files.
   $window.addEventListener('message', function(event) {
     var origin = event.origin || event.originalEvent.origin;
@@ -791,6 +823,28 @@ angular.module('pleaks.files', ['ngRoute'])
   root.$on("userAuthenticated", function (args) {
     getRootDirectory();
     getSharedDirectory();
+  });
+
+  // Watch local storage info for changes with files
+  root.$watch(function () {
+    return localStorage.lastModified;
+  }, function(newVal, oldVal) {
+    var id = parseInt(localStorage.lastModifiedFileId);
+    if (oldVal !== newVal) {
+      http({
+        method: 'GET',
+        url: root.config.backend.host + '/rest/directories/files/' + id
+      }).then(function success(response) {
+        var oldFile = getPobjectById(id, rootDir);
+        if (oldFile) {
+          updateFile(getPobjectById(id, rootDir), response.data);
+        } else {
+          var parent = getPobjectById(response.data.directory.id, rootDir);
+          parent.pobjects.unshift(response.data);
+        }
+      }, function failure(response) {
+      });
+    }
   });
 
 }]);

@@ -10,17 +10,18 @@
       <span>{{pobject.title}}</span>
     </span>
     <span ng-if="c.isPobjectFile(pobject)" class="title">
-      <a ng-click="c.openFile(pobject)">{{pobject.title}}</a>
+      <a class="clickable" ng-click="c.openFile(pobject)">{{pobject.title}}</a>
     </span>
   </div>
-  <div class="col hidden-xs hidden-sm" ng-if="c.isPobjectFile(pobject)">
-    <span>{{pobject.lastModified}}</span>
+  <div class="col hidden-xs hidden-sm">
+    <span ng-if="c.isPobjectFile(pobject)">{{pobject.lastModified}}</span>
   </div>
   <div class="col">
-     <span ng-if="pobject.published" class="glyphicon glyphicon-ok"></span>
+    <span ng-if="pobject.permissions.length > 0" class="glyphicon glyphicon-user"></span>
+    <span ng-if="pobject.published" class="glyphicon glyphicon-globe"></span>
   </div>
-  <div class="col text-right" ng-if="c.isPobjectFile(pobject)">
-    <div class="btn-group pull-right">
+  <div class="col text-right">
+    <div class="btn-group pull-right" ng-if="c.isPobjectFile(pobject)">
       <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Actions <span class="caret"></span>
       </button>

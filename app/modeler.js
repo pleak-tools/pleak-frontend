@@ -1,6 +1,7 @@
 'use strict';
 
 var fs = require('fs');
+var jwtDecode = require('jwt-decode');
 var PleakModeler = require('./pleaks-modeler');
 
 // Bootstrap modals did not work with the reqular var
@@ -34,6 +35,7 @@ var domain = config.frontend.host;
 var backend = config.backend.host;
 
 var file = {};
+var fileId = null;
 var saveFailed = false;
 var lastContent = '';
 
@@ -41,6 +43,10 @@ var getToken = function() {
   var token = localStorage.getItem('ngStorage-jwt');
   if (token !== null) token = token.replace(/['"]+/g, '');
   return token;
+};
+
+var getDecodedToken = function() {
+  return jwtDecode(getToken());
 };
 
 var modelId = window.location.pathname.split('/')[2];
@@ -117,7 +123,7 @@ var getFile = function() {
     .end(function(err, res) {
       if (!err) {
         file = res.body;
-
+        fileId = file.id;
         if (file.content.length === 0) {
           file.content = fs.readFileSync(__dirname + '/../resources/newDiagram.bpmn', 'utf-8');
         }
@@ -287,7 +293,7 @@ var save = function() {
   $('#fileNameError').hide();
   file.title = $('#fileName').val();
   request
-    .put(backend + '/rest/directories/files/' + file.id)
+    .put(backend + '/rest/directories/files/' + fileId)
     .set('JSON-Web-Token', getToken())
     .send(file)
     .end(function(err, res){
@@ -296,9 +302,13 @@ var save = function() {
         $('#fileSaveSuccess').show();
         $('#fileSaveSuccess').fadeOut(5000);
         disableAllButtons();
-        if (file.id !== res.body.id) window.location = domain + '/modeler/' + res.body.id;
+        var date = new Date();
+        localStorage.setItem("ngStorage-lastModifiedFileId", '"' + res.body.id + '"');
+        localStorage.setItem("ngStorage-lastModified", '"' + date.getTime() + '"');
+        if (fileId !== res.body.id) window.location = domain + '/modeler/' + res.body.id;
         file.md5Hash = res.body.md5Hash;
         lastContent = file.content;
+        fileId = res.body.id;
         saveFailed = false;
       } else if (res.statusCode === 400) {
         saveFailed = true;
@@ -308,6 +318,11 @@ var save = function() {
         $('#loginModal').modal();
       } else if (res.statusCode === 409) {
         saveFailed = true;
+        delete file.id;
+        if (parseInt(getDecodedToken().sub) !== file.user.id) {
+          delete file.directory.id;
+          file.directory.title = 'root';
+        }
         $('#fileContentError').show();
       }
     });
