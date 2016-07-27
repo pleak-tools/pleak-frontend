@@ -796,7 +796,7 @@ angular.module('pleaks.files', ['ngRoute'])
     }
   };
 
-  var updateFile = function(oldFile, newFile) {
+  var updateFileAttributes = function(oldFile, newFile) {
     oldFile.directory = newFile.directory;
     oldFile.id = newFile.id;
     oldFile.lastModified = newFile.lastModified;
@@ -837,7 +837,7 @@ angular.module('pleaks.files', ['ngRoute'])
       }).then(function success(response) {
         var oldFile = getPobjectById(id, rootDir);
         if (oldFile) {
-          updateFile(getPobjectById(id, rootDir), response.data);
+          updateFileAttributes(getPobjectById(id, rootDir), response.data);
         } else {
           var parent = getPobjectById(response.data.directory.id, rootDir);
           parent.pobjects.unshift(response.data);

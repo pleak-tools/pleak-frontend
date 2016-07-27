@@ -12,35 +12,8 @@
       <div class="panel panel-default">
         <div class="panel-body">
           <div class="row" style="margin-bottom: 15px;">
-            <!--
-            <div class="col-xs-8">
-              <button class="btn btn-success" data-toggle="modal" data-target="#newFileModal{{c.getRoot().id}}"
-                      ng-click="c.focusInput('#newFileModal' + c.getRoot().id)">
-                <span class="glyphicon glyphicon-file"></span> New model
-              </button>
-              <button class="btn btn-success" data-toggle="modal" data-target="#newDirectoryModal{{c.getRoot().id}}"
-                      ng-click="c.focusInput('#newDirectoryModal' + c.getRoot().id)">
-                <span class="glyphicon glyphicon-folder-open"></span> New directory
-              </button>
-            </div>-->
             <div class="col-xs-4">
               <input ng-model="c.search" type="search" class="form-control pull-right" placeholder="Search files">
-            </div>
-            <div class="col-xs-8">
-              <div class="btn-group pull-right">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Root actions <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                  <li>
-                    <a data-toggle="modal" data-target="#newFileModal{{c.getRoot().id}}"
-                       ng-click="c.focusInput('#newFileModal' + c.getRoot().id)">New model</a>
-                  </li>
-                  <li  data-toggle="modal" data-target="#newDirectoryModal{{c.getRoot().id}}">
-                    <a ng-click="c.focusInput('#newDirectoryModal' + c.getRoot().id)">New directory</a>
-                  </li>
-                </ul>
-              </div>
             </div>
           </div>
           <!-- Table -->
@@ -87,6 +60,22 @@
               <li id="pobjects" class="ng-fade"
                   ng-if="!c.loading" ng-repeat="pobject in c.getRoot().pobjects"
                   ng-include="'files/root.html'"></li>
+              <li class="fluid">
+                <div class="col">
+                  <button class="btn btn-success" data-toggle="modal" data-target="#newFileModal{{c.getRoot().id}}"
+                        ng-click="c.focusInput('#newFileModal' + c.getRoot().id)">
+                    <span class="glyphicon glyphicon-file"></span>New model
+                  </button>
+                  <span> or </span>
+                  <button class="btn btn-success" data-toggle="modal" data-target="#newDirectoryModal{{c.getRoot().id}}"
+                          ng-click="c.focusInput('#newDirectoryModal' + c.getRoot().id)">
+                    <span class="glyphicon glyphicon-folder-open"></span>New directory
+                  </button>
+                </div>
+                <div class="col"></div>
+                <div class="col"></div>
+                <div class="col"></div>
+              </li>
             </ul>
           </div>
         </div>

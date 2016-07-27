@@ -1,7 +1,4 @@
-<div class="fluid
-            {{c.isPobjectDirectory(pobject) && pobject.open ? 'active' : ''}}
-            {{c.isPobjectDirectory(pobject) ? 'group' : ''}}
-            {{c.isPobjectHighlighted(pobject) ? 'highlight' : ''}}"
+<div class="fluid{{c.isPobjectDirectory(pobject) ? ' group' : ''}}{{c.isPobjectHighlighted(pobject) ? ' highlight' : ''}}"
      ng-show="c.isMatchingSearch(pobject)">
   <div class="col" ng-click="pobject.open = pobject.open ? false : true">
     <span ng-if="c.isPobjectDirectory(pobject)" class="title">
