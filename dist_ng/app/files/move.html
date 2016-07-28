@@ -1,4 +1,4 @@
-<div ng-if="c.isPobjectDirectory(dest) && c.canMove(pobject, dest)">
+<div ng-if="c.isPobjectDirectory(dest) && c.canMove(pobject, dest)" class="clickable">
   <div ng-click="c.selected = dest" class="move-element {{dest === c.selected ? 'active' : ''}}">
     <span class="element-title">
       <span class="glyphicon glyphicon-folder-open"></span>
