@@ -9,8 +9,8 @@ angular.module('pleaks.files', ['ngRoute'])
 }])
 
 .controller('FilesController',
-            ['$rootScope', '$scope', '$http', '$window', '$localStorage',
-            function(root, scope, http, $window, localStorage) {
+            ['$rootScope', '$scope', '$http', '$window', '$localStorage', 'AuthService',
+            function(root, scope, http, $window, localStorage, auth) {
 
   var controller = this;
   var files = null;
@@ -105,6 +105,8 @@ angular.module('pleaks.files', ['ngRoute'])
       url: root.config.backend.host + '/rest/directories/files/',
       data: file
     }).then(function success(response) {
+      response.data.md5Hash = null;
+      response.data.content = null;
       parent.pobjects.unshift(response.data);
       parent.open = true;
       callback.success(response);
@@ -546,6 +548,18 @@ angular.module('pleaks.files', ['ngRoute'])
     sortPobjects(rootDir, sortByLastModified);
   };
 
+  controller.formatDate = function(date) {
+    var d = new Date(date);
+    var day = d.getDate() < 10 ? '0' + d.getDate() : d.getDate();
+    var month = d.getMonth() < 9 ? '0' + (d.getMonth() + 1) : (d.getMonth() + 1);
+    var dmy = day + "." + month + "." + d.getFullYear();
+    var hour = d.getHours() < 10 ? '0' + d.getHours() : d.getHours();
+    var minutes = d.getMinutes() < 10 ? '0' + d.getMinutes() : d.getMinutes();
+    var seconds = d.getSeconds() < 10 ? '0' + d.getSeconds() : d.getSeconds();
+    var hms = hour + ":" + minutes + ":" + seconds;
+    return dmy + ", " + hms;
+  };
+
   /* LOCAL FUNCTIONS */
 
   // Searches all children recursively for id
@@ -808,18 +822,13 @@ angular.module('pleaks.files', ['ngRoute'])
     createPublicUrl(oldFile);
   };
 
-  // Refresh the page when user saves to display updated files.
-  $window.addEventListener('message', function(event) {
-    var origin = event.origin || event.originalEvent.origin;
+  if (auth.isAuthenticated()) {
+    getRootDirectory();
+    getSharedDirectory();
+  } else {
+    $('#loginModal').modal();
+  }
 
-    if (origin !== root.config.frontend.host)
-      return;
-
-    $window.location.reload();
-  }, false);
-
-  getRootDirectory();
-  getSharedDirectory();
   root.$on("userAuthenticated", function (args) {
     getRootDirectory();
     getSharedDirectory();
@@ -840,6 +849,8 @@ angular.module('pleaks.files', ['ngRoute'])
           updateFileAttributes(getPobjectById(id, rootDir), response.data);
         } else {
           var parent = getPobjectById(response.data.directory.id, rootDir);
+          response.data.md5Hash = null;
+          response.data.content = null;
           parent.pobjects.unshift(response.data);
         }
       }, function failure(response) {
