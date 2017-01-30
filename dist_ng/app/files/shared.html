@@ -34,9 +34,33 @@
         <li>
           <a ng-click="c.copyFile(pobject)">Copy</a>
         </li>
+        <li>
+        	<a data-toggle="modal" data-target="#removeSharedFileModal{{pobject.id}}">Remove</a>
+        </li>
       </ul>
     </div>
   </div>
+  
+<!-- Remove shared file modal -->
+  <div class="modal fade" id="removeSharedFileModal{{pobject.id}}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          Remove shared file
+        </div>
+        <div class="modal-body">
+          Are you sure you want to remove this shared file: {{pobject.title}}?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button  ng-click="c.removeFileShare(pobject)" data-dismiss="modal" class="btn btn-success">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div> 
+  
 </div>
 <ul ng-if="c.isPobjectDirectory(pobject)" class="subgroup" ng-show="pobject.open">
   <li ng-repeat="pobject in pobject.pobjects" ng-include="'files/shared.html'"></li>
