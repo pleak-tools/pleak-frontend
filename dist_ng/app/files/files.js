@@ -136,6 +136,23 @@ angular.module('pleaks.files', ['ngRoute'])
       callback.error(response);
     });
   };
+  
+  var deleteFilePermissions = function(pobject) {
+	  
+	http({
+	    	
+		method: 'DELETE',
+		url: root.config.backend.host + '/rest/directories/files/permissions/' + pobject.id
+	      
+	}).then(function success(response) {
+	    	
+		unShareFileWithUser(pobject, sharedDir)
+
+	}, function failure(response) {
+
+	});
+	    
+  };
 
   var deleteFile = function(id) {
     http({
@@ -163,8 +180,15 @@ angular.module('pleaks.files', ['ngRoute'])
         // sending generic classes as JSON to java is not smart enough, TODO: get better JSON<->POJO lib?
         newPobject.pobjects = [];
         updateDirectory(newPobject, pobject, callbacks.shareDirectory);
+        
       }
     }
+  };
+  
+  controller.removeFileShare = function(pobject) {
+	  
+	  deleteFilePermissions(pobject);
+	  
   };
 
   controller.movePobject = function(pobject) {
@@ -693,6 +717,33 @@ angular.module('pleaks.files', ['ngRoute'])
       pobject.permissions.push(pobjectPermission);
     }
     controller.userEmail = '';
+  };
+  
+  var unShareFileWithUser = function(pobject, directory) {
+	  
+	var userHasExistingRights = false;
+	  
+	for (var pIx = 0; pIx < pobject.permissions.length; pIx++) {
+
+		if (pobject.permissions[pIx].user.email === root.user.email) {
+			  
+			userHasExistingRights = true;
+			break;
+			  
+		}
+		  
+	}
+	  
+	if (userHasExistingRights) {
+		  
+		var index = directory.pobjects.indexOf(pobject);
+		
+		return directory.pobjects.splice(index, 1);
+	      
+	}
+	
+	return directory;
+	
   };
 
   var isOwner = function(pobject) {
