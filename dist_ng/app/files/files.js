@@ -125,6 +125,7 @@ angular.module('pleaks.files', ['ngRoute'])
       oldFile.directory = response.data.directory;
       oldFile.id = response.data.id;
       oldFile.lastModified = response.data.lastModified;
+      oldFile.modifiedBy = response.data.modifiedBy;
       oldFile.permissions = response.data.permissions;
       oldFile.published = response.data.published;
       oldFile.uri = response.data.uri;
@@ -865,6 +866,7 @@ angular.module('pleaks.files', ['ngRoute'])
     oldFile.directory = newFile.directory;
     oldFile.id = newFile.id;
     oldFile.lastModified = newFile.lastModified;
+    oldFile.modifiedBy = newFile.modifiedBy;
     oldFile.permissions = newFile.permissions;
     oldFile.published = newFile.published;
     oldFile.uri = newFile.uri;
