@@ -11,6 +11,9 @@
     </span>
   </div>
   <div class="col hidden-xs hidden-sm" ng-click="pobject.open = pobject.open ? false : true">
+    <span>{{pobject.user.email}}</span>
+  </div>
+  <div class="col hidden-xs hidden-sm" ng-click="pobject.open = pobject.open ? false : true">
     <span ng-if="c.isPobjectFile(pobject)">{{c.formatDate(pobject.lastModified)}}</span>
     <span ng-if="c.isPobjectFile(pobject)">{{pobject.modifiedBy.email}}</span>
   </div>

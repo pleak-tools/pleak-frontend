@@ -48,7 +48,8 @@ body {
 }
 
 /** http://tobiasahlin.com/spinkit/ **/
-#loginLoading, #logoutLoading {
+#loginLoading,
+#logoutLoading {
     display: none;
 }
 
@@ -64,7 +65,8 @@ body {
   margin: 50px auto;
 }
 
-.double-bounce1, .double-bounce2 {
+.double-bounce1,
+.double-bounce2 {
   width: 100%;
   height: 100%;
   border-radius: 50%;
@@ -141,67 +143,96 @@ body {
   display: none; /* so we can .show() and it's block */
 }
 
-.model-viewer, .model-viewer > div{
+.model-viewer,
+.model-viewer > div{
   height: 85vh;
 }
 
-.files-list {
+.files-list,
+.shared-files-list {
   border: 1px solid #ddd;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
 }
-.files-list ul {
+.files-list ul,
+.shared-files-list ul {
   padding-left: 0;
   margin-bottom: 0;
 }
-.files-list .fhead {
+.files-list .fhead,
+.shared-files-list .fhead {
   background: #f8f8f8;
 }
-.files-list li {
+.files-list li,
+.shared-files-list li {
   list-style-type: none;
 }
-.files-list .active {
+.files-list .active,
+.shared-files-list .active {
   background: #f5f5f5;
 }
-.files-list .fluid {
+.files-list .fluid,
+.shared-files-list .fluid {
   display: table;
   width: 100%;
 }
-.files-list .col {
+.files-list .col,
+.shared-files-list .col {
   display: table-cell;
   height: 50px;
   padding: 10px 15px;
   vertical-align: middle;
   border-bottom: 1px solid #ddd;
 }
-.files-list .col:nth-child(1) {
+.files-list .col:nth-child(1),
+.shared-files-list .col:nth-child(1) {
   width: 50%;
 }
 .files-list .col:nth-child(2) {
   width: 25%;
 }
-.files-list .col:nth-child(3), .files-list .col:nth-child(4) {
+.files-list .col:nth-child(3),
+.files-list .col:nth-child(4) {
   width: 12.5%;
 }
+.shared-files-list .col:nth-child(2),
+.shared-files-list .col:nth-child(3) {
+  width: 15%;
+}
+.shared-files-list .col:nth-child(4) {
+  width: 7.5%;
+}
+.shared-files-list .col:nth-child(5) {
+  width: 12.5%;
+}
+
 @media only screen and (max-width: 991px) {
-  .files-list .col:nth-child(2) {
-    width: 25%;
-  }
-  .files-list .col:nth-child(3), .files-list .col:nth-child(4) {
+  .files-list .col:nth-child(2),
+  .files-list .col:nth-child(3),
+  .files-list .col:nth-child(4),
+  .shared-files-list .col:nth-child(2),
+  .shared-files-list .col:nth-child(3),
+  .shared-files-list .col:nth-child(4),
+  .shared-files-list .col:nth-child(5) {
     width: 25%;
   }
 }
-.files-list .col .full {
+.files-list .col .full,
+.shared-files-list .col .full {
   width: 100%;
 }
-.files-list .group, .clickable {
+.files-list .group,
+.shared-files-list .group,
+.clickable {
   cursor: pointer;
 }
 .files-list .glyphicon {
   margin-right: 10px;
 }
-.files-list .subgroup .title:before, .move-container .subgroup .element-title:before {
+.files-list .subgroup .title:before,
+.shared-files-list .subgroup .title:before,
+.move-container .subgroup .element-title:before {
   position: relative;
   top: -4px;
   display: inline-block;
@@ -213,22 +244,27 @@ body {
   border-bottom: 1px solid #333;
   content: '';
 }
-.files-list ul ul ul .title {
+.files-list ul ul ul .title,
+.shared-files-list ul ul ul .title {
   margin-left: 30px;
 }
-.files-list ul ul ul ul .title {
+.files-list ul ul ul ul .title,
+.shared-files-list ul ul ul ul .title {
   margin-left: 60px;
 }
-.files-list .group:hover {
+.files-list .group:hover,
+.shared-files-list .group:hover {
   background: #f5f5f5;
 }
-.files-list {
+.files-list,
+.shared-files-list {
   border-bottom: none;
 }
 .hidden {
   display: none;
 }
-.files-list .no-files {
+.files-list .no-files,
+.shared-files-list .no-files {
   display: table-cell;
   height: 50px;
   padding: 10px 15px;
@@ -250,7 +286,10 @@ body {
   border: 1px solid #ddd;
   border-bottom: none;
 }
-.files-list .highlight, .files-list .highlight:hover {
+.files-list .highlight,
+.files-list .highlight:hover,
+.shared-files-list .highlight,
+.shared-files-list .highlight:hover {
   background-color: #d4d4d4
 }
 
