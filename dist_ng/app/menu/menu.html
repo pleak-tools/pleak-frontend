@@ -19,6 +19,9 @@
             <a href="#/files">Files</a>
           </li>
           <li ng-if="c.isAuthenticated()">
+           <a data-toggle="modal" data-target="#changePasswordModal" href>Password</a>
+          </li>
+          <li ng-if="c.isAuthenticated()">
             <a data-toggle="modal" data-target="#logoutModal" href>Log out</a>
           </li>
           <li ng-if="!c.isAuthenticated()">
@@ -93,6 +96,46 @@
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           <button ng-click="c.logout()" data-dismiss="modal" class="btn btn-success">
             Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Change Password -->
+  <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          Change password
+        </div>
+        <div class="modal-body">
+          <form id="changePasswordForm">
+            <div class="form-group">
+              <label for="currentPassword">Current password</label>
+              <input type="password" class="form-control" id="currentPassword" placeholder="Current password" ng-model="userExtension.currentPassword">
+              <span id="changePasswordHelpCredentials1" class="help-block">Password is missing or incorrect. Please try again.</span>
+            </div>
+            <div class="form-group">
+              <label for="newPassword1">New password</label>
+              <input type="password" class="form-control" id="newPassword1" placeholder="New password" ng-model="userExtension.newPassword1">
+            </div>
+            <div class="form-group">
+              <label for="newPassword2">New password again</label>
+              <input type="password" class="form-control" id="newPassword2" placeholder="New password again" ng-model="userExtension.newPassword2">
+              <button type="submit" ng-click="c.changePassword()" class="btn btn-success" style="display:none;">Save</button>
+              <span id="changePasswordHelpCredentials2" class="help-block">Passwords do not match. Please try again.</span>
+              <span id="changePasswordHelpServer" class="help-block">Could not reach the server. Please try again <b>later</b>.</span>
+            </div>
+          </form>
+          <div class="spinner" id="changePasswordLoading">
+            <div class="double-bounce1"></div>
+            <div class="double-bounce2"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" ng-click="c.changePassword()" class="btn btn-success">
+            Save
           </button>
         </div>
       </div>

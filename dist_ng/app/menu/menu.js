@@ -2,13 +2,19 @@
 
 angular.module('pleaks.menu', ['ngRoute'])
 
-.controller('MenuController', ['$scope','$rootScope', '$location', 'AuthService', function(scope, root, location, AuthService) {
+.controller('MenuController', ['$scope','$rootScope', '$location', 'AuthService', 'UserService', function(scope, root, location, AuthService, UserService) {
   var controller = this;
 
   scope.user = {
     email: '',
     password: ''
   };
+
+  scope.userExtension = {
+    currentPassword: '',
+    newPassword1: '',
+    newPassword2: ''
+  }
 
   controller.getClass = function(url) {
     return location.url() === ('/' + url) ? 'active' : '';
@@ -36,6 +42,18 @@ angular.module('pleaks.menu', ['ngRoute'])
     AuthService.logout(hideLogoutLoading);
   };
 
+  controller.changePassword = function() {
+    showChangePasswordLoading();
+    if (scope.userExtension.currentPassword && scope.userExtension.newPassword1 && scope.userExtension.newPassword2 && scope.userExtension.newPassword1 == scope.userExtension.newPassword2) {
+      UserService.changePassword(scope.userExtension, changePasswordSuccess, changePasswordError);
+    } else if (!scope.userExtension.currentPassword) {
+      changePasswordError(403);
+    } else {
+      changePasswordError();
+    }
+    scope.userExtension = {};
+  };
+
   var showLoginLoading = function() {
     $('#loginLoading').show();
     $('#loginForm').hide();
@@ -44,8 +62,8 @@ angular.module('pleaks.menu', ['ngRoute'])
   var loginSuccess = function() {
     $('#loginLoading').fadeOut("slow", function(){
       $('#loginForm').show();
-      $('.help-block').hide();
-      $('.form-group').removeClass('has-error');
+      $('#loginForm .help-block').hide();
+      $('#loginForm .form-group').removeClass('has-error');
     });
     $('#loginModal').modal('hide');
     root.$broadcast("userAuthenticated", {});
@@ -54,7 +72,7 @@ angular.module('pleaks.menu', ['ngRoute'])
   var loginError = function(code) {
     $('#loginLoading').fadeOut("slow", function(){
       $('#loginForm').show();
-      $('.form-group').addClass('has-error');
+      $('#loginForm .form-group').addClass('has-error');
       if (code === 403 || code === 404) {
         $('#loginHelpCredentials').show();
       } else {
@@ -78,6 +96,33 @@ angular.module('pleaks.menu', ['ngRoute'])
 
   var redirectHome = function() {
     location.path('/splash');
+  };
+
+  var showChangePasswordLoading = function() {
+    $('#changePasswordLoading').show();
+    $('#changePasswordForm').hide();
+  };
+
+  var changePasswordSuccess = function() {
+    $('#changePasswordLoading').hide();
+    $('#changePasswordForm').trigger('reset').show();
+    $('#changePasswordForm .form-group').removeClass('has-error');
+    $('#changePasswordForm .help-block').hide();
+    $('#changePasswordModal').modal('hide');
+  };
+
+  var changePasswordError = function(code) {
+    $('#changePasswordLoading').hide();
+    $('#changePasswordForm .help-block').hide();
+    $('#changePasswordForm').trigger('reset').show();
+    $('#changePasswordForm .form-group').addClass('has-error');
+    if (code === 403) {
+      $('#changePasswordHelpCredentials1').show();
+    } else if (code == 409) {
+      $('#changePasswordHelpServer').show();
+    } else {
+      $('#changePasswordHelpCredentials2').show();
+    }
   };
 
   // Every time a modal is shown, if it has an autofocus element, focus on it.

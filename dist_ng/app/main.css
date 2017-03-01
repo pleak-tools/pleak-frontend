@@ -49,7 +49,8 @@ body {
 
 /** http://tobiasahlin.com/spinkit/ **/
 #loginLoading,
-#logoutLoading {
+#logoutLoading,
+#changePasswordLoading {
     display: none;
 }
 

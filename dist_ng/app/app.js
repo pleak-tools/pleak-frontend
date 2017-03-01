@@ -10,6 +10,7 @@ angular.module('pleaks', [
   'pleaks.view',
   'pleaks.auth',
   'pleaks.menu',
+  'pleaks.user'
 ]).
 config(['$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
   $routeProvider.otherwise({redirectTo: '/splash'});
