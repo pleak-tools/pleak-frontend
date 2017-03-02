@@ -10,8 +10,7 @@ angular.module('pleaks.user', ['ngRoute'])
       url: root.config.backend.host + '/rest/user/password',
       data: {currentPassword: user.currentPassword, newPassword: user.newPassword1}
     }).then(function(response) {
-      if (response.status === 200) root.user = jwt_decode(response.data.token);
-        success();
+      if (response.status === 200) success();
     }, function(response) {
       error(response.status);
     });

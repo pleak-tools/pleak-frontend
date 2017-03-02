@@ -118,10 +118,12 @@ angular.module('pleaks.menu', ['ngRoute'])
     $('#changePasswordForm .form-group').addClass('has-error');
     if (code === 403) {
       $('#changePasswordHelpCredentials1').show();
+    } else if (code === 400) {
+      $('#changePasswordHelpCredentials2').show();
     } else if (code == 409) {
       $('#changePasswordHelpServer').show();
     } else {
-      $('#changePasswordHelpCredentials2').show();
+      $('#changePasswordHelpCredentials3').show();
     }
   };
 
