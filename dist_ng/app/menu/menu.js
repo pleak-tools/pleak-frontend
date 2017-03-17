@@ -40,6 +40,7 @@ angular.module('pleaks.menu', ['ngRoute'])
   controller.logout = function() {
     showLogoutLoading();
     AuthService.logout(hideLogoutLoading);
+    scope.user = {};
   };
 
   controller.changePassword = function() {
@@ -61,7 +62,7 @@ angular.module('pleaks.menu', ['ngRoute'])
 
   var loginSuccess = function() {
     $('#loginLoading').fadeOut("slow", function(){
-      $('#loginForm').show();
+      $('#loginForm').trigger('reset').show();
       $('#loginForm .help-block').hide();
       $('#loginForm .form-group').removeClass('has-error');
     });
@@ -71,8 +72,9 @@ angular.module('pleaks.menu', ['ngRoute'])
 
   var loginError = function(code) {
     $('#loginLoading').fadeOut("slow", function(){
-      $('#loginForm').show();
+      $('#loginForm .help-block').hide();
       $('#loginForm .form-group').addClass('has-error');
+      $('#loginForm').show();
       if (code === 403 || code === 404) {
         $('#loginHelpCredentials').show();
       } else {
@@ -106,8 +108,8 @@ angular.module('pleaks.menu', ['ngRoute'])
   var changePasswordSuccess = function() {
     $('#changePasswordLoading').hide();
     $('#changePasswordForm').trigger('reset').show();
-    $('#changePasswordForm .form-group').removeClass('has-error');
     $('#changePasswordForm .help-block').hide();
+    $('#changePasswordForm .form-group').removeClass('has-error');
     $('#changePasswordModal').modal('hide');
   };
 
@@ -131,4 +133,17 @@ angular.module('pleaks.menu', ['ngRoute'])
   $('.modal').on('shown.bs.modal', function() {
     $(this).find('[autofocus]').focus();
   });
+
+  $('#loginModal').on('hide.bs.modal', function (e) {
+    $('#loginForm').trigger('reset');
+    $('#loginForm .help-block').hide();
+    $('#loginForm .form-group').removeClass('has-error');
+  });
+
+  $('#changePasswordModal').on('hide.bs.modal', function (e) {
+    $('#changePasswordForm').trigger('reset');
+    $('#changePasswordForm .help-block').hide();
+    $('#changePasswordForm .form-group').removeClass('has-error');
+  });
+
 }]);
