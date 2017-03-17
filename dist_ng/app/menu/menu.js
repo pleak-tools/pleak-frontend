@@ -75,7 +75,7 @@ angular.module('pleaks.menu', ['ngRoute'])
       $('#loginForm .help-block').hide();
       $('#loginForm .form-group').addClass('has-error');
       $('#loginForm').show();
-      if (code === 403 || code === 404) {
+      if (code === 403 || code === 404 || code == 401) {
         $('#loginHelpCredentials').show();
       } else {
         $('#loginHelpServer').show();
