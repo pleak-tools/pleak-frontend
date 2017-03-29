@@ -51,6 +51,13 @@ var getDecodedToken = function() {
 
 var modelId = window.location.pathname.split('/')[2];
 
+var fileName = $('#fileName');
+
+var downloadButton = $('#download-diagram');
+var downloadSvgButton = $('#download-svg');
+var analyzeButton = $('#analyze-diagram');
+var saveButton = $('#save-diagram');
+
 request.get(backend + '/rest/auth')
   .set('JSON-Web-Token', getToken())
   .end(function(err, res) {
@@ -129,7 +136,7 @@ var getFile = function() {
         }
         openDiagram(file.content);
         lastContent = file.content;
-        $('#fileName').val(file.title);
+        fileName.val(file.title);
         document.title += ' - ' + file.title;
       }
   });
@@ -197,7 +204,7 @@ function openDiagram(diagram) {
         })[0];
     }
 
-    $('#analyze-diagram').click(function(event) {
+    analyzeButton.click(function(event) {
         dpAnalizer(elementRegistry);
         event.stopPropagation();
         event.preventDefault();
@@ -284,48 +291,49 @@ function openDiagram(diagram) {
 //
 // Saving the model.
 //
-var saveButton = $('#save-diagram');
 saveButton.click( function(e) {
   save();
 });
 
 var save = function() {
-  $('#fileNameError').hide();
-  file.title = $('#fileName').val();
-  request
-    .put(backend + '/rest/directories/files/' + fileId)
-    .set('JSON-Web-Token', getToken())
-    .send(file)
-    .end(function(err, res){
-      console.log(res);
-      if (res.statusCode === 200 || res.statusCode === 201) {
-        $('#fileSaveSuccess').show();
-        $('#fileSaveSuccess').fadeOut(5000);
-        disableAllButtons();
-        var date = new Date();
-        localStorage.setItem("ngStorage-lastModifiedFileId", '"' + res.body.id + '"');
-        localStorage.setItem("ngStorage-lastModified", '"' + date.getTime() + '"');
-        if (fileId !== res.body.id) window.location = domain + '/modeler/' + res.body.id;
-        file.md5Hash = res.body.md5Hash;
-        lastContent = file.content;
-        fileId = res.body.id;
-        saveFailed = false;
-      } else if (res.statusCode === 400) {
-        saveFailed = true;
-        $('#fileNameError').show();
-      } else if (res.statusCode === 401) {
-        saveFailed = true;
-        $('#loginModal').modal();
-      } else if (res.statusCode === 409) {
-        saveFailed = true;
-        delete file.id;
-        if (parseInt(getDecodedToken().sub) !== file.user.id) {
-          delete file.directory.id;
-          file.directory.title = 'root';
+  if (saveButton.is('.active')) {
+    $('#fileNameError').hide();
+    file.title = fileName.val();
+    request
+      .put(backend + '/rest/directories/files/' + fileId)
+      .set('JSON-Web-Token', getToken())
+      .send(file)
+      .end(function(err, res){
+        console.log(res);
+        if (res.statusCode === 200 || res.statusCode === 201) {
+          $('#fileSaveSuccess').show();
+          $('#fileSaveSuccess').fadeOut(5000);
+          disableSaveButton();
+          var date = new Date();
+          localStorage.setItem("ngStorage-lastModifiedFileId", '"' + res.body.id + '"');
+          localStorage.setItem("ngStorage-lastModified", '"' + date.getTime() + '"');
+          if (fileId !== res.body.id) window.location = domain + '/modeler/' + res.body.id;
+          file.md5Hash = res.body.md5Hash;
+          lastContent = file.content;
+          fileId = res.body.id;
+          saveFailed = false;
+        } else if (res.statusCode === 400) {
+          saveFailed = true;
+          $('#fileNameError').show();
+        } else if (res.statusCode === 401) {
+          saveFailed = true;
+          $('#loginModal').modal();
+        } else if (res.statusCode === 409) {
+          saveFailed = true;
+          delete file.id;
+          if (parseInt(getDecodedToken().sub) !== file.user.id) {
+            delete file.directory.id;
+            file.directory.title = 'root';
+          }
+          $('#fileContentError').show();
         }
-        $('#fileContentError').show();
-      }
-    });
+      });
+  }
 };
 
 // metakey is windows key/mac cmd key
@@ -359,20 +367,53 @@ function saveDiagram(done) {
   });
 }
 
-function disableAllButtons() {
-  var downloadButton = $('#download-diagram');
-  var downloadSvgButton = $('#download-svg');
-  var saveButton = $('#save-diagram');
-  downloadButton.removeClass('active');
-  downloadSvgButton.removeClass('active');
+function disableSaveButton() {
   saveButton.removeClass('active');
-  $('#analyze-diagram').removeClass('active');
+}
+
+function activateSaveButton() {
+  saveButton.addClass('active');
+}
+
+function activateExportButtons() {
+  downloadButton.addClass('active');
+  downloadSvgButton.addClass('active');
+}
+
+function setEncoded(linkButton, name, data) {
+  var encodedData = encodeURIComponent(data);
+
+  if (data) {
+    file.content = data;
+
+    linkButton.addClass('active').attr({
+      'href': 'data:application/bpmn20-xml;charset=UTF-8,' + encodedData,
+      'download': name
+    });
+    analyzeButton.addClass('active');
+  } else {
+    linkButton.removeClass('active');
+    analyzeButton.removeClass('active');
+  }
+}
+
+var exportArtifacts = _.debounce(function() {
+  file.title = fileName.val();
+  saveSVG(function(err, svg) {
+    setEncoded(downloadSvgButton, file.title.slice(0, -5) + '.svg', err ? null : svg);
+  });
+
+  saveDiagram(function(err, xml) {
+    setEncoded(downloadButton, file.title, err ? null : xml);
+  });
+}, 500);
+
+function modelOrTitleChanged() {
+  exportArtifacts();
+  activateSaveButton();
 }
 
 $(document).on('ready', function() {
-  var downloadButton = $('#download-diagram');
-  var downloadSvgButton = $('#download-svg');
-  var analyzeButton = $('#analyze-diagram');
 
   $('.buttons a').click(function(e) {
     if (!$(this).is('.active')) {
@@ -381,37 +422,15 @@ $(document).on('ready', function() {
     }
   });
 
-  function setEncoded(linkButton, name, data) {
-    var encodedData = encodeURIComponent(data);
+  exportArtifacts();
+  activateExportButtons();
 
-    if (data) {
-      file.content = data;
+  modeler.on('commandStack.changed', modelOrTitleChanged);
 
-      saveButton.addClass('active');
-      linkButton.addClass('active').attr({
-        'href': 'data:application/bpmn20-xml;charset=UTF-8,' + encodedData,
-        'download': name
-      });
-      analyzeButton.addClass('active');
-    } else {
-      linkButton.removeClass('active');
-      saveButton.removeClass('active');
-      analyzeButton.removeClass('active');
-    }
-  }
+  fileName.on('input',function(e) {
+	  modelOrTitleChanged();
+  });
 
-  var exportArtifacts = _.debounce(function() {
-    file.title = $('#fileName').val();
-    saveSVG(function(err, svg) {
-      setEncoded(downloadSvgButton, file.title.slice(0, -5) + '.svg', err ? null : svg);
-    });
-
-    saveDiagram(function(err, xml) {
-      setEncoded(downloadButton, file.title, err ? null : xml);
-    });
-  }, 500);
-
-  modeler.on('commandStack.changed', exportArtifacts);
 });
 
 // expose bpmnjs to window for debugging purposes
