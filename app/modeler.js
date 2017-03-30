@@ -390,10 +390,8 @@ function setEncoded(linkButton, name, data) {
       'href': 'data:application/bpmn20-xml;charset=UTF-8,' + encodedData,
       'download': name
     });
-    analyzeButton.addClass('active');
   } else {
     linkButton.removeClass('active');
-    analyzeButton.removeClass('active');
   }
 }
 
