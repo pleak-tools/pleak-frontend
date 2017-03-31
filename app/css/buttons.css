@@ -46,10 +46,9 @@
 
 .analyze a {
   color: #fff;
-}
-
-.analyze > li > a {
-  opacity: 1;
+  &.active {
+    color: #fff;
+  }
 }
 
 .separator {

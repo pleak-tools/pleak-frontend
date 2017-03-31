@@ -58,17 +58,19 @@ var downloadSvgButton = $('#download-svg');
 var analyzeButton = $('#analyze-diagram');
 var saveButton = $('#save-diagram');
 
-request.get(backend + '/rest/auth')
-  .set('JSON-Web-Token', getToken())
-  .end(function(err, res) {
-  if (err) {
-    $('.buttons').hide();
-    $('#login-container').show();
-    $('#loginModal').modal();
-  } else {
-    getFile();
-  }
-});
+function checkAuth() {
+  request.get(backend + '/rest/auth')
+    .set('JSON-Web-Token', getToken())
+    .end(function(err, res) {
+    if (err) {
+      $('.buttons').hide();
+      $('#login-container').show();
+      $('#loginModal').modal();
+    } else {
+      getFile();
+    }
+  });
+}
 
 $('#loginForm').submit(function(event) {
   event.preventDefault();
@@ -138,6 +140,7 @@ var getFile = function() {
         lastContent = file.content;
         fileName.val(file.title);
         document.title += ' - ' + file.title;
+        exportArtifacts();
       }
   });
 };
@@ -375,11 +378,6 @@ function activateSaveButton() {
   saveButton.addClass('active');
 }
 
-function activateExportButtons() {
-  downloadButton.addClass('active');
-  downloadSvgButton.addClass('active');
-}
-
 function setEncoded(linkButton, name, data) {
   var encodedData = encodeURIComponent(data);
 
@@ -404,6 +402,7 @@ var exportArtifacts = _.debounce(function() {
   saveDiagram(function(err, xml) {
     setEncoded(downloadButton, file.title, err ? null : xml);
   });
+  analyzeButton.addClass('active');
 }, 500);
 
 function modelOrTitleChanged() {
@@ -413,15 +412,14 @@ function modelOrTitleChanged() {
 
 $(document).on('ready', function() {
 
+  checkAuth();
+
   $('.buttons a').click(function(e) {
     if (!$(this).is('.active')) {
       e.preventDefault();
       e.stopPropagation();
     }
   });
-
-  exportArtifacts();
-  activateExportButtons();
 
   modeler.on('commandStack.changed', modelOrTitleChanged);
 
