@@ -13,7 +13,8 @@ var request = require('superagent');
 var propertiesPanelModule = require('bpmn-js-properties-panel'),
     propertiesProviderModule = require('./provider/pleak'),
     dpTaskModdleDescriptor = require('./descriptors/dptask'),
-    dpAnalizer = require('./provider/pleak/DPAnalyzer');
+    dpAnalizer = require('./provider/pleak/DPAnalyzer'),
+    embeddedComments = require('bpmn-js-embedded-comments');
 
 var _ = require('lodash');
 
@@ -23,7 +24,8 @@ var modeler = new PleakModeler({ container: '#canvas', keyboard: { bindTo: docum
   },
   additionalModules: [
     propertiesPanelModule,
-    propertiesProviderModule
+    propertiesProviderModule,
+    embeddedComments
   ],
   moddleExtensions: {
     dptask: dpTaskModdleDescriptor
@@ -423,8 +425,23 @@ $(document).on('ready', function() {
 
   modeler.on('commandStack.changed', modelOrTitleChanged);
 
-  fileName.on('input',function(e) {
+  fileName.on('input',function() {
 	  modelOrTitleChanged();
+  });
+
+  $(document).mouseup(function(e) {
+    var container = $('.comments-overlay');
+    if (!container.is(e.target) && container.has(e.target).length === 0) {
+      modeler.get('comments').collapseAll();
+    }
+  });
+
+  $(document).keydown(function(e) {
+    var container = $('.comments-overlay').find('textarea');
+    if (container.is(e.target) && e.which === 13 && !e.shiftKey) {
+      e.preventDefault();
+      modelOrTitleChanged();
+    }
   });
 
 });
