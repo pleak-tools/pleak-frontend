@@ -7,8 +7,11 @@ var topologicalSorting = function (adjList, invAdjList, sources) {
     
     var sourcesp = sources.slice();
     var invAdjListp = new Map();
-    for (var [key, value] of invAdjList)
-        invAdjListp.set(key, value.slice());
+
+    $.each(invAdjList, function(key, value) {
+        invAdjList.set(key, value.slice());
+    });
+
     while (sourcesp.length > 0) {
         var n = sourcesp.pop();
         order.push(n);
@@ -27,22 +30,26 @@ var topologicalSorting = function (adjList, invAdjList, sources) {
 
 var transitiveClosure = function (adjList, sources) {
     var transClosure = new Map();
-    
-    for (var source of sources) {
+
+    $.each(sources, function(key, value) {
+        var source = sources[key];
         var visited = new Array();
         var open = new Array();
         open.push(source);
         while (open.length > 0) {
             var curr = open.pop();
             visited.push(curr);
-            if (adjList.get(curr))
-                for (var succ of adjList.get(curr)) {
+            if (adjList.get(curr)) {
+                $.each(adjList.get(curr), function(k, v) {
+                    var succ = adjList.get(curr)[k];
                     if (visited.indexOf(succ) < 0 && open.indexOf(succ) < 0)
                         open.push(succ);
-                }
+                });
+            }
         }
         transClosure.set(source, visited);        
-    }
+    });
+
     return transClosure;
 }
 
@@ -57,7 +64,8 @@ var computeDPMatrices = function (adjList, invAdjList, sources, sinks) {
         var p = order[_p];
         if (p.$type !== "bpmn:DataObjectReference") {
             // console.log(`About to process: ${p.name}`);
-            for (var source of sources) {
+            for (var i; i < sources.length; ++i) {
+                var source = sources[i];
                 // var source = sources[_source];
                 // console.log('--------------');
                 // console.log(`Source: ${source.name}`);
@@ -121,16 +129,18 @@ var computeDPMatrices = function (adjList, invAdjList, sources, sinks) {
     var htmlStr = "<h3>Differential privacy</h3> <table class='matrix'>";
     htmlStr += "<tr class='matrix'><td class='matrix'/>";
     var targets = new Array();
-    for (var tgt of order) {
+    for (var i; i < order.length; ++i) {
+        var tgt = order[i];
         if (tgt.$type == "bpmn:DataObjectReference" && sources.indexOf(tgt) < 0) {
             targets.push(tgt);
             htmlStr += "<td class='matrix'>"+(tgt.name || j)+"</td>";
         }
     }
-    for (var src of order) {
+    for (var j; j < order.length; ++j) {
+        var src = order[j];
         if (src.$type == "bpmn:DataObjectReference" && sources.indexOf(src) >= 0) {
             htmlStr += "<tr class='matrix'><td class='matrix'>" + src.name +"</td>";
-            for (var tgt of targets)
+            for (var tgt in targets)
                 htmlStr += "<td class='matrix'><input class='matrix' id='"+src.id+","+tgt.id+"' value='"+ddp.get(src).get(tgt)+"' onfocus='focusTracker(this)' onblur='blurTracker(this)'/></td>";
             htmlStr += "</tr>";
         }
@@ -169,8 +179,27 @@ var analyzeDPOnProcessDef = function (procDef) {
     var sources = new Array();
     var sinks = new Array();
 
-    for (var node of adjList.keys()) if (targets.indexOf(node) < 0) sources.push(node);
-    for (var node of targets) if (!adjList.has(node)) sinks.push(node);
+    if (!Object.keys) {
+        Object.keys = function(obj) {
+            var keys = [];
+            for (var i in obj) {
+                if (obj.hasOwnProperty(i)) {
+                    keys.push(i);
+                }
+            }
+            return keys;
+        };
+    }
+
+    for (var i=0; i < adjList.length; ++i) {
+        var node = adjList.keys()[i];
+        if (targets.indexOf(node) < 0) sources.push(node);
+    }
+
+    for (var j=0; j < targets.length; ++j) {
+        var node = targets[j];
+        if (!adjList.has(node)) sinks.push(node);
+    }
 
     computeDPMatrices(adjList, invAdjList, sources, sinks);
 }
