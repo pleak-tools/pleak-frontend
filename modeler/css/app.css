@@ -16,10 +16,8 @@
   }
 }
 
-@import "bpmn-js-properties-panel/styles/properties";
-
-.djs-properties-header > .label {
-  color: #555;
+.bpp-properties-header > .label {
+  color: #333;
 }
 
 [class^="bpmn-icon-"]:before, [class*=" bpmn-icon-"]:before {
@@ -27,4 +25,11 @@
   margin-right: 0!important;
 }
 
-@import (less) "bpmn-js-embedded-comments/assets/comments.css";
+.djs-palette {
+  margin-top: 80px;
+}
+
+.djs-overlay-comments {
+  left: -10px!important;
+  top: -10px!important;
+}

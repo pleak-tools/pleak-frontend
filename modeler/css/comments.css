@@ -1,0 +1,127 @@
+.djs-overlay-comments {}
+
+.comments-overlay {
+  background: #52B415!important;
+  font-size: 12px;
+  display: none;
+  color: white;
+  background: #CCC;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.selected .comments-overlay,
+.comments-overlay.with-comments {
+  display: block;
+}
+
+.comments-overlay .comment {
+  border-top-color: white!important;
+}
+
+.comments-overlay .edit {
+  margin: 2px 0 0 0;
+  padding-top: 2px;
+  color: #333;
+}
+
+.comments-overlay .edit textarea {
+  border: none;
+  margin: 0;
+}
+
+.comments-overlay .icon-comment {
+  color: white;
+  margin-right: 2px;
+}
+
+.comments-overlay .icon-comment:hover {
+  color: #EEE;
+}
+
+.comments-overlay .icon-delete {
+  color: white;
+}
+
+/** fonts **/
+
+@font-face {
+  font-family: 'bpmn-js-comments';
+  src: url('../fonts/bpmn-js-comments.eot?23532594');
+  src: url('../fonts/bpmn-js-comments.eot?23532594#iefix') format('embedded-opentype'),
+       url('../fonts/bpmn-js-comments.woff?23532594') format('woff'),
+       url('../fonts/bpmn-js-comments.ttf?23532594') format('truetype'),
+       url('../fonts/bpmn-js-comments.svg?23532594#bpmn-js-comments') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-"]:before,
+[class*=" icon-"]:before {
+  font-family: "bpmn-js-comments";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  text-align: center;
+
+  font-variant: normal;
+  text-transform: none;
+
+  line-height: 1em;
+}
+
+.icon-comment:before {
+  content: '\e800';
+}
+.icon-delete:before {
+  content: '\e802';
+}
+
+.comments-overlay.expanded {
+  z-index: 100;
+  position: absolute; /* for z-index to work */
+}
+
+.comments-overlay .toggle {
+  white-space: nowrap;
+}
+
+.comments-overlay.expanded .comment-count,
+.comments-overlay .content {
+  display: none;
+}
+
+.comments-overlay .comment-count {
+  display: inline;
+}
+
+.comments-overlay.expanded .content {
+  display: block;
+}
+
+.comments-overlay .comment {
+  border-top: dotted 1px #666;
+  margin-top: 4px;
+  padding-top: 4px;
+  white-space: pre-wrap;
+
+  position: relative;
+}
+
+.comments-overlay .comment .delete {
+  position: absolute;
+  right: 3px;
+  top: 3px;
+
+  text-decoration: none;
+
+  display: none;
+}
+
+.comments-overlay .comment:hover .delete {
+  display: block;
+}

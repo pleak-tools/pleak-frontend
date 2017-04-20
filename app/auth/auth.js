@@ -71,8 +71,6 @@ angular.module('pleaks.auth', ['ngRoute'])
 .factory('AuthInterceptor', function($q, $rootScope, $localStorage) {
   return {
     'request': function(config) {
-      //console.log('Request:');
-      //console.log(config);
 
       var token = $localStorage.jwt;
       if (token !== null && token !== undefined && token !== "") $rootScope.user = jwt_decode(token);
@@ -80,8 +78,6 @@ angular.module('pleaks.auth', ['ngRoute'])
       return config;
     },
     'response': function(config) {
-      //console.log('Response:');
-      //console.log(config);
 
       if (config.data.token) {
         $localStorage.jwt = config.data.token;

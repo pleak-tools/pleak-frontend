@@ -14,12 +14,6 @@ To install all project dependencies execute
 npm install
 ```
 
-Navigate to ```dist_ng/``` and execute again
-
-```
-npm install
-```
-
 Also execute
 
 ```
