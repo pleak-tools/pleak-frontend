@@ -41,6 +41,10 @@
         <li>
         	<a data-toggle="modal" data-target="#removeSharedFileModal{{pobject.id}}">Remove</a>
         </li>
+        <li ng-if="c.canEdit(pobject) && c.isPobjectFile(pobject)" role="separator" class="divider"></li>
+        <li ng-if="c.canEdit(pobject) && c.isPobjectFile(pobject)">
+          <a ng-click="c.openFileSQLEditor(pobject)">Open in SQL-editor</a>
+        </li>
       </ul>
     </div>
   </div>

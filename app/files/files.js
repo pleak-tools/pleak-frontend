@@ -468,6 +468,10 @@ angular.module('pleaks.files', ['ngRoute'])
     openFile(pobject);
   };
 
+  controller.openFileSQLEditor = function(pobject) {
+	openFileSQLEditor(pobject);
+  };
+
   controller.getFileUrl = function(pobject) {
     return getFileUrl(pobject);
   };
@@ -794,9 +798,24 @@ angular.module('pleaks.files', ['ngRoute'])
     $window.open(getFileUrl(pobject), '_blank');
   };
 
+  var openFileSQLEditor = function(pobject) {
+    http({
+      method: 'GET',
+      url: getFileSqlEditorUrl(pobject),
+    }).then(function success(response) {
+      $window.open(getFileSqlEditorUrl(pobject), '_blank');
+    }, function failure(response) {
+      alert("SQL-privacy editor cannot be found!");
+    });
+  };
+
   var getFileUrl = function(pobject) {
     return root.config ? root.config.frontend.host + "/modeler/" + pobject.id : '';
   };
+
+  var getFileSqlEditorUrl = function(pobject) {
+    return root.config ? root.config.frontend.host + "/sql-privacy-editor/" + pobject.id : '';
+  }
 
   var sortPobjects = function(dir, sortFunction) {
     if (!isPobjectDirectory(dir)) return;

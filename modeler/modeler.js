@@ -12,6 +12,55 @@ var request = require('superagent');
 
 var embeddedComments = require('bpmn-js-embedded-comments');
 
+var Custom = {
+  id: 'pleak-pa-bpmn',
+  name: 'Pleak PA-BPMN',
+  prefix: 'pleak',
+  uri: 'http://pleak.io/',
+};
+var SqlBPMNModdle = SqlBPMNModdle = {
+  name: Custom.name,
+  prefix: Custom.prefix,
+  uri: Custom.uri,
+  xml: {
+    tagAlias: "lowerCase"
+  },
+  associations: new Array(),
+  types: [
+    {
+      name: "SQLTask",
+      extends: [
+        "bpmn:Task"
+      ],
+      properties: [
+        {
+          "name": "sqlScript",
+          "isAttr": false,
+          "type": "String"
+        },
+        {
+          "name": "sensitivityMatrix",
+          "isAttr": false,
+        "type": "String"
+        }
+      ]
+    },
+    {
+      name: "SQLDataObjectReference",
+      extends: [
+        "bpmn:DataObjectReference"
+      ],
+      properties: [
+        {
+          "name": "sqlScript",
+          "isAttr": false,
+          "type": "String"
+        }
+      ]
+    }
+  ]
+};
+
 var _ = require('lodash');
 
 var modeler = new Modeler({ container: '#canvas', keyboard: { bindTo: document },
@@ -21,6 +70,9 @@ var modeler = new Modeler({ container: '#canvas', keyboard: { bindTo: document }
   additionalModules: [
     embeddedComments
   ],
+  moddleExtensions: {
+    sqlExt: SqlBPMNModdle
+  }
 });
 
 var config = JSON.parse(fs.readFileSync(__dirname + '/../config.json', 'utf8'));
@@ -49,7 +101,6 @@ var fileName = $('#fileName');
 
 var downloadButton = $('#download-diagram');
 var downloadSvgButton = $('#download-svg');
-var analyzeButton = $('#analyze-diagram');
 var saveButton = $('#save-diagram');
 
 function checkAuth() {
@@ -268,7 +319,6 @@ var exportArtifacts = _.debounce(function() {
   saveDiagram(function(err, xml) {
     setEncoded(downloadButton, file.title, err ? null : xml);
   });
-  analyzeButton.addClass('active');
 }, 500);
 
 function modelOrTitleChanged() {

@@ -25,7 +25,7 @@ run(function($rootScope, $http, $location, AuthService, $localStorage) {
   }
 
   // Read config
-  $http.get('../config.json')
+  $http.get('../frontend/config.json')
     .success(function(data, status, headers, config) {
       $rootScope.config = data;
       // If the server has restarted then old tokens are obsolete. Must verify at startup.
