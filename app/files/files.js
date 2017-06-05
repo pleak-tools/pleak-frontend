@@ -803,10 +803,11 @@ angular.module('pleaks.files', ['ngRoute'])
       method: 'GET',
       url: getFileSqlEditorUrl(pobject),
     }).then(function success(response) {
-      $window.open(getFileSqlEditorUrl(pobject), '_blank');
+      return true;
     }, function failure(response) {
       alert("SQL-privacy editor cannot be found!");
     });
+    $window.open(getFileSqlEditorUrl(pobject), '_blank');
   };
 
   var getFileUrl = function(pobject) {
