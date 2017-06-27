@@ -9,8 +9,8 @@ angular.module('pleaks.files', ['ngRoute'])
 }])
 
 .controller('FilesController',
-            ['$rootScope', '$scope', '$http', '$window', '$localStorage', 'AuthService',
-            function(root, scope, http, $window, localStorage, auth) {
+            ['$rootScope', '$scope', '$http', '$window', 'AuthService',
+            function(root, scope, http, $window, auth) {
 
   var controller = this;
   var files = null;
@@ -933,9 +933,9 @@ angular.module('pleaks.files', ['ngRoute'])
 
   // Watch local storage info for changes with files
   root.$watch(function () {
-    return localStorage.lastModified;
+    return localStorage.getItem('lastModified');
   }, function(newVal, oldVal) {
-    var id = parseInt(localStorage.lastModifiedFileId);
+    var id = parseInt(localStorage.getItem('lastModifiedFileId'));
     if (oldVal !== newVal) {
       http({
         method: 'GET',

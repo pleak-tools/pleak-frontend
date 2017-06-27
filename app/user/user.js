@@ -2,7 +2,7 @@
 
 angular.module('pleaks.user', ['ngRoute'])
 
-.service('UserService', ['$http', '$rootScope', '$localStorage', function(http, root, localStorage) {
+.service('UserService', ['$http', '$rootScope', function(http, root) {
 
   this.changePassword = function(user, success, error) {
     http({

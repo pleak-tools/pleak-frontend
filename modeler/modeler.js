@@ -86,7 +86,7 @@ var saveFailed = false;
 var lastContent = '';
 
 var getToken = function() {
-  var token = localStorage.getItem('ngStorage-jwt');
+  var token = localStorage.getItem('jwt');
   if (token !== null) token = token.replace(/['"]+/g, '');
   return token;
 };
@@ -146,7 +146,7 @@ $('#loginButton').click(function() {
     .set('Accept', 'application/json')
     .end(function(err, res) {
       if (!err) {
-        localStorage.setItem("ngStorage-jwt", '"' + res.body.token + '"');
+        localStorage.setItem("jwt", '"' + res.body.token + '"');
         if ($.isEmptyObject(file)) getFile();
         $('#loginLoading').fadeOut("slow", function(){
           $('.buttons').show();
@@ -232,8 +232,8 @@ var save = function() {
           $('#fileSaveSuccess').fadeOut(5000);
           disableSaveButton();
           var date = new Date();
-          localStorage.setItem("ngStorage-lastModifiedFileId", '"' + res.body.id + '"');
-          localStorage.setItem("ngStorage-lastModified", '"' + date.getTime() + '"');
+          localStorage.setItem("lastModifiedFileId", '"' + res.body.id + '"');
+          localStorage.setItem("lastModified", '"' + date.getTime() + '"');
           if (fileId !== res.body.id) window.location = domain + '/modeler/' + res.body.id;
           file.md5Hash = res.body.md5Hash;
           lastContent = file.content;

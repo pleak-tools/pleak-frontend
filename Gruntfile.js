@@ -94,7 +94,6 @@ module.exports = function(grunt) {
           'node_modules/angular/angular.js',
           'node_modules/angular-animate/angular-animate.js',
           'node_modules/angular-route/angular-route.js',
-          'node_modules/ngstorage/ngStorage.js',
           'node_modules/jwt-decode/build/jwt-decode.js',
           'bower_components/bpmn-js/dist/bpmn-navigated-viewer.js'
         ],
