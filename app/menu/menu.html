@@ -27,18 +27,6 @@
           <li ng-if="!c.isAuthenticated()">
             <a data-toggle="modal" data-target="#loginModal" href>Log in</a>
           </li>
-          <!-- Maybe useful in the future
-          <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools <span class="caret"></span></a>
-            <ul class="dropdown-menu">
-              <li><a href="#/files">bpmn models</a></li>
-              <li role="separator" class="divider"></li>
-              <li class="dropdown-header">Nav header</li>
-              <li><a href="#">Separated link</a></li>
-              <li><a href="#">One more separated link</a></li>
-            </ul>
-          </li>
-          -->
         </ul>
       </div>
     </div>
@@ -123,7 +111,7 @@
               <label for="newPassword2">New password again</label>
               <input type="password" class="form-control" id="newPassword2" placeholder="New password again" ng-model="userExtension.newPassword2">
               <button type="submit" ng-click="c.changePassword()" class="btn btn-success" style="display:none;">Save</button>
-              <span id="changePasswordHelpCredentials2" class="help-block">Password must be a combination of alphanumeric characters of 8 or more characters in length. Please try again.</span>
+              <span id="changePasswordHelpCredentials2" class="help-block">Password must be a combination of alphanumeric characters of 10 or more characters in length. Please try again.</span>
               <span id="changePasswordHelpCredentials3" class="help-block">Passwords do not match. Please try again.</span>
               <span id="changePasswordHelpServer" class="help-block">Could not reach the server. Please try again <b>later</b>.</span>
             </div>

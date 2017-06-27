@@ -227,6 +227,9 @@ angular.module('pleaks.files', ['ngRoute'])
 
   controller.deleteDirectory = function(id) {
     deleteDirectory(id);
+    $('#deleteDirectoryModal' + id).modal('hide');
+    $('body').removeClass('modal-open');
+    $('.modal-backdrop').remove();
   };
 
   controller.createFile = function(parent) {
@@ -265,6 +268,9 @@ angular.module('pleaks.files', ['ngRoute'])
 
   controller.deleteFile = function(id) {
     deleteFile(id);
+    $('#deleteFileModal' + id).modal('hide');
+    $('body').removeClass('modal-open');
+    $('.modal-backdrop').remove();
   };
 
   controller.copyFile = function(oldFile) {
@@ -292,6 +298,8 @@ angular.module('pleaks.files', ['ngRoute'])
         $('.directory-name-input').removeClass('has-error');
         $('.directory-name-error').hide();
         $('#newDirectoryModal' + response.data.directory.id).modal('hide');
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
       },
       error: function(response) {
         $('.directory-name-input').addClass('has-error');
@@ -303,6 +311,8 @@ angular.module('pleaks.files', ['ngRoute'])
         $('.directory-name-input').removeClass('has-error');
         $('.directory-name-error').hide();
         $('#renameDirectoryModal' + response.data.id).modal('hide');
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
       },
       error: function(response) {
         $('.directory-name-input').addClass('has-error');
@@ -312,6 +322,8 @@ angular.module('pleaks.files', ['ngRoute'])
     shareDirectory: {
       success: function(response) {
         $('#shareModal' + response.data.id).modal('hide');
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
       },
       error: function(response) {
       }
@@ -323,6 +335,9 @@ angular.module('pleaks.files', ['ngRoute'])
         getPobjectById(response.data.directory.id, rootDir).pobjects.push(response.data);
         getPobjectById(response.data.directory.id, rootDir).open = true;
         controller.selected = null;
+        $('#moveModal' + response.data.id).modal('hide');
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
       },
       error: function(response) {}
     },
@@ -332,6 +347,8 @@ angular.module('pleaks.files', ['ngRoute'])
         $('.file-name-input').removeClass('has-error');
         $('.file-name-error').hide();
         $('#newFileModal' + response.data.directory.id).modal('hide');
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
       },
       error: function(response) {
         $('.file-name-input').addClass('has-error');
@@ -343,6 +360,8 @@ angular.module('pleaks.files', ['ngRoute'])
         $('.file-name-input').removeClass('has-error');
         $('.file-name-error').hide();
         $('#renameFileModal' + response.data.id).modal('hide');
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
       },
       error: function(response) {
         $('.file-name-input').addClass('has-error');
@@ -356,12 +375,17 @@ angular.module('pleaks.files', ['ngRoute'])
         getPobjectById(response.data.directory.id, rootDir).pobjects.push(response.data);
         getPobjectById(response.data.directory.id, rootDir).open = true;
         controller.selected = null;
+        $('#moveModal' + response.data.id).modal('hide');
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
       },
       error: function(response) {}
     },
     shareFile: {
       success: function(response) {
         $('#shareModal' + response.data.id).modal('hide');
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
       },
       error: function(response) {
       }

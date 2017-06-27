@@ -153,6 +153,8 @@ $('#loginButton').click(function() {
           $('#login-container').hide();
         });
         $('#loginModal').modal('hide');
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
         if (saveFailed) save();
       } else {
         $('.buttons').hide();

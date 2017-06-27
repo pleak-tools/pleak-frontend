@@ -67,6 +67,8 @@ angular.module('pleaks.menu', ['ngRoute'])
       $('#loginForm .form-group').removeClass('has-error');
     });
     $('#loginModal').modal('hide');
+    $('body').removeClass('modal-open');
+    $('.modal-backdrop').remove();
     root.$broadcast("userAuthenticated", {});
   };
 
@@ -93,6 +95,8 @@ angular.module('pleaks.menu', ['ngRoute'])
       $('#logoutText').show();
     });
     $('#logoutModal').modal('hide');
+    $('body').removeClass('modal-open');
+    $('.modal-backdrop').remove();
     redirectHome();
   };
 
@@ -111,6 +115,8 @@ angular.module('pleaks.menu', ['ngRoute'])
     $('#changePasswordForm .help-block').hide();
     $('#changePasswordForm .form-group').removeClass('has-error');
     $('#changePasswordModal').modal('hide');
+    $('body').removeClass('modal-open');
+    $('.modal-backdrop').remove();
   };
 
   var changePasswordError = function(code) {
