@@ -3,6 +3,10 @@ body {
   height: 100%;
 }
 
+.navbar {
+  margin-top: 25px;
+}
+
 .brand {
   width: 90px;
   float: left;

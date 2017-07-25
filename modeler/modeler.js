@@ -12,16 +12,10 @@ var request = require('superagent');
 
 var embeddedComments = require('bpmn-js-embedded-comments');
 
-var Custom = {
-  id: 'pleak-pa-bpmn',
-  name: 'Pleak PA-BPMN',
+var SqlBPMNModdle = {
+  name: 'Pleak PA-BPMN & PE-BPMN',
   prefix: 'pleak',
   uri: 'http://pleak.io/',
-};
-var SqlBPMNModdle = SqlBPMNModdle = {
-  name: Custom.name,
-  prefix: Custom.prefix,
-  uri: Custom.uri,
   xml: {
     tagAlias: "lowerCase"
   },
@@ -41,8 +35,96 @@ var SqlBPMNModdle = SqlBPMNModdle = {
         {
           "name": "sensitivityMatrix",
           "isAttr": false,
-        "type": "String"
+          "type": "String"
         }
+      ]
+    },
+    {
+      name: "StereotypeTask",
+      extends: [
+        "bpmn:Task"
+      ],
+      properties: [
+        {
+          "name": "PKEncrypt",
+          "isAttr": false,
+          "type": "String"
+        },
+        {
+          "name": "PKDecrypt",
+          "isAttr": false,
+          "type": "String"
+        },
+        {
+          "name": "PKComputation",
+          "isAttr": false,
+          "type": "String"
+        },
+        {
+          "name": "MPC",
+          "isAttr": false,
+          "type": "String"
+        },
+        {
+          "name": "SKEncrypt",
+          "isAttr": false,
+          "type": "String"
+        },
+        {
+          "name": "SKDecrypt",
+          "isAttr": false,
+          "type": "String"
+        },
+        {
+          "name": "SKComputation",
+          "isAttr": false,
+          "type": "String"
+        },
+        {
+          "name": "SSSharing",
+          "isAttr": false,
+          "type": "String"
+        },
+        {
+          "name": "SSComputation",
+          "isAttr": false,
+          "type": "String"
+        },
+        {
+          "name": "SSReconstruction",
+          "isAttr": false,
+          "type": "String"
+        },
+        {
+          "name": "AddSSSharing",
+          "isAttr": false,
+          "type": "String"
+        },
+        {
+          "name": "AddSSComputation",
+          "isAttr": false,
+          "type": "String"
+        },
+        {
+          "name": "AddSSReconstruction",
+          "isAttr": false,
+          "type": "String"
+        },
+        {
+          "name": "FunSSSharing",
+          "isAttr": false,
+          "type": "String"
+        },
+        {
+          "name": "FunSSComputation",
+          "isAttr": false,
+          "type": "String"
+        },
+        {
+          "name": "FunSSReconstruction",
+          "isAttr": false,
+          "type": "String"
+        },
       ]
     },
     {

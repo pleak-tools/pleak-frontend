@@ -12,5 +12,8 @@
     },
     "sql_analyser": {
         "folder": "sql-analyser"
+    },
+    "pe_bpmn_editor": {
+        "folder": "pe-bpmn-editor"
     }
 }
