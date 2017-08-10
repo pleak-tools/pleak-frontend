@@ -40,7 +40,7 @@ export class ModelerComponent implements OnInit {
   private lastContent: String = '';
 
   private fileId: Number = null;
-  private file: any;
+  private file: any = null;
 
   @Input() authenticated: boolean;
   private fileLoaded = false;
@@ -110,6 +110,9 @@ export class ModelerComponent implements OnInit {
       this.modeler.importXML(diagram, (error, definitions) => {
         var canvas = this.modeler.get('canvas');
         canvas.zoom('fit-viewport');
+        if (!self.canEdit()) {
+          self.loadExportButtons();
+        }
       });
 
       this.eventBus = this.modeler.get('eventBus');
@@ -324,6 +327,24 @@ export class ModelerComponent implements OnInit {
 
   initLogoutModal() {
     this.authService.initLogoutModal();
+  }
+
+  isOwner(pobject) {
+    return this.authService.user ? pobject.user.id === parseInt(this.authService.user.sub) : false;
+  };
+
+  canEdit() {
+    if (this.file != null && this.authService.user != null) {
+      let file = this.file;
+      if (this.isOwner(file)) return true;
+      for (var pIx = 0; pIx < file.permissions.length; pIx++) {
+        if (file.permissions[pIx].action.title === 'edit' && this.authService.user ? file.permissions[pIx].user.id === parseInt(this.authService.user.sub) : false) {
+          return true;
+        }
+      }
+      return false;
+    }
+    return false;
   }
 
   ngOnInit() {
