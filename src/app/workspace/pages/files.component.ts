@@ -906,25 +906,25 @@ export class FilesComponent implements OnInit {
   };
 
   checkIfOwnFilesLoaded() {
+    this.sharedDir.open = false;
+    this.rootDir.open = true;
     if (this.rootDir != {}) {
       this.ownFilesLoading = false;
     } else {
       this.ownFilesLoading = true;
       this.getRootDirectory();
     }
-    this.rootDir.open = true;
-    this.sharedDir.open = false;
   }
 
   checkIfSharedFilesLoaded() {
+    this.rootDir.open = false;
+    this.sharedDir.open = true;
     if (this.sharedDir != {}) {
       this.sharedFilesLoading = false;
     } else {
       this.sharedFilesLoading = true;
       this.getSharedDirectory();
     }
-    this.sharedDir.open = true;
-    this.rootDir.open = false;
   }
 
   waitForElement(id, callback) {
@@ -933,7 +933,7 @@ export class FilesComponent implements OnInit {
         clearInterval(interval);
         callback();
       }
-    }, 500);
+    }, 100);
   }
 
   triggerLocalStorageChangeEvent() {
