@@ -266,7 +266,8 @@ export class FilesComponent implements OnInit {
 
   movePobject(pobject) {
     var newPobject= Object.assign({}, pobject);
-    newPobject.directory.id = this.selected.id
+    newPobject.directory.id = this.selected.id;
+    newPobject.permissions = this.selected.permissions; // Inherit permissions of the new location folder
     delete newPobject.open;
     if (this.isPobjectFile(pobject)) {
       delete newPobject.publicUrl;
