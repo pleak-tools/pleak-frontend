@@ -1,8 +1,0 @@
-{
-  "name": "pleaks-file-browser",
-  "private": true,
-  "license": "MIT",
-  "dependencies": {
-    "bpmn-js": "^0.20.5"
-  }
-}

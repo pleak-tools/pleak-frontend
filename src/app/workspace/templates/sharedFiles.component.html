@@ -1,0 +1,58 @@
+<div class="fluid{{parent.isPobjectDirectory(pobject) ? ' group' : ''}}{{parent.isPobjectHighlighted(pobject) ? ' highlight' : ''}}" *ngIf="parent.isMatchingSearch(pobject)">
+  <div class="col" (click)="pobject.open = pobject.open ? false : true">
+    <span *ngIf="parent.isPobjectDirectory(pobject)" class="title">
+      <span *ngIf="!pobject.open" class="glyphicon glyphicon-folder-close"></span>
+      <span *ngIf="pobject.open" class="glyphicon glyphicon-folder-open"></span>
+      <span>{{pobject.title}}</span>
+    </span>
+    <span *ngIf="parent.isPobjectFile(pobject)" class="title">
+      <a class="clickable" (click)="parent.openFile(pobject)">{{pobject.title}}</a>
+    </span>
+  </div>
+  <div class="col hidden-xs hidden-sm" (click)="pobject.open = pobject.open ? false : true">
+    <span>{{pobject.user.email}}</span>
+  </div>
+  <div class="col hidden-xs hidden-sm" (click)="pobject.open = pobject.open ? false : true">
+    <span *ngIf="parent.isPobjectFile(pobject)">{{parent.formatDate(pobject.lastModified)}}</span>
+    <span *ngIf="parent.isPobjectFile(pobject)">{{pobject.modifiedBy.email}}</span>
+  </div>
+  <div class="col" (click)="pobject.open = pobject.open ? false : true">
+    <span *ngIf="pobject.permissions.length > 0" class="glyphicon glyphicon-user"></span>
+    <span *ngIf="pobject.published" class="glyphicon glyphicon-globe"></span>
+  </div>
+  <div class="col" *ngIf="parent.isPobjectDirectory(pobject)" (click)="pobject.open = pobject.open ? false : true">
+  </div>
+  <div class="col text-right" *ngIf="parent.isPobjectFile(pobject)">
+    <div class="btn-group pull-right">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Actions <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu">
+        <li *ngIf="parent.canEdit(pobject)">
+          <a (click)="parent.openFile(pobject)">Edit</a>
+        </li>
+        <li *ngIf="!parent.canEdit(pobject) && parent.canView(pobject)">
+          <a (click)="parent.openFile(pobject)">View</a>
+        </li>
+        <li>
+          <a (click)="parent.copyFile(pobject)">Copy</a>
+        </li>
+        <li>
+        	<a (click)="parent.initRemoveShareModal(pobject.id)">Remove</a>
+        </li>
+        <li *ngIf="parent.canEdit(pobject) && parent.isPobjectFile(pobject)" role="separator" class="divider"></li>
+        <li *ngIf="parent.canEdit(pobject) && parent.isPobjectFile(pobject)">
+          <a (click)="parent.openFileSQLEditor(pobject)">Open in SQL-editor</a>
+        </li>
+        <li *ngIf="parent.canEdit(pobject) && parent.isPobjectFile(pobject)">
+          <a (click)="parent.openFilePEBPMNEditor(pobject)">Open in PE-BPMN editor</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<span *ngIf="parent.isPobjectDirectory(pobject)">
+  <ul class="subgroup" [hidden]="!pobject.open">
+    <li *ngFor="let pobject of pobject.pobjects"><shared-files [pobject]="pobject" [parent]="parent"></shared-files></li>
+  </ul>
+</span>

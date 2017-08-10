@@ -2,7 +2,7 @@
 
 The user-facing part of the Privacy Leak Tools
 
-v0.0.3
+v0.0.4
 
 ## Building
 

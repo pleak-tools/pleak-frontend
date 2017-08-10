@@ -1,0 +1,68 @@
+<nav>
+<div class="container">
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="brand" href="/#/home">
+          <img src="assets/img/logo.svg">
+        </a>
+        <p class="navbar-text">Privacy Leakage Analysis Tools {{page}}</p>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li *ngIf="isAuthenticated()">
+            <p class="navbar-text">Signed in as {{getUserEmail()}}</p>
+          </li>
+          <li class="{{getClass('home')}}">
+            <a href="/#/home">Home</a>
+          </li>
+          <li *ngIf="isAuthenticated()" class="{{getClass('files')}}">
+            <a href="/#/files">Files</a>
+          </li>
+          <li *ngIf="isAuthenticated()">
+           <a (click)="initChangePasswordModal()" href="{{getCurrentLocation()}}">Password</a>
+          </li>
+          <li *ngIf="isAuthenticated()">
+            <a (click)="initLogoutModal()" href="{{getCurrentLocation()}}">Log out</a>
+          </li>
+          <li *ngIf="!isAuthenticated()">
+            <a (click)="initLoginModal()" href="{{getCurrentLocation()}}">Log in</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>
+</nav>
+<div [ngSwitch]="subpage">
+  <app-workspace-files *ngSwitchCase="'files'" [authenticated]="authenticated"></app-workspace-files>
+  <div class="container" *ngSwitchDefault>
+    <div class="jumbotron">
+    <h1>Welcome!</h1>
+    <p>
+      PLEAK (Privacy LEAKage) is a next-generation analysis tool for the privacy audit of an existing system and the design of new privacy-aware systems. PLEAK lets you model your business process using the Business Process Model Notation (<a href="//en.wikipedia.org/wiki/Business_Process_Model_and_Notation" target="_blank">BPMN</a>) and privacy-preserving algorithms using the <a href="//sharemind-sdk.github.io/" target="_blank">SecreC</a> privacy-preserving programming language. PLEAK can then analyze the data flows using cryptographic privacy and differential privacy. PLEAK also supports the inclusion of Privacy Enhancing Technologies (PETs) in the business process models to reduce the leakage of private information.
+    </p>
+    <p>
+      PLEAK is currently under development by <a href="//www.cyber.ee/" target="_blank">Cybernetica AS</a> and <a href="//www.cs.ut.ee/" target="_blank">the University of Tartu</a> under the <a href="//www.darpa.mil/" target="_blank">DARPA</a> <a href="//www.darpa.mil/program/brandeis" target="_blank">Brandeis</a> privacy technology development program. Access to PLEAK is currently limited to collaborating privacy researchers. For information about PLEAK, contact <a href="mailto:pleak@cyber.ee">pleak@cyber.ee</a>.
+    </p>
+
+    <p class="logos">
+      <img src="assets/img/cyber.png" width="300" class="img-responsive inline-b">
+      <img src="assets/img/ut.png" width="300" class="img-responsive inline-b">
+    </p>
+
+    <hr>
+
+    <div *ngIf="!isAuthenticated()" id="guestJumbotron" class="ng-fade">
+      <button class="btn btn-lg btn-primary" (click)="initLoginModal()">Login »</button>
+    </div>
+
+    <div *ngIf="isAuthenticated()" id="userJumbotron" class="ng-fade">
+      <p>You can view, edit and create new files here</p>
+      <p>
+        <a class="btn btn-lg btn-primary" href="/#/files">Files »</a>
+      </p>
+    </div>
+    </div>
+  </div>
+<div>

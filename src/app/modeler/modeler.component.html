@@ -1,0 +1,59 @@
+  <div class="row import-export">
+    <div class="col-lg-12">
+      <div class="row">
+        <div class="col-lg-4 form-group file-name-container" *ngIf="isAuthenticated()">
+          <input type="text" class="form-control pull-right file-name-box" id="fileName" placeholder="File name" *ngIf="fileLoaded">
+          <span id="fileNameError" class="help-block error-message" style="display: none;">
+            Incorrect file name, please use symbols: a-z, A-Z, 0-9, ".", "-", "_"
+          </span>
+          <span id="fileContentError" class="help-block error-message" style="display: none;">
+            File has changed on the server. Please set new file name to save a copy.
+          </span>
+          <span id="fileCannotBeOpenedError" class="help-block error-message" style="display: none;">
+            File cannot be found or opened!
+          </span>
+          <span id="fileSaveSuccess" class="help-block success-message" style="display: none;">
+            Successfully saved the file.
+          </span>
+        </div>
+        <div class="col-lg-8 buttons-container">
+          <ul class="buttons" *ngIf="isAuthenticated() && fileLoaded">
+            <li>
+              <a id="save-diagram" title="save BPMN diagram" href="#">
+                <span class="glyphicon glyphicon-floppy-disk"></span> Save diagram
+              </a>
+            </li>
+          </ul>
+          <ul class="buttons" *ngIf="isAuthenticated() && fileLoaded">
+            <li>
+              <a id="download-diagram" title="download BPMN diagram" href="#">
+                <span class="glyphicon glyphicon-cloud-download"></span> BPMN diagram
+              </a>
+            </li>
+            <span class="separator">|</span>
+            <li>
+              <a id="download-svg" title="download as SVG image" href="#">
+                <span class="glyphicon glyphicon-cloud-download"></span> SVG image
+              </a>
+            </li>
+          </ul>
+          <ul class="buttons analyze" id="login-container" *ngIf="!isAuthenticated()">
+            <li>
+              <a class="active" id="log-in" (click)="initLoginModal()" href="{{getCurrentLocation()}}">
+                <span class="glyphicon glyphicon-log-in"></span> Log in
+              </a>
+            </li>
+          </ul>
+          <ul class="buttons analyze" id="login-container" *ngIf="isAuthenticated()">
+            <li>
+              <a class="active" id="log-out" (click)="initLogoutModal()" href="{{getCurrentLocation()}}">
+                <span class="glyphicon glyphicon-log-in"></span> Log out
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="canvas"></div>
