@@ -4,16 +4,15 @@ import { AuthService } from "app/auth/auth.service";
 import { RouteService } from "app/route/route.service";
 
 import * as Modeler from 'bpmn-js/lib/Modeler';
-import ModdleElement from 'moddle';
+import { Comments } from 'assets/comments/comments';
 import { SqlBPMNModdle } from "assets/bpmn-labels-extension";
-import * as embeddedComments from "bpmn-js-embedded-comments";
 
 declare function require(name:string);
-declare var $: any;
+declare let $: any;
 let is = (element, type) => element.$instanceOf(type);
 
-var jwt_decode = require('jwt-decode');
-var config = require('./../../config.json');
+let jwt_decode = require('jwt-decode');
+let config = require('./../../config.json');
 const initialBpmn = require('raw-loader!assets/newDiagram.bpmn');
 
 @Component({
@@ -43,7 +42,7 @@ export class ModelerComponent implements OnInit {
   private file: any = null;
 
   @Input() authenticated: boolean;
-  private fileLoaded = false;
+  fileLoaded = false;
 
   private dataObjectSettings = null;
 
@@ -52,14 +51,14 @@ export class ModelerComponent implements OnInit {
   }
 
   getModel() {
-    var self = this;
+    let self = this;
     self.modeler = null;
     $('#canvas').html('');
     $('.buttons-container').off('click', '#save-diagram');
     $('.buttons-container').off('click', '.buttons a');
     $(window).off('keydown');
     $(window).off('mouseup');
-    this.http.get(config.backend.host + '/rest/directories/files/' + self.modelId, this.authService.loadRequestOptions()).subscribe(
+    self.http.get(config.backend.host + '/rest/directories/files/' + self.modelId, self.authService.loadRequestOptions()).subscribe(
       success => {
         self.file = JSON.parse((<any>success)._body);
         self.fileId = self.file.id;
@@ -92,40 +91,39 @@ export class ModelerComponent implements OnInit {
 
     let self = this;
 
-    if (diagram && this.modeler == null) {
+    if (diagram && self.modeler == null) {
       
-      this.modeler = new Modeler({
+      self.modeler = new Modeler({
         container: '#canvas',
         keyboard: {
           bindTo: document 
         },
-        additionalModules: [
-          embeddedComments
-        ],
         moddleExtensions: {
           sqlExt: SqlBPMNModdle
         }
       });
 
-      this.modeler.importXML(diagram, (error, definitions) => {
-        var canvas = this.modeler.get('canvas');
+      self.modeler.importXML(diagram, (error, definitions) => {
+        let canvas = self.modeler.get('canvas');
         canvas.zoom('fit-viewport');
         if (!self.canEdit()) {
           self.loadExportButtons();
         }
       });
 
-      this.eventBus = this.modeler.get('eventBus');
-      this.overlays = this.modeler.get('overlays');
+      self.eventBus = self.modeler.get('eventBus');
+      self.overlays = self.modeler.get('overlays');
 
-      this.eventBus.on('element.click', (e) => {
-        this.initDataObjectSettings(e);
+      new Comments(self.overlays, self.eventBus);
+
+      self.eventBus.on('element.click', (e) => {
+        self.initDataObjectSettings(e);
       });
 
       $('.buttons-container').on('click', '#save-diagram', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        this.save();
+        self.save();
       });
 
       $('.buttons-container').on('click', '.buttons a', (e) => {
@@ -140,48 +138,46 @@ export class ModelerComponent implements OnInit {
           switch (String.fromCharCode(e.which).toLowerCase()) {
             case 's':
               event.preventDefault();
-              this.save();
+              self.save();
               break;
           }
         }
       });
 
       $(window).bind('beforeunload', (e) => {
-        if (this.file.content != this.lastContent) {
+        if (self.file.content != self.lastContent) {
           return 'Are you sure you want to close this tab? Unsaved progress will be lost.';
         }
       });
 
-      $(window).mouseup((e) => {
-        var container = $('.comments-overlay');
-        if (!container.is(e.target) && container.has(e.target).length === 0) {
-          this.modeler.get('comments').collapseAll();
-        }
+      $(document).on('click', '.delete', (e) => {
+        $(document).find('.edit textarea').val('');
+        self.loadExportButtons();
       });
 
       $(window).keydown((e) => {
-        var container = $('.comments-overlay').find('textarea');
+        let container = $('.comments-overlay').find('textarea');
         if (container.is(e.target) && e.which === 13 && !e.shiftKey) {
           e.preventDefault();
           self.loadExportButtons();
         }
       });
 
-      this.modeler.on('commandStack.changed', (e) => {
+      self.modeler.on('commandStack.changed', (e) => {
         self.loadExportButtons()
       });
 
       $('#fileName').on('input', () => {
-	      this.loadExportButtons();
+	      self.loadExportButtons();
       });
     }
   }
 
   // Save model
   save() {
-    var self = this;
+    let self = this;
     if ($('#save-diagram').is('.active')) {
-      this.modeler.saveXML(
+      self.modeler.saveXML(
       {
         format: true
       },
@@ -189,17 +185,17 @@ export class ModelerComponent implements OnInit {
         if (err) {
           console.log(err)
         } else {
-          this.file.title = $('#fileName').val();
+          self.file.title = $('#fileName').val();
           self.file.content = xml;
-          this.http.put(config.backend.host + '/rest/directories/files/' + self.fileId, self.file, this.authService.loadRequestOptions()).subscribe(
+          self.http.put(config.backend.host + '/rest/directories/files/' + self.fileId, self.file, self.authService.loadRequestOptions()).subscribe(
             success => {
               console.log(success)
               if (success.status === 200 || success.status === 201) {
-                var data = JSON.parse((<any>success)._body);
+                let data = JSON.parse((<any>success)._body);
                 $('#fileSaveSuccess').show();
                 $('#fileSaveSuccess').fadeOut(5000);
                 $('#save-diagram').removeClass('active');
-                var date = new Date();
+                let date = new Date();
                 localStorage.setItem("lastModifiedFileId", '"' + data.id + '"');
                 localStorage.setItem("lastModified", '"' + date.getTime() + '"');
                 if (self.fileId !== data.id) {
@@ -235,11 +231,11 @@ export class ModelerComponent implements OnInit {
   }
 
   loadExportButtons() {
-    var self = this;
+    let self = this;
     self.file.title = $('#fileName').val();
     $('#save-diagram').addClass('active');
     self.modeler.saveSVG((err, svg) => {
-      var encodedData = encodeURIComponent(svg);
+      let encodedData = encodeURIComponent(svg);
       if (svg) {
         self.file.content = svg;
         $('#download-svg').addClass('active').attr({
@@ -251,7 +247,7 @@ export class ModelerComponent implements OnInit {
       }
     });
     self.modeler.saveXML({ format: true }, (err, xml) => {
-      var encodedData = encodeURIComponent(xml);
+      let encodedData = encodeURIComponent(xml);
       if (xml) {
         self.file.content = xml;
         $('#download-diagram').addClass('active').attr({
@@ -268,7 +264,7 @@ export class ModelerComponent implements OnInit {
 
     let self = this;
 
-    this.terminateDataObjectSettings();
+    self.terminateDataObjectSettings();
 
     if (is(event.element.businessObject, 'bpmn:DataObjectReference')) {
 
@@ -283,7 +279,7 @@ export class ModelerComponent implements OnInit {
       overlayHtml += `</div>`;
       overlayHtml = $(overlayHtml);
 
-      this.dataObjectSettings = this.overlays.add(event.element, {
+      self.dataObjectSettings = self.overlays.add(event.element, {
         position: {
           bottom: 0,
           right: 0
@@ -337,7 +333,7 @@ export class ModelerComponent implements OnInit {
     if (this.file != null && this.authService.user != null) {
       let file = this.file;
       if (this.isOwner(file)) return true;
-      for (var pIx = 0; pIx < file.permissions.length; pIx++) {
+      for (let pIx = 0; pIx < file.permissions.length; pIx++) {
         if (file.permissions[pIx].action.title === 'edit' && this.authService.user ? file.permissions[pIx].user.id === parseInt(this.authService.user.sub) : false) {
           return true;
         }
@@ -348,14 +344,14 @@ export class ModelerComponent implements OnInit {
   }
 
   ngOnInit() {
-    var self = this;
+    let self = this;
     window.addEventListener('storage', function(e) {
       if (e.storageArea === localStorage) {
         self.authService.verifyToken();
         self.getModel();
       }
     });
-    this.getModel();
+    self.getModel();
   }
 
 }

@@ -4,7 +4,7 @@ import { AuthService } from "app/auth/auth.service";
 import { RouteService } from "app/route/route.service";
 import { SqlBPMNModdle } from "assets/bpmn-labels-extension";
 import * as Viewer from 'bpmn-js/lib/NavigatedViewer';
-import * as embeddedComments from "bpmn-js-embedded-comments";
+// import { Comments } from 'assets/comments/comments';
 
 declare function require(name:string);
 declare var $: any;
@@ -34,9 +34,6 @@ export class ViewerComponent implements OnInit {
         self.file = JSON.parse((<any>success)._body);
         self.viewer = new Viewer({
           container: '#viewer-canvas',
-          // additionalModules: [
-          //   embeddedComments
-          // ],
           moddleExtensions: {
             sqlExt: SqlBPMNModdle
           }
@@ -48,41 +45,17 @@ export class ViewerComponent implements OnInit {
             // error
           }
         });
-
-        // $(window).mouseup((e) => {
-        //   var container = $('.comments-overlay');
-        //   if (!container.is(e.target) && container.has(e.target).length === 0) {
-        //     this.viewer.get('comments').collapseAll();
-        //   }
+        // new Comments(self.viewer.get('overlays'), self.viewer.get('eventBus'));
+        // $(document).on('click', '.toggle', (e) => {
+        //   $(document).find('.edit').hide();
+        //   $(document).find('.delete').hide();
         // });
-
-        // $(window).keydown((e) => {
-        //   var container = $('.comments-overlay').find('textarea');
-        //   if (container.is(e.target) && e.which === 13 && !e.shiftKey) {
-        //     e.preventDefault();
-        //     self.save();
-        //   }
-        // });
-
-        // $(document).on('click', '.delete', (e) => {
-        //   self.save();
-        //   $(document).find('.edit textarea').val('');
-        // });
-
-        // this.viewer.on('commandStack.changed', (e) => {
-        //   self.save();
-        // });
-
       },
       fail => {
         self.file = null;
       }
     );
   };
-
-  // save() {
-  //   // TODO
-  // }
 
   getFileName() {
     return this.file.title;
