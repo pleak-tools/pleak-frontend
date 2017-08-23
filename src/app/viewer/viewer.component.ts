@@ -4,12 +4,12 @@ import { AuthService } from "app/auth/auth.service";
 import { RouteService } from "app/route/route.service";
 import { SqlBPMNModdle } from "assets/bpmn-labels-extension";
 import * as Viewer from 'bpmn-js/lib/NavigatedViewer';
+import { ElementsHandler } from "../../../../pe-bpmn-editor/src/app/editor/handler/elements-handler"; // If you don't have PE-BPMN editor installed, comment this line out!
 // import { Comments } from 'assets/comments/comments';
 
 declare function require(name:string);
-declare var $: any;
 
-var config = require('./../../config.json');
+let config = require('./../../config.json');
 
 @Component({
   selector: 'app-viewer',
@@ -22,14 +22,14 @@ export class ViewerComponent implements OnInit {
   @Input() authenticated: boolean;
 
   file;
-  viewer;
+  viewer: Viewer;
 
   private modelId = this.routeService.getCurrentUrl().split('/')[3];
 
   getPublishedFile() {
-    var self = this;
+    let self = this;
     self.viewer = null;
-    this.http.get(config.backend.host + '/rest/directories/files/public/' + self.modelId, this.authService.loadRequestOptions()).subscribe(
+    self.http.get(config.backend.host + '/rest/directories/files/public/' + self.modelId, self.authService.loadRequestOptions()).subscribe(
       success => {
         self.file = JSON.parse((<any>success)._body);
         self.viewer = new Viewer({
@@ -38,18 +38,12 @@ export class ViewerComponent implements OnInit {
             sqlExt: SqlBPMNModdle
           }
         });
-        self.viewer.importXML(self.file.content, function(err) {
+        self.viewer.importXML(self.file.content, (err) => {
           if (!err) {
             self.viewer.get('#viewer-canvas').zoom('fit-viewport');
-          } else {
-            // error
           }
         });
-        // new Comments(self.viewer.get('overlays'), self.viewer.get('eventBus'));
-        // $(document).on('click', '.toggle', (e) => {
-        //   $(document).find('.edit').hide();
-        //   $(document).find('.delete').hide();
-        // });
+        new ElementsHandler(self.viewer, self.file.content, self, "public");  // If you don't have PE-BPMN editor installed, comment this line out!
       },
       fail => {
         self.file = null;
