@@ -106,9 +106,7 @@ export class ModelerComponent implements OnInit {
       self.modeler.importXML(diagram, (error, definitions) => {
         let canvas = self.modeler.get('canvas');
         canvas.zoom('fit-viewport');
-        if (!self.canEdit()) {
-          self.loadExportButtons();
-        }
+        self.loadExportButtons();
       });
 
       self.eventBus = self.modeler.get('eventBus');
@@ -153,6 +151,7 @@ export class ModelerComponent implements OnInit {
       $(document).on('click', '.delete', (e) => {
         $(document).find('.edit textarea').val('');
         self.loadExportButtons();
+        $('#save-diagram').addClass('active');
       });
 
       $(window).keydown((e) => {
@@ -160,15 +159,18 @@ export class ModelerComponent implements OnInit {
         if (container.is(e.target) && e.which === 13 && !e.shiftKey) {
           e.preventDefault();
           self.loadExportButtons();
+          $('#save-diagram').addClass('active');
         }
       });
 
       self.modeler.on('commandStack.changed', (e) => {
-        self.loadExportButtons()
+        self.loadExportButtons();
+        $('#save-diagram').addClass('active');
       });
 
       $('#fileName').on('input', () => {
-	      self.loadExportButtons();
+        self.loadExportButtons();
+        $('#save-diagram').addClass('active');
       });
     }
   }
@@ -232,15 +234,16 @@ export class ModelerComponent implements OnInit {
 
   loadExportButtons() {
     let self = this;
-    self.file.title = $('#fileName').val();
-    $('#save-diagram').addClass('active');
+    if ($('#fileName').val().length > 0) {
+      self.file.title = $('#fileName').val();
+    }
     self.modeler.saveSVG((err, svg) => {
       let encodedData = encodeURIComponent(svg);
       if (svg) {
         self.file.content = svg;
         $('#download-svg').addClass('active').attr({
           'href': 'data:application/bpmn20-xml;charset=UTF-8,' + encodedData,
-          'download': name
+          'download': self.file.title + '.svg'
         });
       } else {
         $('#download-svg').removeClass('active');
@@ -252,7 +255,7 @@ export class ModelerComponent implements OnInit {
         self.file.content = xml;
         $('#download-diagram').addClass('active').attr({
           'href': 'data:application/bpmn20-xml;charset=UTF-8,' + encodedData,
-          'download': name
+          'download': self.file.title
         });
       } else {
         $('#download-diagram').removeClass('active');
@@ -292,6 +295,7 @@ export class ModelerComponent implements OnInit {
           dObj.isCollection = false;
           self.eventBus.fire('shape.changed', event);
           self.loadExportButtons();
+          $('#save-diagram').addClass('active');
           self.terminateDataObjectSettings();
         });
       } else {
@@ -299,6 +303,7 @@ export class ModelerComponent implements OnInit {
           dObj.isCollection = true;
           self.eventBus.fire('shape.changed', event);
           self.loadExportButtons();
+          $('#save-diagram').addClass('active');
           self.terminateDataObjectSettings();
         });
       }
