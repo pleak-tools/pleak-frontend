@@ -4,9 +4,10 @@ import { AuthService } from "app/auth/auth.service";
 import { RouteService } from "app/route/route.service";
 import { SqlBPMNModdle } from "assets/bpmn-labels-extension";
 import * as Viewer from 'bpmn-js/lib/NavigatedViewer';
-import { ElementsHandler } from "../../../../pe-bpmn-editor/src/app/editor/handler/elements-handler"; // If you don't have PE-BPMN editor installed, comment this line out!
+import { ElementsHandler } from "../../../../pleak-pe-bpmn-editor/src/app/editor/handler/elements-handler"; // If you don't have PE-BPMN editor installed, comment this line out!
 // import { Comments } from 'assets/comments/comments';
 
+declare var $: any;
 declare function require(name:string);
 
 let config = require('./../../config.json');
@@ -44,6 +45,19 @@ export class ViewerComponent implements OnInit {
           }
         });
         new ElementsHandler(self.viewer, self.file.content, self, "public");  // If you don't have PE-BPMN editor installed, comment this line out!
+        $(window).on('wheel', (event) => {
+          // Change the color of stereotype labels more visible when zooming out
+          var zoomLevel = self.viewer.get('canvas').zoom();
+          if (zoomLevel < 1.0) {
+            if ($('.stereotype-label-color').css("color") != "rgb(0, 0, 255)") {
+              $('.stereotype-label-color').css('color','blue');
+            }
+          } else {
+            if ($('.stereotype-label-color').css("color") != "rgb(0, 0, 139)") {
+              $('.stereotype-label-color').css('color','darkblue');
+            }
+          }
+        });
       },
       fail => {
         self.file = null;

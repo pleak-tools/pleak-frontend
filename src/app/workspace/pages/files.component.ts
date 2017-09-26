@@ -16,9 +16,11 @@ export class FilesComponent implements OnInit {
   constructor(public http: Http, private authService: AuthService) {
 
     this.authService.authStatus.subscribe(status => {
+      if (this.authenticated != status) {
+        this.getRootDirectory();
+        this.getSharedDirectory();
+      }
       this.authenticated = status;
-      this.getRootDirectory();
-      this.getSharedDirectory();
     });
 
   }
@@ -1037,12 +1039,173 @@ export class FilesComponent implements OnInit {
     this.selected = null;
   }
 
+  // Update only one row in own/shared files list when file is updated
+
+  updateRootDirectory() {
+
+    if (localStorage.lastModifiedFileId) {
+
+      var pid = parseInt(localStorage.lastModifiedFileId.replace('"',''));
+
+      this.http.get(config.backend.host + '/rest/directories/files/' + pid, this.authService.loadRequestOptions()).subscribe(
+        success => {
+
+          let pobject = JSON.parse((<any>success)._body);
+
+          for (let i = 0; i < this.rootDir.pobjects.length; i++) {
+
+            // Update row in root
+            let pobj1 = this.rootDir.pobjects[i];
+            if (pobj1.id == pid) {
+              this.rootDir.pobjects[i] = pobject;
+              this.createPublicUrl(this.rootDir.pobjects[i]);
+              break;
+            }
+
+            // Update row in sub folder (level 1)
+            if (pobj1.pobjects) {
+
+              for (let j = 0; j < pobj1.pobjects.length; j++) {
+
+                let pobj2 = pobj1.pobjects[j];
+                if (pobj2.id == pid) {
+                  this.rootDir.pobjects[i].pobjects[j] = pobject;
+                  this.createPublicUrl(this.rootDir.pobjects[i].pobjects[j]);
+                  break;
+                }
+
+                // Update row in sub folder (level 2)
+                if (pobj2.pobjects) {
+
+                  for (let k = 0; k < pobj2.pobjects.length; k++) {
+
+                    let pobj3 = pobj2.pobjects[k];
+                    if (pobj3.id == pid) {
+                      this.rootDir.pobjects[i].pobjects[j].pobjects[k] = pobject;
+                      this.createPublicUrl(this.rootDir.pobjects[i].pobjects[j].pobjects[k]);
+                      break;
+                    }
+
+                    // Update row in sub folder (level 3)
+                    if (pobj3.pobjects) {
+
+                      for (let l = 0; l < pobj3.pobjects.length; l++) {
+
+                        let pobj4 = pobj3.pobjects[l];
+                        if (pobj4.id == pid) {
+                          this.rootDir.pobjects[i].pobjects[j].pobjects[k].pobjects[l] = pobject;
+                          this.createPublicUrl(this.rootDir.pobjects[i].pobjects[j].pobjects[k].pobjects[l]);
+                          break;
+                        }
+
+                      }
+
+                    }
+
+                  }
+
+                }
+
+              }
+
+            }
+          }
+
+        },
+        fail => {
+          this.ownFilesLoading = true;
+        }
+      );
+
+    }
+
+  }
+
+  updateSharedDirectory() {
+
+    if (localStorage.lastModifiedFileId) {
+
+      var pid = parseInt(localStorage.lastModifiedFileId.replace('"',''));
+
+      this.http.get(config.backend.host + '/rest/directories/files/' + pid, this.authService.loadRequestOptions()).subscribe(
+        success => {
+
+          let pobject = JSON.parse((<any>success)._body);
+
+          for (let i = 0; i < this.sharedDir.pobjects.length; i++) {
+
+            // Update row in root
+            let pobj1 = this.sharedDir.pobjects[i];
+            if (pobj1.id == pid) {
+              this.sharedDir.pobjects[i] = pobject;
+              this.createPublicUrl(this.sharedDir.pobjects[i]);
+              break;
+            }
+
+            // Update row in sub folder (level 1)
+            if (pobj1.pobjects) {
+
+              for (let j = 0; j < pobj1.pobjects.length; j++) {
+
+                let pobj2 = pobj1.pobjects[j];
+                if (pobj2.id == pid) {
+                  this.sharedDir.pobjects[i].pobjects[j] = pobject;
+                  this.createPublicUrl(this.sharedDir.pobjects[i].pobjects[j]);
+                  break;
+                }
+
+                // Update row in sub folder (level 2)
+                if (pobj2.pobjects) {
+
+                  for (let k = 0; k < pobj2.pobjects.length; k++) {
+
+                    let pobj3 = pobj2.pobjects[k];
+                    if (pobj3.id == pid) {
+                      this.sharedDir.pobjects[i].pobjects[j].pobjects[k] = pobject;
+                      this.createPublicUrl(this.sharedDir.pobjects[i].pobjects[j].pobjects[k]);
+                      break;
+                    }
+
+                    // Update row in sub folder (level 3)
+                    if (pobj3.pobjects) {
+
+                      for (let l = 0; l < pobj3.pobjects.length; l++) {
+
+                        let pobj4 = pobj3.pobjects[l];
+                        if (pobj4.id == pid) {
+                          this.sharedDir.pobjects[i].pobjects[j].pobjects[k].pobjects[l] = pobject;
+                          this.createPublicUrl(this.sharedDir.pobjects[i].pobjects[j].pobjects[k].pobjects[l]);
+                          break;
+                        }
+
+                      }
+
+                    }
+
+                  }
+
+                }
+
+              }
+
+            }
+          }
+
+        },
+        fail => {
+          this.sharedFilesLoading = true;
+        }
+      );
+
+    }
+
+  };
+
   ngOnInit() {
     window.addEventListener('storage', (e) => {
       if (e.storageArea === localStorage) {
-        this.authService.verifyToken();
-        this.getRootDirectory();
-        this.getSharedDirectory();
+        this.updateRootDirectory();
+        this.updateSharedDirectory();
         $('#loginModal').modal('hide');
       }
     });

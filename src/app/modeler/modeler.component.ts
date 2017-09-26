@@ -168,10 +168,11 @@ export class ModelerComponent implements OnInit {
         $('#save-diagram').addClass('active');
       });
 
-      $('#fileName').on('input', () => {
+      $(document).on('input', '#fileName', () => {
         self.loadExportButtons();
         $('#save-diagram').addClass('active');
       });
+
     }
   }
 
