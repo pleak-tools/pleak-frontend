@@ -6,11 +6,12 @@ v0.0.4
 
 ## Prerequisites
 
-You need to have [pleak-backend](https://github.com/pleak-tools/pleak-backend), pleak-frontend, [pleak-sql-analysis](https://github.com/pleak-tools/pleak-sql-analysis) and [pleak-sql-editor](https://github.com/pleak-tools/pleak-sql-editor) directories all in the same directory and their names specified in the config.json file. All parts (except backend) must be built separately.
+You need to locate [pleak-backend](https://github.com/pleak-tools/pleak-backend), pleak-frontend, [pleak-sql-analysis](https://github.com/pleak-tools/pleak-sql-analysis), [pleak-sql-editor](https://github.com/pleak-tools/pleak-sql-editor) and [pleak-pe-bpmn-editor](https://github.com/pleak-tools/pleak-pe-bpmn-editor) directories all into the same directory and specify their names in the config.json file.
+Read more from sub-repositories how to build each module.
 
 ## Building
 
-To build an app you need: [NodeJS](http://nodejs.org) with [npm](https://npmjs.org) installed.
+To build the app you need: [NodeJS](http://nodejs.org) with [npm](https://npmjs.org) installed.
 
 To install all project dependencies execute
 
@@ -32,7 +33,7 @@ node server.js
 
 ## Using
 
-Pleak-backend and pleak-frontend running, go to the URL: http://localhost:8000.
+Set up (serve) pleak-backend and pleak-frontend and go to the URL: http://localhost:8000.
 
 ## License
 
