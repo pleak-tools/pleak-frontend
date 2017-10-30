@@ -2,8 +2,8 @@
   <div class="row topMargin">
     <div class="col-sm-12">
 
-      <h3 *ngIf="!nothingFound()">{{getFileName()}}</h3>
-      <h3 *ngIf="nothingFound()">Oops, nothing found.</h3>
+      <h3 class="model-title" *ngIf="!nothingFound()">{{getFileName()}}</h3>
+      <h3 class="nothing-found" *ngIf="nothingFound()" style="display:none">Oops, nothing found!</h3>
 
       <div id="viewer-canvas" class="model-viewer"></div>
 

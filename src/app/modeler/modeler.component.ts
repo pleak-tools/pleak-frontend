@@ -62,10 +62,38 @@ export class ModelerComponent implements OnInit {
       success => {
         self.file = JSON.parse((<any>success)._body);
         self.fileId = self.file.id;
-        if (self.file.content.length === 0) {
-          self.file.content = initialBpmn;
+        if (self.file.content.length === 0) { // If no content added yet, show option to import or create a new model
+          // $('#template-selector-overlay, #template-selector').show();
+          // document.getElementById('importModel').onclick = (e) => {
+          //   document.getElementById('fileImportInput').click();
+          // };
+          // document.getElementById('fileImportInput').onchange = (e:any) => {
+          //   var file = e.target.files[0];
+          //   if (!file) {
+          //     return;
+          //   }
+          //   self.modeler = null;
+          //   var reader = new FileReader();
+          //   reader.onload = (e:any) => {
+          //     var content = e.target.result;
+          //     if (this.isXML(content)) {
+          //       this.file.content = content;
+          //       this.openDiagram(content);
+          //       $('#template-selector-overlay, #template-selector').hide();
+          //     } else {
+          //       alert("File cannot be opened!");
+          //     }
+          //   };
+          //   reader.readAsText(file);
+          // };
+          // $(document).on('click', '#createNewModel', (e) => {
+            self.file.content = initialBpmn;
+            self.openDiagram(self.file.content);
+          //   $('#template-selector-overlay, #template-selector').hide();
+          // });
+        } else { // Content is already added, so just open the model
+          self.openDiagram(self.file.content);
         }
-        self.openDiagram(self.file.content);
         $('#fileName').val(self.file.title);
         self.lastContent = self.file.content;
         document.title = 'Pleak editor - ' + self.file.title;
@@ -92,7 +120,7 @@ export class ModelerComponent implements OnInit {
     let self = this;
 
     if (diagram && self.modeler == null) {
-      
+
       self.modeler = new Modeler({
         container: '#canvas',
         keyboard: {
@@ -192,9 +220,10 @@ export class ModelerComponent implements OnInit {
           self.file.content = xml;
           self.http.put(config.backend.host + '/rest/directories/files/' + self.fileId, self.file, self.authService.loadRequestOptions()).subscribe(
             success => {
-              console.log(success)
-              if (success.status === 200 || success.status === 201) {
+              // console.log(success)
+              if (success.status == 200 || success.status == 201) {
                 let data = JSON.parse((<any>success)._body);
+                $('.error-message').hide();
                 $('#fileSaveSuccess').show();
                 $('#fileSaveSuccess').fadeOut(5000);
                 $('#save-diagram').removeClass('active');
@@ -208,13 +237,17 @@ export class ModelerComponent implements OnInit {
                 self.lastContent = self.file.content;
                 self.fileId = data.id;
                 self.saveFailed = false;
-              } else if (success.status === 400) {
+                document.title = 'Pleak editor - ' + self.file.title;
+              }
+            },
+            fail => {
+              if (fail.status == 400) {
                 self.saveFailed = true;
                 $('#fileNameError').show();
-              } else if (success.status === 401) {
+              } else if (fail.status == 401) {
                 self.saveFailed = true;
                 $('#loginModal').modal();
-              } else if (success.status === 409) {
+              } else if (fail.status == 409) {
                 self.saveFailed = true;
                 delete self.file.id;
                 if (parseInt(jwt_decode(localStorage.jwt).sub) !== self.file.user.id) {
@@ -223,11 +256,9 @@ export class ModelerComponent implements OnInit {
                 }
                 $('#fileContentError').show();
               }
-            },
-            fail => {
             }
           );
-          console.log(xml)
+          // console.log(xml)
         }
       });
     }
@@ -235,7 +266,10 @@ export class ModelerComponent implements OnInit {
 
   loadExportButtons() {
     let self = this;
-    if ($('#fileName').val().length > 0) {
+    if (!self.canEdit()) {
+      $('.djs-palette').hide();
+    }
+    if ($('#fileName').val() && $('#fileName').val().length > 0) {
       self.file.title = $('#fileName').val();
     }
     self.modeler.saveSVG((err, svg) => {
@@ -347,6 +381,15 @@ export class ModelerComponent implements OnInit {
       return false;
     }
     return false;
+  }
+
+  isXML(xml) {
+    try {
+      $.parseXML(xml);
+      return true;
+    } catch (err) {
+      return false;
+    }
   }
 
   ngOnInit() {

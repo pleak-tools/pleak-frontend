@@ -24,32 +24,183 @@
   </div>
   <div class="col text-right" *ngIf="parent.isPobjectFile(pobject)">
     <div class="btn-group pull-right">
-      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Actions <span class="caret"></span>
-      </button>
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions <span class="caret"></span> </button>
       <ul class="dropdown-menu">
-        <li *ngIf="parent.canEdit(pobject)">
+        <li *ngIf="parent.canEditFileInShared(pobject)">
           <a (click)="parent.openFile(pobject)">Edit</a>
         </li>
-        <li *ngIf="!parent.canEdit(pobject) && parent.canView(pobject)">
+        <li *ngIf="parent.canViewFile(pobject)">
           <a (click)="parent.openFile(pobject)">View</a>
+        </li>
+        <li *ngIf="parent.canRenameFile(pobject)">
+          <a (click)="parent.initRenameFileModal(pobject.id)">Rename</a>
         </li>
         <li>
           <a (click)="parent.copyFile(pobject)">Copy</a>
         </li>
-        <li>
+        <li *ngIf="parent.canExport(pobject)">
+          <a (click)="parent.exportFile(pobject)" id="export-{{pobject.id}}">Export</a>
+        </li>
+        <li *ngIf="parent.isOwner(pobject)">
+          <a (click)="parent.initMoveModal(pobject.id)">Move</a>
+        </li>
+        <li *ngIf="parent.canDeleteFile(pobject)">
+          <a (click)="parent.initDeleteFileModal(pobject.id)">Delete</a>
+        </li>
+        <li *ngIf="parent.canRemoveShare(pobject)">
         	<a (click)="parent.initRemoveShareModal(pobject.id)">Remove</a>
         </li>
-        <li *ngIf="parent.canEdit(pobject) && parent.isPobjectFile(pobject)" role="separator" class="divider"></li>
-        <li *ngIf="parent.canEdit(pobject) && parent.isPobjectFile(pobject)">
+        <li *ngIf="parent.canShare(pobject)" role="separator" class="divider"></li>
+        <li *ngIf="parent.canShare(pobject)">
+          <a (click)="parent.initShareModal(pobject.id)">Share</a>
+        </li>
+        <li *ngIf="parent.canPublish(pobject)">
+          <a (click)="parent.initPublishFileModal(pobject.id)">Publish</a>
+        </li>
+        <li *ngIf="parent.canEditFileInShared(pobject)" role="separator" class="divider"></li>
+        <li *ngIf="parent.canEditFileInShared(pobject)">
           <a (click)="parent.openFileSQLEditor(pobject)">Open in SQL-editor</a>
         </li>
-        <li *ngIf="parent.canEdit(pobject) && parent.isPobjectFile(pobject)">
+        <li *ngIf="parent.canEditFileInShared(pobject)">
           <a (click)="parent.openFilePEBPMNEditor(pobject)">Open in PE-BPMN editor</a>
         </li>
       </ul>
     </div>
   </div>
+  <div class="col text-right" *ngIf="parent.isPobjectDirectory(pobject) && parent.canEdit(pobject)">
+    <div class="btn-group pull-right">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions <span class="caret"></span> </button>
+      <ul class="dropdown-menu">
+        <li *ngIf="parent.canCreateFile(pobject)">
+          <a (click)="parent.initCreateNewFileModal(pobject.id)">New model</a>
+        </li>
+        <li *ngIf="parent.canShare(pobject)" role="separator" class="divider"></li>
+        <li *ngIf="parent.canShare(pobject)">
+          <a (click)="parent.initShareModal(pobject.id)">Share</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Share modal -->
+  <div class="modal fade" id="shareModal{{pobject.id}}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div class="modal-body">
+          <p>Shared with:</p>
+          <table class="table sharing" id="sharedTable{{id}}">
+            <tbody>
+              <tr *ngFor="let fp of pobject.permissions">
+                <td class="{{!parent.canEditShare(pobject,fp) ? 'disabled' : ''}}" *ngIf="pobject.user.email != fp.user.email">{{fp.user.email}}</td>
+                <td *ngIf="parent.canEditShare(pobject,fp) && pobject.user.email != fp.user.email" style="text-align: right;">
+                  <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle sharing" type="button"
+                            id="dropdownMenu1" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="true">
+                      {{fp.action.title}}
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                      <li><a (click)="fp.action.title = 'view'">view</a></li>
+                      <li><a (click)="fp.action.title = 'edit'">edit</a></li>
+                    </ul>
+                  </div>
+                </td>
+                <td *ngIf="!parent.canEditShare(pobject,fp) && pobject.user.email != fp.user.email">
+                  <span class="disabled">{{fp.action.title}}</span>
+                </td>
+                <td *ngIf="parent.canEditShare(pobject,fp) && pobject.user.email != fp.user.email" style="text-align: right;">
+                  <a class="icon-link" (click)="parent.removeShare(pobject, fp.user.email)">
+                    <span class="glyphicon glyphicon-remove"></span>
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <form>
+            <div class="form-group input-group">
+              <input type="email" class="form-control" id="shareWithEmail" #shareWithEmail (keyup)="parent.setShareUserEmail(shareWithEmail.value)" (input)="parent.setShareUserEmail(shareWithEmail.value)" placeholder="Enter e-mail address">
+              <input type="hidden" #shareWithEmailRights value="{{parent.shareWithEmailRights}}" hidden>
+              <div class="input-group-btn">
+                <button type="button" class="btn btn-default dropdown-toggle" style="border-radius:0px"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{parent.shareWithEmailRights}} <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                  <li><a (click)="parent.setShareWithEmailRights('view')">view</a></li>
+                  <li><a (click)="parent.setShareWithEmailRights('edit')">edit</a></li>
+                </ul>
+                <button type="submit" class="btn btn-default" (click)="parent.sharePobjectWithoutCallback(pobject, shareWithEmailRights.value)">
+                  <span class="glyphicon glyphicon-plus"></span>
+                </button>
+              </div>
+            </div>
+            <span id="not-existing-email" class="error-block">Email not found.</span>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button (click)="parent.sharePobject(pobject, shareWithEmailRights.value)" class="btn btn-success">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Move modal -->
+  <div class="modal fade move" id="moveModal{{pobject.id}}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div class="modal-header">
+          Move <b>{{pobject.title}}</b> to <b>{{parent.selected === null ? '(select a directory)' : parent.selected.title}}</b>
+        </div>
+        <div class="modal-body">
+          <ul class="move-container">
+            <span *ngIf="parent.moveObjectId == pobject.id">
+              <li><move-pobjects [pobject]="pobject" [dest]="parent.getRoot()" [parent]="parent"></move-pobjects></li>
+            </span>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" (click)="parent.movePobject(pobject)">Move</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Publish (public link) modal -->
+  <div class="modal fade" id="publishFileModal{{pobject.id}}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div class="modal-header">
+          Publish file by creating a public link
+        </div>
+        <div class="modal-body">
+          <div class="form-group input-group">
+            <span class="input-group-addon">
+              <span class=" glyphicon glyphicon-link"></span>
+            </span>
+            <input type="text" class="form-control" id="publicLink" placeholder="No public link (yet)" value="{{pobject.publicUrl}}" readonly/>
+            <div class="input-group-btn">
+              <button (click)="parent.publishFile(pobject)" class="btn btn-success" *ngIf="!pobject.published">
+                Create public link
+              </button>
+              <button (click)="parent.unpublishFile(pobject)" class="btn btn-default" type="submit" *ngIf="pobject.published">
+                Remove public link
+              </button>
+            </div>
+          </div>
+          <span id="server-error" class="error-block">Server error, please try again later!</span>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 <span *ngIf="parent.isPobjectDirectory(pobject)">
   <ul class="subgroup" [hidden]="!pobject.open">

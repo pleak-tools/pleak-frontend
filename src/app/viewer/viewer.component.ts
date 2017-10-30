@@ -32,6 +32,7 @@ export class ViewerComponent implements OnInit {
     self.viewer = null;
     self.http.get(config.backend.host + '/rest/directories/files/public/' + self.modelId, self.authService.loadRequestOptions()).subscribe(
       success => {
+        if (success.status == 200) {
         self.file = JSON.parse((<any>success)._body);
         self.viewer = new Viewer({
           container: '#viewer-canvas',
@@ -58,15 +59,26 @@ export class ViewerComponent implements OnInit {
             }
           }
         });
+        $('.nothing-found').hide();
+      } else {
+        self.file = undefined;
+        $('.nothing-found').show();
+      }
+
       },
       fail => {
-        self.file = null;
+        self.file = undefined;
+        $('.nothing-found').show();
       }
     );
   };
 
   getFileName() {
-    return this.file.title;
+    if (this.file) {
+      return this.file.title;
+    } else {
+      return null;
+    }
   }
 
   nothingFound() {

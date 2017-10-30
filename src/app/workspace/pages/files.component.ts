@@ -4,6 +4,7 @@ import { AuthService } from "app/auth/auth.service";
 
 declare var $: any;
 declare function require(name:string);
+let is = (element, type) => element.$instanceOf(type);
 
 let config = require('../../../config.json');
 
@@ -40,6 +41,7 @@ export class FilesComponent implements OnInit {
   private moveObjectId = null;
   private ownFilesLoading;
   private sharedFilesLoading;
+  private canExportModel = false;
   
   isAuthenticated() {
     return this.authenticated;
@@ -52,6 +54,10 @@ export class FilesComponent implements OnInit {
   getShared = function() {
     return this.sharedDir;
   };
+
+  getCurrentUserEmail() {
+    return this.authService.getUserEmail();
+  }
 
   setSearchInput(value: string) {
     this.search = value;
@@ -156,7 +162,7 @@ export class FilesComponent implements OnInit {
     );
   };
 
-  createFileREST(file, parent, callback) {
+  createFileREST(file, parent, callback, location) {
     this.http.post(config.backend.host + '/rest/directories/files/', file, this.authService.loadRequestOptions()).subscribe(
       success => {
         var data = JSON.parse((<any>success)._body);
@@ -164,6 +170,10 @@ export class FilesComponent implements OnInit {
         data.content = null;
         parent.pobjects.unshift(data);
         parent.open = true;
+        if (location == 'shared') {
+          this.setShareUserEmail(parent.user.email);
+          this.addRightsREST(data, 'edit', true);
+        }
         callback.success(data);
       },
       fail => {
@@ -208,9 +218,16 @@ export class FilesComponent implements OnInit {
   };
 
   deleteFileREST(id) {
+    let fileInOwnFiles = this.getPobjectById(id, this.getRoot());
+    let fileInSharedFiles = this.getPobjectById(id, this.getShared());
     this.http.delete(config.backend.host + '/rest/directories/files/' + id, this.authService.loadRequestOptions()).subscribe(
       success => {
-        this.deletePobjectById(id, this.rootDir);
+        if (fileInOwnFiles) {
+          this.deletePobjectById(id, this.rootDir);
+        }
+        if (fileInSharedFiles) {
+          this.deletePobjectById(id, this.sharedDir);
+        }
       },
       fail => {
       }
@@ -260,8 +277,12 @@ export class FilesComponent implements OnInit {
   sharePobjectWithoutCallback(pobject, userRights) {
     this.addRightsREST(pobject, userRights, false);
   }
+
+  removeShare(pobject, email) {
+    pobject.permissions = $.grep(pobject.permissions, function(el, idx) {return el.user.email == email}, true)
+  }
   
-  removeFileShare(pobjectId) {
+  removeOwnShare(pobjectId) {
     let pobject = this.getPobjectById(Number.parseInt(pobjectId), this.getShared());
 	  this.deleteFilePermissions(pobject);
   };
@@ -269,7 +290,15 @@ export class FilesComponent implements OnInit {
   movePobject(pobject) {
     var newPobject= Object.assign({}, pobject);
     newPobject.directory.id = this.selected.id;
-    newPobject.permissions = this.selected.permissions; // Inherit permissions of the new location folder
+    if (this.isOwner(pobject)) {
+      newPobject.permissions = this.selected.permissions; // Inherit permissions of the new location folder
+    } else if (pobject.directory && this.isOwnerByPobjectId(pobject.directory.id)) {
+      newPobject.permissions = this.selected.permissions;
+      if (!this.isOwner(pobject)) {
+        this.setShareUserEmail(this.getCurrentUserEmail());
+        this.addRightsREST(pobject, 'edit', true);
+      }
+    }
     delete newPobject.open;
     if (this.isPobjectFile(pobject)) {
       delete newPobject.publicUrl;
@@ -311,23 +340,44 @@ export class FilesComponent implements OnInit {
   };
 
   createFile(parentId) {
-    var parent = this.getPobjectById(Number.parseInt(parentId), this.getRoot());
-    var newFile = {
-      title: this.addBpmn(this.newPobjectTitle),
-      directory: {
-        id: parent.id
-      },
-    };
-    this.createFileREST(newFile, parent, this.callbacks.newFile);
+    let rootParent = this.getPobjectById(Number.parseInt(parentId), this.getRoot());
+    let sharedParent = this.getPobjectById(Number.parseInt(parentId), this.getShared());
+    if (rootParent) {
+      let newFile = {
+        title: this.addBpmn(this.newPobjectTitle),
+        directory: {
+          id: rootParent.id
+        },
+      };
+      this.createFileREST(newFile, rootParent, this.callbacks.newFile, 'own');
+    } else if (sharedParent) {
+      let newFile = {
+        title: this.addBpmn(this.newPobjectTitle),
+        directory: {
+          id: sharedParent.id
+        },
+      };
+      this.createFileREST(newFile, sharedParent, this.callbacks.newFile, 'shared');
+    }
   };
 
   renameFile(oldFileId, title) {
-    let oldFile = this.getPobjectById(Number.parseInt(oldFileId), this.getRoot());
-    var newFile = Object.assign({}, oldFile);
-    delete newFile.publicUrl;
-    delete newFile.open;
-    newFile.title = this.addBpmn(title);
-    this.updateFileREST(newFile, oldFile, this.callbacks.renameFile);
+    let oldFileRoot = this.getPobjectById(Number.parseInt(oldFileId), this.getRoot());
+    let oldFileShared = this.getPobjectById(Number.parseInt(oldFileId), this.getShared());
+    if (oldFileRoot) {
+      var newFile = Object.assign({}, oldFileRoot);
+      delete newFile.publicUrl;
+      delete newFile.open;
+      newFile.title = this.addBpmn(title);
+      this.updateFileREST(newFile, oldFileRoot, this.callbacks.renameFile);
+    }
+    if (oldFileShared) {
+      var newFile = Object.assign({}, oldFileShared);
+      delete newFile.publicUrl;
+      delete newFile.open;
+      newFile.title = this.addBpmn(title);
+      this.updateFileREST(newFile, oldFileShared, this.callbacks.renameFile);
+    }
   };
 
   publishFile(oldFile) {
@@ -356,20 +406,45 @@ export class FilesComponent implements OnInit {
 
   copyFile(oldFile) {
     var newFile = Object.assign({}, oldFile);
-    var parent = this.rootDir;
-    if (!this.sharedDir.open) {
-      var parent = this.getPobjectById(oldFile.directory.id, this.rootDir);
+    let rootParent = this.getPobjectById(oldFile.directory.id, this.rootDir);
+    let sharedParent = this.getPobjectById(oldFile.directory.id, this.sharedDir);
+    if (!sharedParent && this.sharedDir.open) {
+      sharedParent = this.sharedDir;
     }
     delete newFile.publicUrl;
     delete newFile.open;
-    if (!this.isOwner(oldFile)) {
-      delete newFile.directory.id;
-      newFile.directory.title = 'root';
-    }
     newFile.title = this.addBpmn(this.removeBpmn(newFile.title) + " (copy)");
     newFile.permissions = [];
     newFile.published = false;
-    this.createFileREST(newFile, parent, this.callbacks.copyFile);
+    if (this.sharedDir.open && sharedParent) {
+      if (!this.isOwner(oldFile)) {
+        if (this.canEditByPobjectId(oldFile.directory.id)) { //can edit parent directory
+          this.createFileREST(newFile, sharedParent, this.callbacks.copySharedFile, 'shared');
+        } else {
+          delete newFile.directory.id;
+          newFile.directory.title = 'root';
+          this.createFileREST(newFile, this.rootDir, this.callbacks.copyOwnFile, 'own');
+        }
+      } else {
+        if (this.canEditByPobjectId(oldFile.directory.id)) { //can edit parent directory
+          this.createFileREST(newFile, sharedParent, this.callbacks.copySharedFile, 'shared');
+        } else {
+          delete newFile.directory.id;
+          newFile.directory.title = 'root';
+          this.createFileREST(newFile, this.rootDir, this.callbacks.copyOwnFile, 'own');
+        }
+      }
+    } else if (!this.sharedDir.open && rootParent) {
+      if (!this.isOwner(oldFile)) {
+        this.createFileREST(newFile, rootParent, this.callbacks.copyOwnFile, 'shared');
+      } else {
+        this.createFileREST(newFile, rootParent, this.callbacks.copyOwnFile, 'own');
+      }
+    } else {
+      delete newFile.directory.id;
+      newFile.directory.title = 'root';
+      this.createFileREST(newFile, this.rootDir, this.callbacks.copyOwnFile, 'own');
+    }
   };
 
   callbacks = {
@@ -444,15 +519,37 @@ export class FilesComponent implements OnInit {
     },
     moveFile: {
       success: function(response, oldParentId, self) {
-        self.deletePobjectById(response.id, self.getPobjectById(oldParentId, self.rootDir));
-        response.open = true;
-        self.getPobjectById(response.directory.id, self.rootDir).pobjects.push(response);
-        self.getPobjectById(response.directory.id, self.rootDir).open = true;
-        self.selected = null;
-        $('#moveModal' + response.id).modal('hide');
-        $('body').removeClass('modal-open');
-        $('.modal-backdrop').remove();
-        self.getRootDirectory();
+        let ownParent = self.getPobjectById(oldParentId, self.rootDir);
+        let sharedParent = self.getPobjectById(oldParentId, self.sharedDir);
+        let ownNew = self.getPobjectById(response.directory.id, self.rootDir);
+        let sharedNew = self.getPobjectById(response.directory.id, self.sharedDir);
+        if (ownParent) {
+          self.deletePobjectById(response.id, self.getPobjectById(oldParentId, self.rootDir));
+          response.open = true;
+          self.getPobjectById(response.directory.id, self.rootDir).pobjects.push(response);
+          self.getPobjectById(response.directory.id, self.rootDir).open = true;
+          self.selected = null;
+          $('#moveModal' + response.id).modal('hide');
+          $('body').removeClass('modal-open');
+          $('.modal-backdrop').remove();
+          self.checkIfOwnFilesLoaded();
+        } else if (sharedParent) {
+          self.deletePobjectById(response.id, self.getPobjectById(oldParentId, self.sharedDir));
+          response.open = true;
+          self.getPobjectById(response.directory.id, self.sharedDir).pobjects.push(response);
+          self.getPobjectById(response.directory.id, self.sharedDir).open = true;
+          self.selected = null;
+          $('#moveModal' + response.id).modal('hide');
+          $('body').removeClass('modal-open');
+          $('.modal-backdrop').remove();
+        }
+        if (ownNew) {
+          self.getSharedDirectory();
+          self.getRootDirectory();
+        } else if (sharedNew) {
+          self.getSharedDirectory();
+          self.getSharedDirectory();
+        }
       },
       error: function(response) {}
     },
@@ -482,10 +579,17 @@ export class FilesComponent implements OnInit {
         $('.form-group.input-group').addClass('has-error');
       }
     },
-    copyFile: {
+    copyOwnFile: {
       success: () => {
         this.rootDir.open = true;
         this.sharedDir.open = false;
+      },
+      error: () => {}
+    },
+    copySharedFile: {
+      success: () => {
+        this.rootDir.open = false;
+        this.sharedDir.open = true;
       },
       error: () => {}
     }
@@ -494,20 +598,52 @@ export class FilesComponent implements OnInit {
   /* OTHER TEMPLATE FUNCTIONS */
 
   getOwner(email) {
-    return email === this.authService.user.email ? 'Myself' : email;
+    return email === this.getCurrentUserEmail() ? 'Myself' : email;
   };
 
-  canDelete(pobject) {
-    return this.isOwner(pobject);
+  canCreateFile(parent) {
+    return this.isPobjectDirectory(parent) && this.canEdit(parent);
+  }
+
+  canCreateDirectory(parent) {
+    return this.isPobjectDirectory(parent) && this.canEdit(parent) && this.getInversePobjectDepth(parent) < 4;
+  }
+
+  canDeleteFile(pobject) {
+    return this.isPobjectFile(pobject) && (this.isOwner(pobject) || (pobject.directory && this.isOwnerByPobjectId(pobject.directory.id)));
+  };
+
+  canDeleteDirectory(pobject) {
+    return this.isPobjectDirectory(pobject) && (this.isOwner(pobject) || (pobject.directory && this.isOwnerByPobjectId(pobject.directory.id)));
   };
 
   canPublish(pobject) {
-    return this.isOwner(pobject) && this.isPobjectFile(pobject);
+    return this.isPobjectFile(pobject) && (this.canEdit(pobject) || (pobject.directory && this.isOwnerByPobjectId(pobject.directory.id)));
   };
 
   canShare(pobject) {
-    return this.isOwner(pobject);
+    return this.canEdit(pobject);
   };
+
+  canEditShare(pobject, fp) {
+    return this.getCurrentUserEmail() != fp.user.email && pobject.user.email != fp.user.email && (pobject.directory && !this.userCanEditByPobjectIdAndUser(pobject.directory.id, fp.user));
+  }
+
+  canRenameFile(pobject) {
+    return this.isPobjectFile(pobject) && this.canEdit(pobject);
+  }
+
+  canRenameFileInRoot(pobject) {
+    return this.canRenameFile(pobject) || this.isPobjectFile(pobject) && pobject.directory && this.isOwnerByPobjectId(pobject.directory.id);
+  }
+
+  canRenameDirectory(pobject) {
+    return this.isPobjectDirectory(pobject) && this.isOwner(pobject);
+  }
+
+  canRemoveShare(pobject) {
+    return !this.isOwner(pobject) && (pobject.directory ?!this.canEditByPobjectId(pobject.directory.id) && !this.canViewByPobjectId(pobject.directory.id) : (this.canEdit(pobject) || this.canView(pobject)));
+  }
 
   canEdit(file) {
     if (this.isOwner(file)) return true;
@@ -516,6 +652,29 @@ export class FilesComponent implements OnInit {
           this.authService.user ? file.permissions[pIx].user.id === parseInt(this.authService.user.sub) : false) {
         return true;
       }
+    }
+    return false;
+  };
+
+  canEditFileInRoot(file) {
+    return this.isPobjectFile(file) && (this.canEdit(file) || file.directory && this.isOwnerByPobjectId(file.directory.id));
+  }
+
+  canEditFileInShared(file) {
+    return this.isPobjectFile(file) && this.canEdit(file);
+  }
+
+  canEditByPobjectId(id) {
+    let file = null;
+    let fileInOwnFiles = this.getPobjectById(id, this.getRoot());
+    let fileInSharedFiles = this.getPobjectById(id, this.getShared());
+    if (fileInOwnFiles) {
+      file = fileInOwnFiles;
+    } else if (fileInSharedFiles) {
+      file = fileInSharedFiles;
+    }
+    if (file) {
+      return this.canEdit(file);
     }
     return false;
   };
@@ -530,6 +689,64 @@ export class FilesComponent implements OnInit {
     }
     return false;
   };
+
+  canViewFile(file) {
+    return !this.canEdit(file) && this.canView(file) && this.isPobjectFile(file);
+  }
+
+  canViewByPobjectId(id) {
+    let file = null;
+    let fileInOwnFiles = this.getPobjectById(id, this.getRoot());
+    let fileInSharedFiles = this.getPobjectById(id, this.getShared());
+    if (fileInOwnFiles) {
+      file = fileInOwnFiles;
+    } else if (fileInSharedFiles) {
+      file = fileInSharedFiles;
+    }
+    if (file) {
+      return this.canView(file);
+    }
+    return false;
+  };
+
+  canExport(file) {
+    return this.isPobjectFile(file);
+  }
+
+  canMoveFileInRoot(pobject) {
+    return this.canEdit(pobject) || this.isPobjectFile(pobject) && pobject.directory && this.isOwnerByPobjectId(pobject.directory.id);
+  }
+
+  exportFile(file) {
+    this.canExportModel = true;
+    this.http.get(config.backend.host + '/rest/directories/files/' + file.id, this.authService.loadRequestOptions()).subscribe(
+      success => {
+        let data = JSON.parse((<any>success)._body);
+        if (data.content.length > 0) {
+          let encodedData = encodeURIComponent(data.content);
+          $('#export-'+file.id).attr({
+            'href': 'data:application/bpmn20-xml;charset=UTF-8,' + encodedData,
+            'download': data.title
+          });
+          if (this.canExportModel) {
+            var mousedownEvent = document.createEvent("MouseEvent");
+            mousedownEvent.initMouseEvent("click", true, true, window, 0, null, null, null, null, false , false, false, false, 0, null);
+            document.getElementById('export-'+file.id).dispatchEvent(mousedownEvent);
+            this.canExportModel = false;
+          }
+        } else {
+          alert("File is empty!");
+        }
+        this.canExportModel = false;
+        document.getElementById('export-'+file.id).removeAttribute("href");
+        document.getElementById('export-'+file.id).removeAttribute("download");
+      },
+      fail => {
+        alert("File cannot be found/opened!");
+        this.canExportModel = false;
+      }
+    );
+  }
 
   isExistingFileName(fileName) {
     // Console error fix.
@@ -568,6 +785,27 @@ export class FilesComponent implements OnInit {
       }
     }
     return true;
+  };
+
+  userCanEditByPobjectIdAndUser(id, user) {
+    let file = null;
+    let fileInOwnFiles = this.getPobjectById(id, this.getRoot());
+    let fileInSharedFiles = this.getPobjectById(id, this.getShared());
+    if (fileInOwnFiles) {
+      file = fileInOwnFiles;
+    } else if (fileInSharedFiles) {
+      file = fileInSharedFiles;
+    }
+    if (file) {
+      if (user && file.user.id === parseInt(user.id)) { return true };
+      for (var pIx = 0; pIx < file.permissions.length; pIx++) {
+        if ((file.permissions[pIx].action.title === 'edit' || file.permissions[pIx].action.title === 'view') && user ? file.permissions[pIx].user.id === parseInt(user.id) : false) {
+          return true;
+        }
+      }
+      return false;
+    }
+    return false;
   };
 
   isMatchingSearch(pobject) {
@@ -752,7 +990,7 @@ export class FilesComponent implements OnInit {
   unShareFileWithUser(pobject, directory) {
 	  var userHasExistingRights = false;
 	  for (var pIx = 0; pIx < pobject.permissions.length; pIx++) {
-		  if (pobject.permissions[pIx].user.email === this.authService.user.email) {
+		  if (pobject.permissions[pIx].user.email === this.getCurrentUserEmail()) {
 			  userHasExistingRights = true;
 		  	break;
 		  }
@@ -764,9 +1002,34 @@ export class FilesComponent implements OnInit {
 	  return directory;
   };
 
+  isShared(pobject) {
+    if (pobject.permissions.length > 0) {
+      if (pobject.permissions.length == 1 && !this.isOwner(pobject) && this.canEdit(pobject)) {
+        return false;
+      }
+      return true;
+    }
+    return false;
+  }
+
   isOwner(pobject) {
     return this.authService.user ? pobject.user.id === parseInt(this.authService.user.sub) : false;
   };
+
+  isOwnerByPobjectId(id) {
+    let pobject = null;
+    let pobjectInOwnFiles = this.getPobjectById(id, this.getRoot());
+    let pobjectInSharedFiles = this.getPobjectById(id, this.getShared());
+    if (pobjectInOwnFiles) {
+      pobject = pobjectInOwnFiles;
+    } else if (pobjectInSharedFiles) {
+      pobject = pobjectInSharedFiles;
+    }
+    if (pobject) {
+      return this.isOwner(pobject);
+    }
+    return false;
+  }
 
   removeBpmn(title) {
     return title.replace(/.bpmn$/, "");
@@ -968,7 +1231,14 @@ export class FilesComponent implements OnInit {
   }
 
   initRenameFileModal(id) {
-    let file = this.getPobjectById(id, this.getRoot());
+    let file;
+    let ownFile = this.getPobjectById(id, this.getRoot());
+    let sharedFile = this.getPobjectById(id, this.getShared());
+    if (ownFile) {
+      file = ownFile;
+    } else if (sharedFile) {
+      file = sharedFile;
+    }
     $('.file-name-input').removeClass('has-error');
     $('.file-name-error').hide();
     $('#renameFileModal').find('#renameFileParentId').val(id);
@@ -992,7 +1262,14 @@ export class FilesComponent implements OnInit {
   };
 
   initDeleteFileModal(id) {
-    let file = this.getPobjectById(id, this.getRoot());
+    let file;
+    let fileInOwnFiles = this.getPobjectById(id, this.getRoot());
+    let fileInSharedFiles = this.getPobjectById(id, this.getShared());
+    if (fileInOwnFiles) {
+      file = fileInOwnFiles;
+    } else if (fileInSharedFiles) {
+      file = fileInSharedFiles;
+    }
     $('#deleteFileModal').find('#deleteFileParentId').val(id);
     $('#deleteFileModal').find('#deleteFileTitle').text(file.title);
     $('#deleteFileModal').modal();
@@ -1006,6 +1283,15 @@ export class FilesComponent implements OnInit {
   }
 
   initPublishFileModal(id) {
+    let file;
+    let fileInOwnFiles = this.getPobjectById(id, this.getRoot());
+    let fileInSharedFiles = this.getPobjectById(id, this.getShared());
+    if (fileInOwnFiles) {
+      file = fileInOwnFiles;
+    } else if (fileInSharedFiles) {
+      file = fileInSharedFiles;
+    }
+    this.createPublicUrl(file);
     $('#publishFileModal' + id).modal();
     this.waitForElement("publishFileModal" + id, () => {
       $('#publishFileModal' + id).find('#publicLink').focus();

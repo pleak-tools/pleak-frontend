@@ -79,6 +79,7 @@ export class RouteService {
     this.routePageId.next('home');
     this.routeSubPageId.next('home');
     this._router.navigateByUrl('/#/home');
+    document.title = 'Pleak - Privacy Leakage Analysis Tools';
   }
 
 }
