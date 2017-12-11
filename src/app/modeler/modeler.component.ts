@@ -63,34 +63,35 @@ export class ModelerComponent implements OnInit {
         self.file = JSON.parse((<any>success)._body);
         self.fileId = self.file.id;
         if (self.file.content.length === 0) { // If no content added yet, show option to import or create a new model
-          // $('#template-selector-overlay, #template-selector').show();
-          // document.getElementById('importModel').onclick = (e) => {
-          //   document.getElementById('fileImportInput').click();
-          // };
-          // document.getElementById('fileImportInput').onchange = (e:any) => {
-          //   var file = e.target.files[0];
-          //   if (!file) {
-          //     return;
-          //   }
-          //   self.modeler = null;
-          //   var reader = new FileReader();
-          //   reader.onload = (e:any) => {
-          //     var content = e.target.result;
-          //     if (this.isXML(content)) {
-          //       this.file.content = content;
-          //       this.openDiagram(content);
-          //       $('#template-selector-overlay, #template-selector').hide();
-          //     } else {
-          //       alert("File cannot be opened!");
-          //     }
-          //   };
-          //   reader.readAsText(file);
-          // };
-          // $(document).on('click', '#createNewModel', (e) => {
+          $('#template-selector-overlay, #template-selector').show();
+          document.getElementById('importModel').onclick = (e) => {
+            document.getElementById('fileImportInput').click();
+          };
+          document.getElementById('fileImportInput').onchange = (e:any) => {
+            let file = null;
+            file = e.target.files[0];
+            if (!file) {
+              return;
+            }
+            self.modeler = null;
+            var reader = new FileReader();
+            reader.onload = (e:any) => {
+              var content = e.target.result.replace(/\n/g, "").replace(/entity/gi, "").replace(/\<\!DOCTYPE.+]\>/gi, ""); // Minor cleaning
+              if (this.isXML(content)) {
+                this.file.content = content;
+                this.openDiagram(content);
+                $('#template-selector-overlay, #template-selector').hide();
+              } else {
+                alert("File cannot be opened!");
+              }
+            };
+            reader.readAsText(file);
+          };
+          $(document).on('click', '#createNewModel', (e) => {
             self.file.content = initialBpmn;
             self.openDiagram(self.file.content);
-          //   $('#template-selector-overlay, #template-selector').hide();
-          // });
+            $('#template-selector-overlay, #template-selector').hide();
+          });
         } else { // Content is already added, so just open the model
           self.openDiagram(self.file.content);
         }
@@ -132,9 +133,14 @@ export class ModelerComponent implements OnInit {
       });
 
       self.modeler.importXML(diagram, (error, definitions) => {
-        let canvas = self.modeler.get('canvas');
-        canvas.zoom('fit-viewport');
-        self.loadExportButtons();
+        if (!error) {
+          let canvas = self.modeler.get('canvas');
+          canvas.zoom('fit-viewport');
+          self.loadExportButtons();
+        } else {
+          alert("File cannot be opened!");
+          this.getModel();
+        }
       });
 
       self.eventBus = self.modeler.get('eventBus');
