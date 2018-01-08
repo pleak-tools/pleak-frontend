@@ -51,11 +51,14 @@ export class AuthService {
         delete localStorage.jwt;
         this.user = null;
         this.authStatusChanged(false);
+        return false;
       }
     );
 
+    return true;
+
   }
-  
+
   authStatusChanged(status: boolean) {
 
     this.authStatusBool.next(status);

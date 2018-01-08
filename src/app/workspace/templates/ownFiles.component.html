@@ -110,7 +110,7 @@
           </table>
           <form>
             <div class="form-group input-group">
-              <input type="email" class="form-control" id="shareWithEmail" #shareWithEmail (keyup)="parent.setShareUserEmail(shareWithEmail.value)" (input)="parent.setShareUserEmail(shareWithEmail.value)" placeholder="Enter e-mail address">
+              <input type="email" class="form-control shareWithEmail" #shareWithEmail (keyup)="parent.setShareUserEmail(shareWithEmail.value)" (input)="parent.setShareUserEmail(shareWithEmail.value)" placeholder="Enter e-mail address">
               <input type="hidden" #shareWithEmailRights value="{{parent.shareWithEmailRights}}" hidden>
               <div class="input-group-btn">
                 <button type="button" class="btn btn-default dropdown-toggle" style="border-radius:0px"
@@ -126,7 +126,7 @@
                 </button>
               </div>
             </div>
-            <span id="not-existing-email" class="error-block">Email not found.</span>
+            <span class="error-block">Email not found.</span>
           </form>
         </div>
         <div class="modal-footer">
@@ -173,7 +173,7 @@
             <span class="input-group-addon">
               <span class=" glyphicon glyphicon-link"></span>
             </span>
-            <input type="text" class="form-control" id="publicLink" placeholder="No public link (yet)" value="{{pobject.publicUrl}}" readonly/>
+            <input type="text" class="form-control publicLink" placeholder="No public link (yet)" value="{{pobject.publicUrl}}" readonly/>
             <div class="input-group-btn">
               <button (click)="parent.publishFile(pobject)" class="btn btn-success" *ngIf="!pobject.published">
                 Create public link

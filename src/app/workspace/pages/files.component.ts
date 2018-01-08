@@ -568,9 +568,9 @@ export class FilesComponent implements OnInit {
         $('#server-error').hide();
         $('.form-group.input-group').removeClass('has-error');
         this.waitForElement("publishFileModal" + response.id, () => {
-          $('#publishFileModal' + response.id).find('#publicLink').focus();
-          if ($('#publishFileModal' + response.id).find('#publicLink').val().length > 0) {
-            $('#publishFileModal' + response.id).find('#publicLink')[0].setSelectionRange(0, $('#publishFileModal' + response.id).find('#publicLink').val().length);
+          $('#publishFileModal' + response.id).find('.publicLink').focus();
+          if ($('#publishFileModal' + response.id).find('.publicLink').val().length > 0) {
+            $('#publishFileModal' + response.id).find('.publicLink')[0].setSelectionRange(0, $('#publishFileModal' + response.id).find('.publicLink').val().length);
           }
         });
       },
@@ -984,7 +984,7 @@ export class FilesComponent implements OnInit {
       pobject.permissions.push(pobjectPermission);
     }
     this.setShareUserEmail("");
-    $('#shareModal' + pobject.id).find('#shareWithEmail').val('');
+    $('#shareModal' + pobject.id).find('.shareWithEmail').val('');
   };
   
   unShareFileWithUser(pobject, directory) {
@@ -1211,22 +1211,22 @@ export class FilesComponent implements OnInit {
     this.newPobjectTitle = '';
     $('.file-name-input').removeClass('has-error');
     $('.file-name-error').hide();
-    $('#newFileModal').find('#newFileParentId').val(id);
-    $('#newFileModal').find('#newPobjectFileTitle').val('');
+    $('#newFileModal').find('.newFileParentId').val(id);
+    $('#newFileModal').find('.newPobjectFileTitle').val('');
     $('#newFileModal').modal();
     this.waitForElement("newFileModal", () => {
-      $('#newFileModal').find('#newPobjectFileTitle').focus();
+      $('#newFileModal').find('.newPobjectFileTitle').focus();
     });
   };
 
   initCreateNewDirectoryModal(id) {
     $('.directory-name-input').removeClass('has-error');
     $('.directory-name-error').hide();
-    $('#newDirectoryModal').find('#newDirectoryParentId').val(id);
-    $('#newDirectoryModal').find('#newPobjectDirectoryTitle').val('');
+    $('#newDirectoryModal').find('.newDirectoryParentId').val(id);
+    $('#newDirectoryModal').find('.newPobjectDirectoryTitle').val('');
     $('#newDirectoryModal').modal();
     this.waitForElement("newDirectoryModal", () => {
-      $('#newDirectoryModal').find('#newPobjectDirectoryTitle').focus();
+      $('#newDirectoryModal').find('.newPobjectDirectoryTitle').focus();
     });
   }
 
@@ -1241,11 +1241,11 @@ export class FilesComponent implements OnInit {
     }
     $('.file-name-input').removeClass('has-error');
     $('.file-name-error').hide();
-    $('#renameFileModal').find('#renameFileParentId').val(id);
-    $('#renameFileModal').find('#newFileTitle').val(this.removeBpmn(file.title));
+    $('#renameFileModal').find('.renameFileParentId').val(id);
+    $('#renameFileModal').find('.newFileTitle').val(this.removeBpmn(file.title));
     $('#renameFileModal').modal();
     this.waitForElement("renameFileModal", () => {
-      $('#renameFileModal').find('#newFileTitle').focus();
+      $('#renameFileModal').find('.newFileTitle').focus();
     });
   };
 
@@ -1253,11 +1253,11 @@ export class FilesComponent implements OnInit {
     let directory = this.getPobjectById(id, this.getRoot());
     $('.directory-name-input').removeClass('has-error');
     $('.directory-name-error').hide();
-    $('#renameDirectoryModal').find('#renameDirectoryParentId').val(id);
-    $('#renameDirectoryModal').find('#newDirectoryTitle').val(directory.title);
+    $('#renameDirectoryModal').find('.renameDirectoryParentId').val(id);
+    $('#renameDirectoryModal').find('.newDirectoryTitle').val(directory.title);
     $('#renameDirectoryModal').modal();
     this.waitForElement("renameDirectoryModal", () => {
-      $('#renameDirectoryModal').find('#newDirectoryTitle').focus();
+      $('#renameDirectoryModal').find('.newDirectoryTitle').focus();
     });
   };
 
@@ -1270,15 +1270,15 @@ export class FilesComponent implements OnInit {
     } else if (fileInSharedFiles) {
       file = fileInSharedFiles;
     }
-    $('#deleteFileModal').find('#deleteFileParentId').val(id);
-    $('#deleteFileModal').find('#deleteFileTitle').text(file.title);
+    $('#deleteFileModal').find('.deleteFileParentId').val(id);
+    $('#deleteFileModal').find('.deleteFileTitle').text(file.title);
     $('#deleteFileModal').modal();
   }
 
   initDeleteDirectoryModal(id) {
     let directory = this.getPobjectById(id, this.getRoot());
-    $('#deleteDirectoryModal').find('#deleteDirectoryParentId').val(id);
-    $('#deleteDirectoryModal').find('#deleteDirectoryTitle').text(directory.title);
+    $('#deleteDirectoryModal').find('.deleteDirectoryParentId').val(id);
+    $('#deleteDirectoryModal').find('.deleteDirectoryTitle').text(directory.title);
     $('#deleteDirectoryModal').modal();
   }
 
@@ -1294,9 +1294,9 @@ export class FilesComponent implements OnInit {
     this.createPublicUrl(file);
     $('#publishFileModal' + id).modal();
     this.waitForElement("publishFileModal" + id, () => {
-      $('#publishFileModal' + id).find('#publicLink').focus();
-      if ($('#publishFileModal' + id).find('#publicLink').val().length > 0) {
-        $('#publishFileModal' + id).find('#publicLink')[0].setSelectionRange(0, $('#publishFileModal' + id).find('#publicLink').val().length);
+      $('#publishFileModal' + id).find('.publicLink').focus();
+      if ($('#publishFileModal' + id).find('.publicLink').val().length > 0) {
+        $('#publishFileModal' + id).find('.publicLink')[0].setSelectionRange(0, $('#publishFileModal' + id).find('.publicLink').val().length);
       }
     });
   }
@@ -1305,17 +1305,17 @@ export class FilesComponent implements OnInit {
     this.setShareUserEmail("");
     $('.form-group.input-group').removeClass('has-error');
     $('.error-block').hide();
-    $('#shareModal' + id).find('#shareWithEmail').val('');
+    $('#shareModal' + id).find('.shareWithEmail').val('');
     $('#shareModal' + id).modal();
     this.waitForElement("shareModal" + id, () => {
-      $('#shareModal' + id).find('#shareWithEmail').focus();
+      $('#shareModal' + id).find('.shareWithEmail').focus();
     });
   }
 
   initRemoveShareModal(id) {
     let pobject = this.getPobjectById(id, this.getShared());
-    $('#removeSharedFileModal').find('#removeSharingPobjectParentId').val(id);
-    $('#removeSharedFileModal').find('#removeSharingPobjectTitle').text(pobject.title);
+    $('#removeSharedFileModal').find('.removeSharingPobjectParentId').val(id);
+    $('#removeSharedFileModal').find('.removeSharingPobjectTitle').text(pobject.title);
     $('#removeSharedFileModal').modal();
   }
 

@@ -25,8 +25,11 @@ export class ModelerComponent implements OnInit {
   constructor(public http: Http, private authService: AuthService, private routeService: RouteService) {
     this.authService.authStatus.subscribe(status => {
       this.authenticated = status;
-      this.getModel();
+      if (!status || !this.file) {
+        this.getModel();
+      }
     });
+    this.getModel();
   }
 
   private modeler;
@@ -45,6 +48,8 @@ export class ModelerComponent implements OnInit {
   fileLoaded = false;
 
   private dataObjectSettings = null;
+
+  private lastModified: Number = null;
 
   isAuthenticated() {
     return this.authenticated;
@@ -98,6 +103,7 @@ export class ModelerComponent implements OnInit {
         $('#fileName').val(self.file.title);
         self.lastContent = self.file.content;
         document.title = 'Pleak editor - ' + self.file.title;
+        self.lastModified = new Date().getTime();
         self.fileLoaded = true;
       },
       fail => {
@@ -226,7 +232,6 @@ export class ModelerComponent implements OnInit {
           self.file.content = xml;
           self.http.put(config.backend.host + '/rest/directories/files/' + self.fileId, self.file, self.authService.loadRequestOptions()).subscribe(
             success => {
-              // console.log(success)
               if (success.status == 200 || success.status == 201) {
                 let data = JSON.parse((<any>success)._body);
                 $('.error-message').hide();
@@ -234,6 +239,7 @@ export class ModelerComponent implements OnInit {
                 $('#fileSaveSuccess').fadeOut(5000);
                 $('#save-diagram').removeClass('active');
                 let date = new Date();
+                self.lastModified = date.getTime();
                 localStorage.setItem("lastModifiedFileId", '"' + data.id + '"');
                 localStorage.setItem("lastModified", '"' + date.getTime() + '"');
                 if (self.fileId !== data.id) {
@@ -264,7 +270,6 @@ export class ModelerComponent implements OnInit {
               }
             }
           );
-          // console.log(xml)
         }
       });
     }
@@ -399,14 +404,25 @@ export class ModelerComponent implements OnInit {
   }
 
   ngOnInit() {
-    let self = this;
-    window.addEventListener('storage', function(e) {
+    window.addEventListener('storage', (e) => {
       if (e.storageArea === localStorage) {
-        self.authService.verifyToken();
-        self.getModel();
+        if (!this.authService.verifyToken()) {
+          this.getModel();
+        } else {
+          let lastModifiedFileId = Number(localStorage.getItem('lastModifiedFileId').replace(/['"]+/g, ''));
+          let currentFileId = null;
+          if (this.file) {
+            currentFileId = this.file.id;
+          }
+          let localStorageLastModifiedTime = Number(localStorage.getItem('lastModified').replace(/['"]+/g, ''))
+          let lastModifiedTime = this.lastModified;
+          if (lastModifiedFileId && currentFileId && localStorageLastModifiedTime && lastModifiedTime && lastModifiedFileId == currentFileId && localStorageLastModifiedTime > lastModifiedTime) {
+            this.getModel();
+          }
+        }
       }
     });
-    self.getModel();
+    this.getModel();
   }
 
 }

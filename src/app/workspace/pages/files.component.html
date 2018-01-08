@@ -135,9 +135,9 @@
             New model
           </div>
           <div class="modal-body">
-            <input type="hidden" id="newFileParentId" #newFileParentId value="" hidden>
+            <input type="hidden" class="newFileParentId" #newFileParentId value="" hidden>
             <div class="form-group input-group file-name-input">
-              <input type="text" class="form-control" id="newPobjectFileTitle" #newPobjectFileTitle (keyup)="setNewPobjectTitle(newPobjectFileTitle.value)"/>
+              <input type="text" class="form-control newPobjectFileTitle" #newPobjectFileTitle (keyup)="setNewPobjectTitle(newPobjectFileTitle.value)"/>
               <div class="input-group-addon">.bpmn</div>
             </div>
             <span class="error-block file-name-error">Incorrect model name.</span>
@@ -160,9 +160,9 @@
             New directory
           </div>
           <div class="modal-body">
-            <input type="hidden" id="newDirectoryParentId" #newDirectoryParentId value="" hidden>
+            <input type="hidden" class="newDirectoryParentId" #newDirectoryParentId value="" hidden>
             <div class="form-group directory-name-input">
-              <input type="text" class="form-control" id="newPobjectDirectoryTitle" #newPobjectDirectoryTitle (keyup)="setNewPobjectTitle(newPobjectDirectoryTitle.value)"/>
+              <input type="text" class="form-control newPobjectDirectoryTitle" #newPobjectDirectoryTitle (keyup)="setNewPobjectTitle(newPobjectDirectoryTitle.value)"/>
               <span class="error-block directory-name-error">Incorrect directory name.</span>
             </div>
           </div>
@@ -184,9 +184,9 @@
             Rename file
           </div>
           <div class="modal-body">
-            <input type="hidden" id="renameFileParentId" #renameFileParentId value="" hidden>
+            <input type="hidden" class="renameFileParentId" #renameFileParentId value="" hidden>
             <div class="form-group input-group file-name-input">
-              <input type="text" class="form-control" id="newFileTitle" #newFileTitle value=""/>
+              <input type="text" class="form-control newFileTitle" #newFileTitle value=""/>
               <div class="input-group-addon">.bpmn</div>
             </div>
             <span class="error-block file-name-error">Incorrect file name.</span>
@@ -209,9 +209,9 @@
             Rename directory
           </div>
           <div class="modal-body">
-            <input type="hidden" id="renameDirectoryParentId" #renameDirectoryParentId value="" hidden>
+            <input type="hidden" class="renameDirectoryParentId" #renameDirectoryParentId value="" hidden>
             <div class="form-group directory-name-input">
-              <input type="text" class="form-control" id="newDirectoryTitle" #newDirectoryTitle value=""/>
+              <input type="text" class="form-control newDirectoryTitle" #newDirectoryTitle value=""/>
               <span class="error-block directory-name-error">Incorrect directory name.</span>
             </div>
           </div>
@@ -232,8 +232,8 @@
           Delete file
         </div>
         <div class="modal-body">
-          <input type="hidden" id="deleteFileParentId" #deleteFileParentId value="" hidden>
-          Are you sure you want to delete this file: <strong><span id="deleteFileTitle"></span></strong>?
+          <input type="hidden" class="deleteFileParentId" #deleteFileParentId value="" hidden>
+          Are you sure you want to delete this file: <strong><span class="deleteFileTitle"></span></strong>?
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -253,9 +253,9 @@
           Delete directory
         </div>
         <div class="modal-body">
-          <input type="hidden" id="deleteDirectoryParentId" #deleteDirectoryParentId value="" hidden>
+          <input type="hidden" class="deleteDirectoryParentId" #deleteDirectoryParentId value="" hidden>
           <p>Are you sure you want to delete this directory and all it's contents?</p>
-          <strong><span id="deleteDirectoryTitle"></span></strong>
+          <strong><span class="deleteDirectoryTitle"></span></strong>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -275,8 +275,8 @@
           Remove shared file
         </div>
         <div class="modal-body">
-          <input type="hidden" id="removeSharingPobjectParentId" #removeSharingPobjectParentId value="" hidden>
-          Are you sure you want to remove this shared file: <strong><span id="removeSharingPobjectTitle"></span></strong>?
+          <input type="hidden" class="removeSharingPobjectParentId" #removeSharingPobjectParentId value="" hidden>
+          Are you sure you want to remove this shared file: <strong><span class="removeSharingPobjectTitle"></span></strong>?
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
