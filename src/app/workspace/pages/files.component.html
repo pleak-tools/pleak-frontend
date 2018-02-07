@@ -15,6 +15,14 @@
             <div class="col-xs-4">
               <input type="search" class="form-control pull-right" placeholder="Search files" value="{{search}}" #searchBox (keyup)="setSearchInput(searchBox.value)">
             </div>
+            <div class="col-xs-8 text-right ">
+              <button type="button" class="btn btn-success" (click)="initCreateNewFileModal(getRoot().id)">
+                <span class="glyphicon glyphicon-file"></span> New model
+              </button>
+              <button type="button" class="btn btn-success" (click)="initCreateNewDirectoryModal(getRoot().id)">
+                <span class="glyphicon glyphicon-folder-open"></span> New directory
+              </button>
+            </div>
           </div>
           <!-- Table -->
           <div class="files-list" id="filesList">
@@ -57,19 +65,9 @@
                   <div class="double-bounce2"></div>
                 </div>
               </li>
-              <span *ngIf="!ownFilesLoading">
+              <ng-container *ngIf="!ownFilesLoading">
                 <li id="pobjects" class="ng-fade" *ngFor="let pobject of getRoot().pobjects"><own-files [pobject]="pobject" [parent]="this"></own-files></li>
-              </span>
-              <li class="fluid">
-                <div class="col">
-                  <button type="button" class="btn btn-success" (click)="initCreateNewFileModal(getRoot().id)">
-                    <span class="glyphicon glyphicon-file"></span>New model
-                  </button>
-                  <button type="button" class="btn btn-success" (click)="initCreateNewDirectoryModal(getRoot().id)">
-                    <span class="glyphicon glyphicon-folder-open"></span>New directory
-                  </button>
-                </div>
-              </li>
+              </ng-container>
             </ul>
           </div>
         </div>
