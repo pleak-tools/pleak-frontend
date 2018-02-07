@@ -113,9 +113,9 @@
                   <div class="double-bounce2"></div>
                 </div>
               </li>
-              <span *ngIf="!sharedFilesLoading">
+              <ng-container *ngIf="!sharedFilesLoading">
                 <li id="pobjects" class="ng-fade" *ngFor="let pobject of getShared().pobjects"><shared-files [pobject]="pobject" [parent]="this"></shared-files></li>
-              </span>
+              </ng-container>
             </ul>
           </div>
         </div>
