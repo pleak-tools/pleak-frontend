@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 
+declare var $: any;
+
 @Component({
   selector: 'shared-files',
   templateUrl: './sharedFiles.component.html'
@@ -11,6 +13,9 @@ export class SharedFilesComponent implements OnInit {
   @Input() pobject;
   @Input() parent;
 
-  ngOnInit() {}
-
+  ngOnInit() {
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+  }
 }

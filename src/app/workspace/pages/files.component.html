@@ -26,10 +26,10 @@
           </div>
           <!-- Table -->
           <div class="files-list" id="filesList">
-            <ul>
+            <ul class="pobject-list">
               <li class="fhead">
-                <div class="fluid">
-                  <div class="col">
+                <div class="row">
+                  <div class="col-xs-6 col-md-5 col-lg-6">
                     <b (mouseenter)="showTitle = true" (mouseleave)="showTitle = false">File Name
                       <span (click)="sortPobjectsByTitleDesc()"
                             ng-show="sort !== 2"
@@ -39,24 +39,28 @@
                             class="glyphicon glyphicon-chevron-down clickable"></span>
                     </b>
                   </div>
-                  <div class="col hidden-xs hidden-sm">
-                    <b (mouseenter)="showLastModified = true" (mouseleave)="showLastModified = false">Last Modified
-                      <span (click)="sortPobjectsByLastModifiedDesc()"
-                            ng-show="sort !== 4"
-                            class="glyphicon glyphicon-chevron-up clickable {{sort > 2 || showLastModified ? '' : 'invisible'}}"></span>
-                      <span (click)="sortPobjectsByLastModifiedAsc()"
-                            ng-show="sort === 4"
-                            class="glyphicon glyphicon-chevron-down clickable"></span>
-                    </b>
-                  </div>
-                  <div class="col">
-                    <b>Status</b>
-                  </div>
-                  <div class="col">
+                  <div class="col-xs-6 col-md-7 col-lg-6">
+                    <div class="row">
+                      <div class="col-md-6 text-center hidden-xs hidden-sm">
+                        <b (mouseenter)="showLastModified = true" (mouseleave)="showLastModified = false">Last Modified
+                          <span (click)="sortPobjectsByLastModifiedDesc()"
+                                ng-show="sort !== 4"
+                                class="glyphicon glyphicon-chevron-up clickable {{sort > 2 || showLastModified ? '' : 'invisible'}}"></span>
+                          <span (click)="sortPobjectsByLastModifiedAsc()"
+                                ng-show="sort === 4"
+                                class="glyphicon glyphicon-chevron-down clickable"></span>
+                        </b>
+                      </div>
+                      <div class="col-md-3 text-center">
+                        <b>Status</b>
+                      </div>
+                      <div class="col-md-3 ">
+                      </div>
+                    </div>
                   </div>
                 </div>
               </li>
-              <li class="fluid" *ngIf="getRoot().pobjects.length === 0 && !ownFilesLoading">
+              <li class="fluid empty-list" *ngIf="getRoot().pobjects.length === 0 && !ownFilesLoading">
                 <div class="no-files">No available files...</div>
               </li>
               <li class="fluid loading-container">
@@ -66,7 +70,7 @@
                 </div>
               </li>
               <ng-container *ngIf="!ownFilesLoading">
-                <li id="pobjects" class="ng-fade" *ngFor="let pobject of getRoot().pobjects"><own-files [pobject]="pobject" [parent]="this"></own-files></li>
+                <li class="ng-fade pobject" *ngFor="let pobject of getRoot().pobjects"><own-files [pobject]="pobject" [parent]="this"></own-files></li>
               </ng-container>
             </ul>
           </div>
@@ -85,26 +89,30 @@
             </div>
           </div>
           <div class="shared-files-list" id="filesList">
-            <ul>
+            <ul class="pobject-list">
               <li class="fhead">
-                <div class="fluid">
-                  <div class="col">
+                <div class="row">
+                  <div class="col-xs-6 col-md-5 col-lg-6">
                     <b>File Name</b>
                   </div>
-                  <div class="col hidden-xs hidden-sm">
-                    <b>Owner</b>
-                  </div>
-                  <div class="col hidden-xs hidden-sm">
-                    <b>Last Modified</b>
-                  </div>
-                  <div class="col">
-                    <b>Status</b>
-                  </div>
-                  <div class="col">
+                  <div class="col-xs-6 col-md-7 col-lg-6">
+                    <div class="row">
+                      <div class="col-md-5 hidden-xs hidden-sm">
+                        <b>Owner</b>
+                      </div>
+                      <div class="col-md-3 text-center hidden-xs hidden-sm">
+                        <b>Last Modified</b>
+                      </div>
+                      <div class="col-md-2 text-center">
+                        <b>Status</b>
+                      </div>
+                      <div class="col-md-2">
+                      </div>
+                    </div>
                   </div>
                 </div>
               </li>
-              <li class="fluid" *ngIf="getShared().pobjects.length === 0 && !sharedFilesLoading">
+              <li class="fluid empty-list" *ngIf="getShared().pobjects.length === 0 && !sharedFilesLoading">
                 <div class="no-files">No available files...</div>
               </li>
               <li class="fluid loading-container">
@@ -114,7 +122,7 @@
                 </div>
               </li>
               <ng-container *ngIf="!sharedFilesLoading">
-                <li id="pobjects" class="ng-fade" *ngFor="let pobject of getShared().pobjects"><shared-files [pobject]="pobject" [parent]="this"></shared-files></li>
+                <li class="ng-fade pobject" *ngFor="let pobject of getShared().pobjects"><shared-files [pobject]="pobject" [parent]="this"></shared-files></li>
               </ng-container>
             </ul>
           </div>

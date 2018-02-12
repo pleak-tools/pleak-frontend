@@ -1,82 +1,91 @@
-<div class="fluid{{parent.isPobjectDirectory(pobject) ? ' group' : ''}}{{parent.isPobjectHighlighted(pobject) ? ' highlight' : ''}}" *ngIf="parent.isMatchingSearch(pobject)">
-  <div class="col" (click)="pobject.open = pobject.open ? false : true">
+<div class="row {{parent.isPobjectDirectory(pobject) ? ' group' : ''}} {{parent.isPobjectHighlighted(pobject) ? ' highlight' : ''}}" *ngIf="parent.isMatchingSearch(pobject)">
+  <div class="col-xs-6 col-md-5 col-lg-6 text-column" (click)="pobject.open = !pobject.open">
     <span *ngIf="parent.isPobjectDirectory(pobject)" class="title">
-      <span *ngIf="!pobject.open" class="glyphicon glyphicon-folder-close"></span>
-      <span *ngIf="pobject.open" class="glyphicon glyphicon-folder-open"></span>
-      <span>{{pobject.title}}</span>
+      <span class="glyphicon " [ngClass]="pobject.open ? 'glyphicon-folder-open' : 'glyphicon-folder-close'"></span> {{pobject.title}}
     </span>
     <span *ngIf="parent.isPobjectFile(pobject)" class="title">
-      <a class="clickable" (click)="parent.openFile(pobject)">{{pobject.title}}</a>
+      <span class="glyphicon glyphicon-file"></span> <a class="clickable" (click)="parent.openFile(pobject)" title="{{pobject.title}}">{{pobject.title}}</a>
     </span>
   </div>
-  <div class="col hidden-xs hidden-sm" (click)="pobject.open = pobject.open ? false : true">
-    <span>{{pobject.user.email}}</span>
-  </div>
-  <div class="col hidden-xs hidden-sm" (click)="pobject.open = pobject.open ? false : true">
-    <span *ngIf="parent.isPobjectFile(pobject)">{{parent.formatDate(pobject.lastModified)}}</span>
-    <span *ngIf="parent.isPobjectFile(pobject)">{{pobject.modifiedBy.email}}</span>
-  </div>
-  <div class="col" (click)="pobject.open = pobject.open ? false : true">
-    <span *ngIf="pobject.permissions.length > 0" class="glyphicon glyphicon-user"></span>
-    <span *ngIf="pobject.published" class="glyphicon glyphicon-globe"></span>
-  </div>
-  <div class="col text-right" *ngIf="parent.isPobjectFile(pobject)">
-    <div class="btn-group pull-right">
-      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions <span class="caret"></span> </button>
-      <ul class="dropdown-menu">
-        <li *ngIf="parent.canEditFileInShared(pobject)">
-          <a (click)="parent.openFile(pobject)">Edit</a>
-        </li>
-        <li *ngIf="parent.canViewFile(pobject)">
-          <a (click)="parent.openFile(pobject)">View</a>
-        </li>
-        <li *ngIf="parent.canRenameFile(pobject)">
-          <a (click)="parent.initRenameFileModal(pobject.id)">Rename</a>
-        </li>
-        <li>
-          <a (click)="parent.copyFile(pobject)">Copy</a>
-        </li>
-        <li *ngIf="parent.canExport(pobject)">
-          <a (click)="parent.exportFile(pobject)" id="export-{{pobject.id}}">Export</a>
-        </li>
-        <li *ngIf="parent.isOwner(pobject)">
-          <a (click)="parent.initMoveModal(pobject.id)">Move</a>
-        </li>
-        <li *ngIf="parent.canDeleteFile(pobject)">
-          <a (click)="parent.initDeleteFileModal(pobject.id)">Delete</a>
-        </li>
-        <li *ngIf="parent.canRemoveShare(pobject)">
-        	<a (click)="parent.initRemoveShareModal(pobject.id)">Remove</a>
-        </li>
-        <li *ngIf="parent.canShare(pobject)" role="separator" class="divider"></li>
-        <li *ngIf="parent.canShare(pobject)">
-          <a (click)="parent.initShareModal(pobject.id)">Share</a>
-        </li>
-        <li *ngIf="parent.canPublish(pobject)">
-          <a (click)="parent.initPublishFileModal(pobject.id)">Publish</a>
-        </li>
-        <li *ngIf="parent.canEditFileInShared(pobject)" role="separator" class="divider"></li>
-        <li *ngIf="parent.canEditFileInShared(pobject)">
-          <a (click)="parent.openFileSQLEditor(pobject)">Open in SQL-editor</a>
-        </li>
-        <li *ngIf="parent.canEditFileInShared(pobject)">
-          <a (click)="parent.openFilePEBPMNEditor(pobject)">Open in PE-BPMN editor</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-  <div class="col text-right" *ngIf="parent.isPobjectDirectory(pobject) && parent.canEdit(pobject)">
-    <div class="btn-group pull-right">
-      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions <span class="caret"></span> </button>
-      <ul class="dropdown-menu">
-        <li *ngIf="parent.canCreateFile(pobject)">
-          <a (click)="parent.initCreateNewFileModal(pobject.id)">New model</a>
-        </li>
-        <li *ngIf="parent.canShare(pobject)" role="separator" class="divider"></li>
-        <li *ngIf="parent.canShare(pobject)">
-          <a (click)="parent.initShareModal(pobject.id)">Share</a>
-        </li>
-      </ul>
+  <div class="col-xs-6 col-md-7 col-lg-6">
+    <div class="row">
+      <div class="col-md-5 hidden-xs hidden-sm text-column" (click)="pobject.open = !pobject.open">
+        <span title="{{pobject.user.email}}">{{pobject.user.email}}</span>
+      </div>
+      <div class="col-md-3 text-center hidden-xs hidden-sm" (click)="pobject.open = !pobject.open">
+        <span class="" *ngIf="parent.isPobjectFile(pobject)"
+              data-toggle="tooltip"
+              data-placement="top"
+              data-html="true"
+              data-container="body"
+              title="{{parent.formatDate(pobject.lastModified)}}<br> by: {{pobject.modifiedBy.email}}"
+        >
+            {{parent.formatDateFrom(pobject.lastModified)}}
+        </span>
+      </div>
+      <div class="col-md-2 text-center" (click)="pobject.open = !pobject.open">
+        <span *ngIf="pobject.permissions.length > 0" class="glyphicon glyphicon-user"></span>
+        <span *ngIf="pobject.published" class="glyphicon glyphicon-globe"></span>
+      </div>
+      <div class="col-md-2 text-right" *ngIf="parent.isPobjectFile(pobject)">
+        <div class="btn-group">
+          <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-menu-hamburger"></span> <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <li *ngIf="parent.canEditFileInShared(pobject)">
+              <a (click)="parent.openFile(pobject)">Edit</a>
+            </li>
+            <li *ngIf="parent.canViewFile(pobject)">
+              <a (click)="parent.openFile(pobject)">View</a>
+            </li>
+            <li *ngIf="parent.canRenameFile(pobject)">
+              <a (click)="parent.initRenameFileModal(pobject.id)">Rename</a>
+            </li>
+            <li>
+              <a (click)="parent.copyFile(pobject)">Copy</a>
+            </li>
+            <li *ngIf="parent.canExport(pobject)">
+              <a (click)="parent.exportFile(pobject)" id="export-{{pobject.id}}">Export</a>
+            </li>
+            <li *ngIf="parent.isOwner(pobject)">
+              <a (click)="parent.initMoveModal(pobject.id)">Move</a>
+            </li>
+            <li *ngIf="parent.canDeleteFile(pobject)">
+              <a (click)="parent.initDeleteFileModal(pobject.id)">Delete</a>
+            </li>
+            <li *ngIf="parent.canRemoveShare(pobject)">
+              <a (click)="parent.initRemoveShareModal(pobject.id)">Remove</a>
+            </li>
+            <li *ngIf="parent.canShare(pobject)" role="separator" class="divider"></li>
+            <li *ngIf="parent.canShare(pobject)">
+              <a (click)="parent.initShareModal(pobject.id)">Share</a>
+            </li>
+            <li *ngIf="parent.canPublish(pobject)">
+              <a (click)="parent.initPublishFileModal(pobject.id)">Publish</a>
+            </li>
+            <li *ngIf="parent.canEditFileInShared(pobject)" role="separator" class="divider"></li>
+            <li *ngIf="parent.canEditFileInShared(pobject)">
+              <a (click)="parent.openFileSQLEditor(pobject)">Open in SQL-editor</a>
+            </li>
+            <li *ngIf="parent.canEditFileInShared(pobject)">
+              <a (click)="parent.openFilePEBPMNEditor(pobject)">Open in PE-BPMN editor</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-2 text-right" *ngIf="parent.isPobjectDirectory(pobject)">
+        <div class="btn-group" *ngIf="parent.canEdit(pobject)">
+          <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-menu-hamburger"></span> <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <li *ngIf="parent.canCreateFile(pobject)">
+              <a (click)="parent.initCreateNewFileModal(pobject.id)">New model</a>
+            </li>
+            <li *ngIf="parent.canShare(pobject)" role="separator" class="divider"></li>
+            <li *ngIf="parent.canShare(pobject)">
+              <a (click)="parent.initShareModal(pobject.id)">Share</a>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -88,31 +97,31 @@
           <p>Shared with:</p>
           <table class="table sharing" id="sharedTable{{id}}">
             <tbody>
-              <tr *ngFor="let fp of pobject.permissions">
-                <td class="{{!parent.canEditShare(pobject,fp) ? 'disabled' : ''}}" *ngIf="pobject.user.email != fp.user.email">{{fp.user.email}}</td>
-                <td *ngIf="parent.canEditShare(pobject,fp) && pobject.user.email != fp.user.email" style="text-align: right;">
-                  <div class="dropdown">
-                    <button class="btn btn-default dropdown-toggle sharing" type="button"
-                            id="dropdownMenu1" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="true">
-                      {{fp.action.title}}
-                      <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                      <li><a (click)="fp.action.title = 'view'">view</a></li>
-                      <li><a (click)="fp.action.title = 'edit'">edit</a></li>
-                    </ul>
-                  </div>
-                </td>
-                <td *ngIf="!parent.canEditShare(pobject,fp) && pobject.user.email != fp.user.email">
-                  <span class="disabled">{{fp.action.title}}</span>
-                </td>
-                <td *ngIf="parent.canEditShare(pobject,fp) && pobject.user.email != fp.user.email" style="text-align: right;">
-                  <a class="icon-link" (click)="parent.removeShare(pobject, fp.user.email)">
-                    <span class="glyphicon glyphicon-remove"></span>
-                  </a>
-                </td>
-              </tr>
+            <tr *ngFor="let fp of pobject.permissions">
+              <td class="{{!parent.canEditShare(pobject,fp) ? 'disabled' : ''}}" *ngIf="pobject.user.email != fp.user.email">{{fp.user.email}}</td>
+              <td *ngIf="parent.canEditShare(pobject,fp) && pobject.user.email != fp.user.email" style="text-align: right;">
+                <div class="dropdown">
+                  <button class="btn btn-default dropdown-toggle sharing" type="button"
+                          id="dropdownMenu1" data-toggle="dropdown"
+                          aria-haspopup="true" aria-expanded="true">
+                    {{fp.action.title}}
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <li><a (click)="fp.action.title = 'view'">view</a></li>
+                    <li><a (click)="fp.action.title = 'edit'">edit</a></li>
+                  </ul>
+                </div>
+              </td>
+              <td *ngIf="!parent.canEditShare(pobject,fp) && pobject.user.email != fp.user.email">
+                <span class="disabled">{{fp.action.title}}</span>
+              </td>
+              <td *ngIf="parent.canEditShare(pobject,fp) && pobject.user.email != fp.user.email" style="text-align: right;">
+                <a class="icon-link" (click)="parent.removeShare(pobject, fp.user.email)">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </a>
+              </td>
+            </tr>
             </tbody>
           </table>
           <form>
@@ -122,7 +131,7 @@
               <div class="input-group-btn">
                 <button type="button" class="btn btn-default dropdown-toggle" style="border-radius:0px"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {{parent.shareWithEmailRights}} <span class="caret"></span>
+                  {{parent.shareWithEmailRights}} <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-right">
                   <li><a (click)="parent.setShareWithEmailRights('view')">view</a></li>
@@ -201,7 +210,7 @@
 
 </div>
 <span *ngIf="parent.isPobjectDirectory(pobject)">
-  <ul class="subgroup" [hidden]="!pobject.open">
-    <li *ngFor="let pobject of pobject.pobjects"><shared-files [pobject]="pobject" [parent]="parent"></shared-files></li>
+  <ul class="pobject-list subgroup" [hidden]="!pobject.open">
+    <li class="pobject" *ngFor="let pobject of pobject.pobjects"><shared-files [pobject]="pobject" [parent]="parent"></shared-files></li>
   </ul>
 </span>

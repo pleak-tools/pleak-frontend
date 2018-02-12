@@ -1,3 +1,26 @@
+@import "../node_modules/bootstrap/less/bootstrap.less";
+
+@font-family-sans-serif: 'Roboto', sans-serif;
+
+@tooltip-color: @gray-dark;
+//** Tooltip background color
+@tooltip-bg: #E7E7E7;
+@tooltip-opacity: 1;
+
+[data-toggle="tooltip"] {
+  text-decoration: underline;
+  text-decoration-style: dashed;
+  cursor: default;
+}
+
+.dropdown-menu {
+  left: auto;
+  right: 0;
+  a:hover {
+    cursor: pointer;
+  }
+}
+
 html, body, #canvas, #canvas > div {
   height: 100%;
 }
@@ -18,17 +41,18 @@ html, body, #canvas, #canvas > div {
 .has-error span {
   color: #a94442;
 }
+
 .has-error label {
   color: #a94442;
 }
 
 /** http://tobiasahlin.com/spinkit/ **/
 #loginLoading, #logoutLoading {
-    display: none;
+  display: none;
 }
 
 #filesTable, #filesNew {
-    display: none;
+  display: none;
 }
 
 .spinner {
@@ -59,15 +83,20 @@ html, body, #canvas, #canvas > div {
 }
 
 @-webkit-keyframes sk-bounce {
-  0%, 100% { -webkit-transform: scale(0.0) }
-  50% { -webkit-transform: scale(1.0) }
+  0%, 100% {
+    -webkit-transform: scale(0.0)
+  }
+  50% {
+    -webkit-transform: scale(1.0)
+  }
 }
 
 @keyframes sk-bounce {
   0%, 100% {
     transform: scale(0.0);
     -webkit-transform: scale(0.0);
-  } 50% {
+  }
+  50% {
     transform: scale(1.0);
     -webkit-transform: scale(1.0);
   }
@@ -78,8 +107,8 @@ html, body, #canvas, #canvas > div {
 }
 
 [class^="bpmn-icon-"]:before, [class*=" bpmn-icon-"]:before {
-  margin-left: 0!important;
-  margin-right: 0!important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
 
 .djs-palette {
@@ -87,18 +116,14 @@ html, body, #canvas, #canvas > div {
 }
 
 .djs-overlay-comments {
-  left: -10px!important;
-  top: -10px!important;
+  left: -10px !important;
+  top: -10px !important;
 }
 
 .pageContainer {
   height: 100%;
   width: 100%;
 }
-
-
-
-
 
 body {
   padding-top: 25px;
@@ -117,11 +142,13 @@ body {
 .logos {
   text-align: center;
 }
+
 .logos img {
   display: inline-block;
   vertical-align: top;
   margin: 20px 0;
 }
+
 .logos img:first-of-type {
   margin-right: 20px;
   margin-bottom: 0;
@@ -130,16 +157,20 @@ body {
 .ng-fade {
   transition: 1s ease-in;
 }
+
 .ng-fade.ng-enter {
-  transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1.0s;
+  transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1.0s;
 }
+
 .ng-fade.ng-leave {
   transition: none;
 }
+
 .ng-fade.ng-enter,
 .ng-fade.ng-leave.ng-leave-active {
   opacity: 0;
 }
+
 .ng-fade.ng-leave,
 .ng-fade.ng-enter.ng-enter-active {
   opacity: 1;
@@ -153,7 +184,7 @@ body {
 #loginLoading,
 #logoutLoading,
 #changePasswordLoading {
-    display: none;
+  display: none;
 }
 
 .loading-container {
@@ -189,15 +220,20 @@ body {
 }
 
 @-webkit-keyframes sk-bounce {
-  0%, 100% { -webkit-transform: scale(0.0) }
-  50% { -webkit-transform: scale(1.0) }
+  0%, 100% {
+    -webkit-transform: scale(0.0)
+  }
+  50% {
+    -webkit-transform: scale(1.0)
+  }
 }
 
 @keyframes sk-bounce {
   0%, 100% {
     transform: scale(0.0);
     -webkit-transform: scale(0.0);
-  } 50% {
+  }
+  50% {
     transform: scale(1.0);
     -webkit-transform: scale(1.0);
   }
@@ -207,6 +243,7 @@ body {
 .has-error span {
   color: #a94442;
 }
+
 .has-error label {
   color: #a94442;
 }
@@ -247,84 +284,83 @@ body {
 }
 
 .model-viewer,
-.model-viewer > div{
+.model-viewer > div {
   height: 85vh;
 }
 
 .files-list,
 .shared-files-list {
-  border: 1px solid #ddd;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
+  font-size: 13px;
+  .glyphicon {
+    margin-right: 0.3em;
+    color: #666;
+  }
+
+  ul.pobject-list {
+    padding-left: 0;
+    margin-bottom: 0;
+    border: 1px solid #ddd;
+    border-bottom-width: 0;
+    &.subgroup {
+      border: none;
+      margin: 0 -15px;
+    }
+
+    li.pobject,
+    li.fhead,
+    li.loading-container,
+    li.empty-list{
+      list-style-type: none;
+      line-height: 40px;
+      padding: 0 15px;
+      .text-column {
+        .text-overflow();
+      }
+      shared-files,
+      own-files{
+        & > div.row {
+          border-bottom: 1px solid #ddd;
+          white-space: nowrap;
+          .btn-group [data-toggle="dropdown"] {
+            display: none;
+          }
+          .btn-group.open [data-toggle="dropdown"] {
+            display: inline-block;
+          }
+          &:hover {
+            background: #f5f5f5;
+            .btn-group [data-toggle="dropdown"] {
+              display: inline-block;
+            }
+          }
+
+        }
+      }
+
+    }
+  }
 }
+
 .files-list ul,
 .shared-files-list ul {
-  padding-left: 0;
-  margin-bottom: 0;
+
 }
+
 .files-list .fhead,
 .shared-files-list .fhead {
   background: #f8f8f8;
 }
+
 .files-list li,
 .shared-files-list li {
-  list-style-type: none;
+
 }
+
 .files-list .active,
 .shared-files-list .active {
   background: #f5f5f5;
 }
-.files-list .fluid,
-.shared-files-list .fluid {
-  display: table;
-  width: 100%;
-}
-.files-list .col,
-.shared-files-list .col {
-  display: table-cell;
-  height: 50px;
-  padding: 10px 15px;
-  vertical-align: middle;
-  border-bottom: 1px solid #ddd;
-}
-.files-list .col:nth-child(1),
-.shared-files-list .col:nth-child(1) {
-  width: 50%;
-}
-.files-list .col:nth-child(2) {
-  width: 25%;
-}
-.files-list .col:nth-child(3),
-.files-list .col:nth-child(4) {
-  width: 12.5%;
-}
-.shared-files-list .col:nth-child(2),
-.shared-files-list .col:nth-child(3) {
-  width: 15%;
-}
-.shared-files-list .col:nth-child(4) {
-  width: 7.5%;
-}
-.shared-files-list .col:nth-child(5) {
-  width: 12.5%;
-}
 
-@media only screen and (max-width: 991px) {
-  .files-list .col:nth-child(2),
-  .files-list .col:nth-child(3),
-  .files-list .col:nth-child(4),
-  .shared-files-list .col:nth-child(2),
-  .shared-files-list .col:nth-child(3),
-  .shared-files-list .col:nth-child(4),
-  .shared-files-list .col:nth-child(5) {
-    width: 25%;
-  }
-}
-.files-list .col .full,
-.shared-files-list .col .full {
-  width: 100%;
-}
 .files-list .group,
 .shared-files-list .group,
 .clickable {
@@ -334,36 +370,36 @@ body {
 .files-list .subgroup .title:before,
 .shared-files-list .subgroup .title:before,
 .move-container .subgroup .element-title:before {
-  position: relative;
-  top: -4px;
+
   display: inline-block;
   width: 10px;
   height: 10px;
   margin-right: 10px;
   margin-left: 5px;
-  border-left: 1px solid #333;
-  border-bottom: 1px solid #333;
+  border-left: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
   content: '';
 }
+
 .files-list ul ul ul .title,
 .shared-files-list ul ul ul .title {
   margin-left: 30px;
 }
+
 .files-list ul ul ul ul .title,
 .shared-files-list ul ul ul ul .title {
   margin-left: 60px;
 }
-.files-list .group:hover,
-.shared-files-list .group:hover {
-  background: #f5f5f5;
-}
+
 .files-list,
 .shared-files-list {
   border-bottom: none;
 }
+
 .hidden {
   display: none;
 }
+
 .files-list .no-files,
 .shared-files-list .no-files {
   display: table-cell;
@@ -373,20 +409,25 @@ body {
   border-bottom: 1px solid #ddd;
   width: 100%;
 }
+
 .move-container {
   border-bottom: 1px solid #ddd;
 }
+
 .move-container ul ul .element-title {
   margin-left: 30px;
 }
+
 .move-container ul ul ul .element-title {
   margin-left: 60px;
 }
+
 .move-element {
   padding: 10px;
   border: 1px solid #ddd;
   border-bottom: none;
 }
+
 .files-list .highlight,
 .files-list .highlight:hover,
 .shared-files-list .highlight,
@@ -401,13 +442,6 @@ body {
 .invisible {
   opacity: 0
 }
-
-
-
-
-
-
-
 
 .comments-overlay {
   background: #CCC;
@@ -460,15 +494,8 @@ body {
   display: block;
 }
 
-
-
-
-
-
-
-
 .comments-overlay {
-  background: #52B415!important;
+  background: #52B415 !important;
   font-size: 12px;
   display: none;
   color: white;
@@ -483,7 +510,7 @@ body {
 }
 
 .comments-overlay .comment {
-  border-top-color: white!important;
+  border-top-color: white !important;
 }
 
 .comments-overlay .edit {
@@ -516,9 +543,9 @@ body {
   font-family: 'bpmn-js-comments';
   src: url('assets/comments/fonts/bpmn-js-comments.eot?23532594');
   src: url('assets/comments/fonts/bpmn-js-comments.eot?23532594#iefix') format('embedded-opentype'),
-       url('assets/comments/fonts/bpmn-js-comments.woff?23532594') format('woff'),
-       url('assets/comments/fonts/bpmn-js-comments.ttf?23532594') format('truetype'),
-       url('assets/comments/fonts/bpmn-js-comments.svg?23532594#bpmn-js-comments') format('svg');
+  url('assets/comments/fonts/bpmn-js-comments.woff?23532594') format('woff'),
+  url('assets/comments/fonts/bpmn-js-comments.ttf?23532594') format('truetype'),
+  url('assets/comments/fonts/bpmn-js-comments.svg?23532594#bpmn-js-comments') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -543,6 +570,7 @@ body {
 .icon-comment:before {
   content: '\e800';
 }
+
 .icon-delete:before {
   content: '\e802';
 }
@@ -592,35 +620,34 @@ body {
   display: block;
 }
 
-
 /** Stereotypes */
 /* */
 .highlight-input:not(.djs-connection) .djs-visual > :nth-child(1) {
-  fill: greenyellow!important;
+  fill: greenyellow !important;
 }
 
 .highlight-input-selected:not(.djs-connection) .djs-visual > :nth-child(1) {
-  fill: springgreen!important;
+  fill: springgreen !important;
 }
 
 .highlight-input-output:not(.djs-connection) .djs-visual > :nth-child(1) {
-  fill: rosybrown!important;
+  fill: rosybrown !important;
 }
 
 .highlight-input-output-selected:not(.djs-connection) .djs-visual > :nth-child(1) {
-  fill: brown!important;
+  fill: brown !important;
 }
 
 .highlight-output:not(.djs-connection) .djs-visual > :nth-child(1) {
-  fill: lightsalmon!important;
+  fill: lightsalmon !important;
 }
 
 .highlight-output-selected:not(.djs-connection) .djs-visual > :nth-child(1) {
-  fill: lightcoral!important;
+  fill: lightcoral !important;
 }
 
 .highlight-group:not(.djs-connection) .djs-visual > :nth-child(1) {
-  fill: lightskyblue!important;
+  fill: lightskyblue !important;
 }
 
 .stereotype-label-color {
@@ -628,6 +655,6 @@ body {
 }
 
 .disabled {
-  color : darkgray;
+  color: darkgray;
   font-style: italic;
 }

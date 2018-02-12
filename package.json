@@ -12,7 +12,9 @@
     "prestart": "npm install",
     "start": "ng build --prod --aot",
     "poststart": "node server.js",
-    "build": "ng build --prod --aot"
+    "build": "ng build --prod --aot",
+    "build:dev": "ng build --dev",
+    "serve": "ng serve --host 0.0.0.0 --poll 200"
   },
   "dependencies": {
     "@angular/common": "^4.4.6",
@@ -30,6 +32,7 @@
     "jquery": "^3.2.1",
     "jwt-decode": "^2.2.0",
     "less": "^2.7.3",
+    "moment": "^2.20.1",
     "rxjs": "^5.5.2",
     "zone.js": "^0.8.18"
   },

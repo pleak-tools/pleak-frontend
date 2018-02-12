@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Http, RequestOptions, Headers } from '@angular/http';
 import { AuthService } from "app/auth/auth.service";
+import * as moment from 'moment';
 
 declare var $: any;
 declare function require(name:string);
@@ -842,16 +843,15 @@ export class FilesComponent implements OnInit {
   };
 
   formatDate(date) {
-    var d = new Date(date);
-    var day = d.getDate() < 10 ? '0' + d.getDate() : d.getDate();
-    var month = d.getMonth() < 9 ? '0' + (d.getMonth() + 1) : (d.getMonth() + 1);
-    var dmy = day + "." + month + "." + d.getFullYear();
-    var hour = d.getHours() < 10 ? '0' + d.getHours() : d.getHours();
-    var minutes = d.getMinutes() < 10 ? '0' + d.getMinutes() : d.getMinutes();
-    var seconds = d.getSeconds() < 10 ? '0' + d.getSeconds() : d.getSeconds();
-    var hms = hour + ":" + minutes + ":" + seconds;
-    return dmy + ", " + hms;
+
+    moment.locale('en-gb');
+    return moment(date).format('lll');
   };
+
+  formatDateFrom(date) {
+    moment.locale('en-gb');
+    return moment(date).fromNow();
+  }
 
   // Searches all children recursively for id
   containsById(id, dir) {
