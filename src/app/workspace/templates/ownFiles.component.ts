@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {Component, Input, AfterViewInit, ElementRef} from '@angular/core';
 
 declare var $: any;
 
@@ -6,17 +6,15 @@ declare var $: any;
   selector: 'own-files',
   templateUrl: './ownFiles.component.html'
 })
-export class OwnFilesComponent implements OnInit {
+export class OwnFilesComponent implements AfterViewInit {
 
-  constructor() {}
+  constructor(private elementRef: ElementRef) { }
 
   @Input() pobject;
   @Input() parent;
 
-  ngOnInit() {
-    $(function () {
-      $('[data-toggle="tooltip"]').tooltip()
-    })
+  ngAfterViewInit() {
+    $('[data-toggle="tooltip"]', this.elementRef.nativeElement).tooltip();
   }
 
 }

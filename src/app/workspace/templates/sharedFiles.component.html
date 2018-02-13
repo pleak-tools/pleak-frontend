@@ -13,7 +13,8 @@
         <span title="{{pobject.user.email}}">{{pobject.user.email}}</span>
       </div>
       <div class="col-md-3 text-center hidden-xs hidden-sm" (click)="pobject.open = !pobject.open">
-        <span class="" *ngIf="parent.isPobjectFile(pobject)"
+        &nbsp;
+        <span  *ngIf="parent.isPobjectFile(pobject)"
               data-toggle="tooltip"
               data-placement="top"
               data-html="true"
@@ -22,8 +23,10 @@
         >
             {{parent.formatDateFrom(pobject.lastModified)}}
         </span>
+
       </div>
       <div class="col-md-2 text-center" (click)="pobject.open = !pobject.open">
+        &nbsp;
         <span *ngIf="pobject.permissions.length > 0" class="glyphicon glyphicon-user"></span>
         <span *ngIf="pobject.published" class="glyphicon glyphicon-globe"></span>
       </div>

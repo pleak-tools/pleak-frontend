@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {Component, Input, ElementRef, AfterViewInit} from '@angular/core';
 
 declare var $: any;
 
@@ -6,16 +6,15 @@ declare var $: any;
   selector: 'shared-files',
   templateUrl: './sharedFiles.component.html'
 })
-export class SharedFilesComponent implements OnInit {
+export class SharedFilesComponent implements AfterViewInit {
 
-  constructor() {}
+  constructor(private elementRef: ElementRef) { }
 
   @Input() pobject;
   @Input() parent;
 
-  ngOnInit() {
-    $(function () {
-      $('[data-toggle="tooltip"]').tooltip()
-    })
+  ngAfterViewInit() {
+    $('[data-toggle="tooltip"]', this.elementRef.nativeElement).tooltip();
   }
+
 }
