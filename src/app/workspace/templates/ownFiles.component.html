@@ -90,7 +90,7 @@
     <div class="modal-content">
       <div class="modal-body">
         <p>Shared with:</p>
-        <table class="table sharing" id="sharedTable{{id}}">
+        <table class="table sharing">
           <tbody>
           <tr *ngFor="let fp of pobject.permissions">
             <td class="{{!parent.canEditShare(pobject,fp) ? 'disabled' : ''}}" *ngIf="pobject.user.email != fp.user.email">{{fp.user.email}}</td>

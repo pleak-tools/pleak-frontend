@@ -311,8 +311,10 @@ body {
     li.loading-container,
     li.empty-list{
       list-style-type: none;
-
       padding: 0 15px;
+      & > div.row {
+        line-height: 40px;
+      }
       .text-column {
         .text-overflow();
       }
