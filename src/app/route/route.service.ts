@@ -30,7 +30,7 @@ export class RouteService {
 
   setLocation(router, event) {
   
-    //if (event.constructor.name === 'NavigationStart') {
+    if (event['url']) {
 
       if (event['url'].indexOf('/#/files') !== -1) {
 
@@ -63,7 +63,7 @@ export class RouteService {
 
       this.setCurrentUrl(event['url']);
 
-    //}
+    }
 
   }
 
