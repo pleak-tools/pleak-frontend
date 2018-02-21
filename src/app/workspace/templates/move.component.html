@@ -1,6 +1,6 @@
 <div *ngIf="parent.isPobjectDirectory(dest) && parent.canMove(pobject, dest)" class="clickable">
   <div (click)="parent.selected = dest" class="move-element {{dest === parent.selected ? 'active' : ''}}">
-    <span class="element-title">
+    <span class="title">
       <span class="glyphicon glyphicon-folder-open"></span>
       <span>{{dest.title}}</span>
     </span>

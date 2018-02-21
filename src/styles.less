@@ -1,6 +1,7 @@
 @import "../node_modules/bootstrap/less/bootstrap.less";
 
-@font-family-sans-serif: 'Roboto', sans-serif;
+@font-family-sans-serif: 'Roboto', Helvetica, Arial, sans-serif;
+@font-letter-spacing: .3px;
 
 @tooltip-color: @gray-dark;
 //** Tooltip background color
@@ -23,6 +24,12 @@
 
 html, body, #canvas, #canvas > div {
   height: 100%;
+}
+
+body {
+  padding-top: 25px;
+  height: 100%;
+  letter-spacing: @font-letter-spacing;
 }
 
 .icon-pleaks-query {
@@ -125,10 +132,7 @@ html, body, #canvas, #canvas > div {
   width: 100%;
 }
 
-body {
-  padding-top: 25px;
-  height: 100%;
-}
+
 
 .brand {
   width: 90px;
@@ -295,6 +299,11 @@ body {
     margin-right: 0.3em;
     color: #666;
   }
+  .title {
+    .glyphicon {
+      color: #bbb;
+    }
+  }
 
   ul.pobject-list {
     padding-left: 0;
@@ -372,7 +381,7 @@ body {
 
 .files-list .subgroup .title:before,
 .shared-files-list .subgroup .title:before,
-.move-container .subgroup .element-title:before {
+.move-container .subgroup .title:before {
 
   display: inline-block;
   width: 10px;
@@ -426,11 +435,11 @@ body {
 
 }
 
-.move-container ul ul .element-title {
+.move-container ul ul .title {
   margin-left: 30px;
 }
 
-.move-container ul ul ul .element-title {
+.move-container ul ul ul .title {
   margin-left: 60px;
 }
 
