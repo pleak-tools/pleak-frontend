@@ -321,17 +321,17 @@ export class ModelerComponent implements OnInit {
       let overlayHtml = `<div class="collection-editor" id="` + event.element.businessObject.id + `-collection-selector" style="background:white; padding:10px; border-radius:2px">`;
 
       if (event.element.businessObject.dataObjectRef.isCollection == true) {
-        overlayHtml += `<button id="` + event.element.businessObject.id + `-collection-off-button">Turn to Data Object</button><br>`;
+        overlayHtml += `<button class="btn btn-default" id="` + event.element.businessObject.id + `-collection-off-button">-> Object</button><br>`;
       } else {
-        overlayHtml += `<button id="` + event.element.businessObject.id + `-collection-on-button">Turn to Data Object Collection</button><br>`;
+        overlayHtml += `<button class="btn btn-default" id="` + event.element.businessObject.id + `-collection-on-button">-> Collection</button><br>`;
       }
       overlayHtml += `</div>`;
       overlayHtml = $(overlayHtml);
 
       self.dataObjectSettings = self.overlays.add(event.element, {
         position: {
-          bottom: 0,
-          right: 0
+          top: -15,
+          right: -30
         },
         html: overlayHtml
       });
