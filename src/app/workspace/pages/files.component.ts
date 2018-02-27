@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Http, RequestOptions, Headers } from '@angular/http';
-import { AuthService } from "app/auth/auth.service";
+import { Http } from '@angular/http';
+import { AuthService } from 'app/auth/auth.service';
 import * as moment from 'moment';
 
 declare var $: any;
@@ -15,6 +15,25 @@ let config = require('../../../config.json');
 })
 export class FilesComponent implements OnInit {
 
+  selectedPobject: object;
+
+  @Input() authenticated: boolean;
+
+  private rootDir: any = {};
+  private sharedDir: any = {};
+  private files = null;
+  private pobjects = null;
+  private selected = null;
+  private sort = 0;
+  private userEmail = '';
+  private search = '';
+  private newPobjectTitle = '';
+  private shareWithEmailRights = 'view';
+  private moveObjectId = null;
+  private ownFilesLoading;
+  private sharedFilesLoading;
+  private canExportModel = false;
+
   constructor(public http: Http, private authService: AuthService) {
 
     this.authService.authStatus.subscribe(status => {
@@ -27,23 +46,6 @@ export class FilesComponent implements OnInit {
 
   }
 
-  @Input() authenticated: boolean;
-
-  private rootDir: any = {};
-  private sharedDir: any = {};
-  private files = null;
-  private pobjects = null;
-  private selected = null;
-  private sort = 0;
-  private userEmail = "";
-  private search = '';
-  private newPobjectTitle = '';
-  private shareWithEmailRights = "view";
-  private moveObjectId = null;
-  private ownFilesLoading;
-  private sharedFilesLoading;
-  private canExportModel = false;
-  
   isAuthenticated() {
     return this.authenticated;
   }
@@ -207,7 +209,7 @@ export class FilesComponent implements OnInit {
       }
     );
   };
-  
+
   deleteFilePermissions(pobject) {
     this.http.delete(config.backend.host + '/rest/directories/files/permissions/' + pobject.id, this.authService.loadRequestOptions()).subscribe(
       success => {
@@ -1323,6 +1325,11 @@ export class FilesComponent implements OnInit {
     this.moveObjectId = id;
     $('#moveModal' + id).modal();
     this.selected = null;
+  }
+
+  initModal(modalName, pobject) {
+    this.selectedPobject = pobject;
+    $('#' + modalName).modal();
   }
 
   // Update only one row in own/shared files list when file is updated

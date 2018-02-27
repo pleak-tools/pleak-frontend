@@ -86,6 +86,9 @@
             <li *ngIf="parent.canShare(pobject)">
               <a (click)="parent.initShareModal(pobject.id)">Share</a>
             </li>
+            <li *ngIf="parent.isPobjectDirectory(pobject)">
+              <a (click)="parent.initModal('publishFolderForm', pobject)">Publish files</a>
+            </li>
           </ul>
         </div>
       </div>
