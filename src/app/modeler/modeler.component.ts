@@ -86,6 +86,7 @@ export class ModelerComponent implements OnInit {
                 this.file.content = content;
                 this.openDiagram(content);
                 $('#template-selector-overlay, #template-selector').hide();
+                $('#save-diagram').addClass('active');
               } else {
                 alert("File cannot be opened!");
               }
