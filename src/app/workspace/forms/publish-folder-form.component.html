@@ -7,8 +7,8 @@
       <div class="modal-body">
         <div class="row">
           <div class="col-md-12 text-right">
-            <button type="button" class="btn btn-success" (click)="publishAllFiles()">Publish all files</button>
-            <button type="button" class="btn btn-warning" (click)="unpublishAllFiles()">Remove public all public links</button>
+            <button type="button" class="btn btn-success with-spinner" [ngClass]="{spinning: publishing}" (click)="publishAllFiles()">Publish all files</button>
+            <button type="button" class="btn btn-warning with-spinner" [ngClass]="{spinning: unpublishing}" (click)="unpublishAllFiles()">Remove all public links</button>
           </div>
         </div>
         <div class="row">
@@ -21,7 +21,7 @@
                     <td>
                       <span class="glyphicon glyphicon-link"></span> {{dirname}}{{pobject.title}}
                     </td>
-                    <td>{{pobject.publicUrl}}</td>
+                    <td><span *ngIf="pobject.published" [@pobjectPublished]="pobject.published">{{pobject.publicUrl}}</span></td>
                   </tr>
                   <ng-container *ngIf="pobject.type == 'directory' && pobject.pobjects.length > 0">
                     <ng-container *ngTemplateOutlet="pobjectItem; context:{$implicit: pobject.pobjects, dirname: dirname + pobject.title + '/'}"></ng-container>

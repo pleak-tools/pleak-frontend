@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import 'rxjs/add/operator/map';
+import { Observable } from 'rxjs/Observable';
 
 declare function require(name: string);
 
@@ -11,14 +13,14 @@ export class ApiService {
   constructor(private http: HttpClient) {
   }
 
-  updateFile(pobject: any, values: Object = {}) {
+  updateFile(pobject: any, values: Object = {}): Observable<any> {
 
     let requestItem = Object.assign({}, pobject);
     Object.assign(requestItem, values);
     delete requestItem.publicUrl;
     delete requestItem.open;
 
-    this.http.put(config.backend.host + '/rest/directories/files/' + pobject.id, requestItem, {headers: {'JSON-Web-Token': localStorage.jwt}}).subscribe(
+    return this.http.put(config.backend.host + '/rest/directories/files/' + pobject.id, requestItem, {headers: {'JSON-Web-Token': localStorage.jwt}}).map(
       (response: any) => {
         Object.assign(pobject, response);
 
@@ -27,9 +29,7 @@ export class ApiService {
         } else {
           pobject.publicUrl = '';
         }
-      },
-      error => {
-
+        return response;
       }
     );
   }
