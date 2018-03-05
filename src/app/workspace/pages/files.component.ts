@@ -850,11 +850,6 @@ export class FilesComponent implements OnInit {
     return moment(date).format('lll');
   };
 
-  formatDateFrom(date) {
-    moment.locale('en-gb');
-    return moment(date).fromNow();
-  }
-
   // Searches all children recursively for id
   containsById(id, dir) {
     if (!this.isPobjectDirectory(dir) ||

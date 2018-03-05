@@ -19,7 +19,7 @@
               data-container="body"
               title="{{parent.formatDate(pobject.lastModified)}}<br> by: {{pobject.modifiedBy.email}}"
         >
-            {{parent.formatDateFrom(pobject.lastModified)}}
+            {{lastModified | async }}
         </span>
       </div>
       <div class="col-md-3 text-center" (click)="pobject.open = !pobject.open">

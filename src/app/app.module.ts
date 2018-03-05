@@ -10,6 +10,7 @@ import { ModelerComponent } from './modeler/modeler.component';
 import { ViewerComponent } from './viewer/viewer.component';
 import { WorkspaceComponent } from './workspace/workspace.component';
 import { FilesComponent } from './workspace/pages/files.component';
+import { FileListItemComponent } from './workspace/templates/file-list-item.component';
 import { OwnFilesComponent } from './workspace/templates/ownFiles.component';
 import { SharedFilesComponent } from './workspace/templates/sharedFiles.component';
 import { MovePobjectsComponent } from './workspace/templates/move.component';
@@ -21,6 +22,7 @@ import { ApiService } from './api.service';
 
 import { RouterModule, Routes } from '@angular/router';
 import { RouteService } from 'app/route/route.service';
+
 
 const appRoutes: Routes = [
   {
@@ -40,6 +42,7 @@ const appRoutes: Routes = [
     ViewerComponent,
     WorkspaceComponent,
     FilesComponent,
+    FileListItemComponent,
     OwnFilesComponent,
     SharedFilesComponent,
     MovePobjectsComponent,
