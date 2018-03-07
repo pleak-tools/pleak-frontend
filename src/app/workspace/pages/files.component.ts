@@ -30,8 +30,6 @@ export class FilesComponent implements OnInit {
   private newPobjectTitle = '';
   private shareWithEmailRights = 'view';
   private moveObjectId = null;
-  private ownFilesLoading;
-  private sharedFilesLoading;
   private canExportModel = false;
 
   constructor(public http: Http, private authService: AuthService) {
@@ -81,40 +79,20 @@ export class FilesComponent implements OnInit {
   /** BACK-END RELATED FUNCTIONS */
 
   getRootDirectory() {
-    this.ownFilesLoading = true;
-    var self = this;
     this.http.get(config.backend.host + '/rest/directories/root', this.authService.loadRequestOptions()).subscribe(
       success => {
         this.rootDir = JSON.parse((<any>success)._body);
         this.createPublicUrls(this.rootDir);
         this.rootDir.open = true;
-        this.waitForElement("ownFilesLoader", function() {
-          $('#ownFilesLoader').fadeOut('slow', function() {
-            self.ownFilesLoading = false;
-          });
-        });
-      },
-      fail => {
-        self.ownFilesLoading = true;
       }
     );
   };
 
   getSharedDirectory() {
-    this.sharedFilesLoading = true;
-    var self = this;
     this.http.get(config.backend.host + '/rest/directories/shared', this.authService.loadRequestOptions()).subscribe(
       success => {
         this.sharedDir = JSON.parse((<any>success)._body);
         this.createPublicUrls(this.sharedDir);
-        this.waitForElement("sharedFilesLoader", function() {
-          $('#sharedFilesLoader').fadeOut('slow', function() {
-            self.sharedFilesLoading = false;
-          });
-        });
-      },
-      fail => {
-        self.sharedFilesLoading = true;
       }
     );
   };
@@ -913,7 +891,8 @@ export class FilesComponent implements OnInit {
 
   // Searches directory and all children recursively for pobject with id
   getPobjectById(id, directory) {
-    if (directory.id === id) return directory;
+    if (directory.id === id) { return directory; };
+    if (!directory.pobjects) { return null; }
     for (var pIx = 0; pIx < directory.pobjects.length; pIx++) {
       if (directory.pobjects[pIx].id === id) {
         return directory.pobjects[pIx];
@@ -1172,9 +1151,7 @@ export class FilesComponent implements OnInit {
     this.sharedDir.open = false;
     this.rootDir.open = true;
     if (this.rootDir != {}) {
-      this.ownFilesLoading = false;
     } else {
-      this.ownFilesLoading = true;
       this.getRootDirectory();
     }
   }
@@ -1183,9 +1160,7 @@ export class FilesComponent implements OnInit {
     this.rootDir.open = false;
     this.sharedDir.open = true;
     if (this.sharedDir != {}) {
-      this.sharedFilesLoading = false;
     } else {
-      this.sharedFilesLoading = true;
       this.getSharedDirectory();
     }
   }
@@ -1399,9 +1374,6 @@ export class FilesComponent implements OnInit {
             }
           }
 
-        },
-        fail => {
-          this.ownFilesLoading = true;
         }
       );
 
@@ -1479,9 +1451,6 @@ export class FilesComponent implements OnInit {
             }
           }
 
-        },
-        fail => {
-          this.sharedFilesLoading = true;
         }
       );
 
