@@ -23,13 +23,13 @@ export class FilesComponent implements OnInit {
   private sharedDir: any = {};
   private files = null;
   private pobjects = null;
-  private selected = null;
+  public selected = null;
   private sort = 0;
   private userEmail = '';
   private search = '';
   private newPobjectTitle = '';
-  private shareWithEmailRights = 'view';
-  private moveObjectId = null;
+  public shareWithEmailRights = 'view';
+  public moveObjectId = null;
   private canExportModel = false;
 
   constructor(public http: Http, private authService: AuthService) {
@@ -48,11 +48,11 @@ export class FilesComponent implements OnInit {
     return this.authenticated;
   }
 
-  getRoot = function() {
+  getRoot() {
     return this.rootDir;
   };
 
-  getShared = function() {
+  getShared() {
     return this.sharedDir;
   };
 
