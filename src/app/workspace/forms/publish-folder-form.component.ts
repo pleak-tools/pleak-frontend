@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, NgZone } from '@angular/core';
 import { trigger, style, animate, transition } from '@angular/animations';
 import { HttpClient } from '@angular/common/http';
 import { ApiService } from 'app/api.service';
@@ -20,50 +20,63 @@ export class PublishFolderFormComponent {
   unpublishing = false;
   @Input() pobject: any;
 
-  constructor(private http: HttpClient, private apiService: ApiService) {
+  constructor(private http: HttpClient, private apiService: ApiService, private zone: NgZone) {
   }
 
-  publishAllFiles(pobject: any) {
-    let directory = pobject || this.pobject;
+  publishAllFiles() {
     let observables = [];
 
     this.publishing = true;
 
-    directory.pobjects.forEach(item => {
-      if (item.type === 'directory') {
-        this.publishAllFiles(item);
-      } else if (!item.published) {
-        observables.push(this.apiService.updateFile(item, {published: true}));
-      }
-    });
+    let recursion = (dir) => {
+      dir.pobjects.forEach(item => {
+        if (item.type === 'directory') {
+          recursion(item);
+        } else if (!item.published) {
+          observables.push(this.apiService.updateFile(item, {published: true}));
+        }
+      });
+    };
 
-    // stop spinner once all requests are completed
-    Observable.forkJoin(observables).subscribe(
-      () => {},
-      () => {},
-      () => this.publishing = false
-    );
+    this.zone.runOutsideAngular(() => {
+      recursion(this.pobject);
+
+      Observable.forkJoin(observables).subscribe(
+        () => {},
+        () => {},
+        () => {
+          this.zone.run(() => this.publishing = false);
+        }
+      );
+    });
   }
 
-  unpublishAllFiles(pobject: any) {
-    let directory = pobject || this.pobject;
+  unpublishAllFiles() {
     let observables = [];
 
     this.unpublishing = true;
 
-    directory.pobjects.forEach(item => {
-      if (item.type === 'directory') {
-        this.unpublishAllFiles(item);
-      } else if (item.published) {
-        observables.push(this.apiService.updateFile(item, {published: false}));
-      }
-    });
+    let recursion = (dir) => {
+      dir.pobjects.forEach(item => {
+        if (item.type === 'directory') {
+          recursion(item);
+        } else if (item.published) {
+          observables.push(this.apiService.updateFile(item, {published: false}));
+        }
+      });
+    };
 
-    Observable.forkJoin(observables).subscribe(
-      () => {},
-      () => {},
-      () => this.unpublishing = false
-    );
+    this.zone.runOutsideAngular(() => {
+      recursion(this.pobject);
+
+      Observable.forkJoin(observables).subscribe(
+        () => {},
+        () => {},
+        () => {
+          this.zone.run(() => this.unpublishing = false);
+        }
+      );
+    });
   }
 
 }
