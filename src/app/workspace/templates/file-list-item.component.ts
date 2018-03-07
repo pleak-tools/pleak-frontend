@@ -9,7 +9,8 @@ import { FilesComponent } from '../pages/files.component';
 declare var $: any;
 
 @Component({
-  selector: 'file-list-item'
+  selector: 'file-list-item',
+  template: '<div></div>'
 })
 export class FileListItemComponent implements AfterViewInit {
 
