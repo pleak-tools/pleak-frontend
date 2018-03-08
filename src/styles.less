@@ -434,7 +434,14 @@ body {
   table {
     margin: 1em 0;
     border: 1px solid #ddd;
+    table-layout:fixed;
+    word-wrap: break-word;
     tbody tr {
+      td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
       color: @gray-light;
       .glyphicon-link {
         color: #bbb;

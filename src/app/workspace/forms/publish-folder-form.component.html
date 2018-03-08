@@ -19,7 +19,7 @@
                 <ng-container *ngFor="let pobject of pobjects">
                   <tr *ngIf="pobject.type !== 'directory'" [ngClass]="{'published': pobject.published}">
                     <td>
-                      <span class="glyphicon glyphicon-link"></span> {{dirname}}{{pobject.title}}
+                      <span title="{{dirname}}{{pobject.title}}"><span class="glyphicon glyphicon-link"></span> {{dirname}}{{pobject.title}}</span>
                     </td>
                     <td><span *ngIf="pobject.published" [@pobjectPublished]="pobject.published">{{pobject.publicUrl}}</span></td>
                   </tr>
