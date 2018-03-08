@@ -1,10 +1,11 @@
-import {Component, Input, ElementRef, AfterViewInit} from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { Subscriber } from 'rxjs/Subscriber';
-import 'rxjs/add/operator/startWith';
-import 'rxjs/add/operator/merge';
-import * as moment from 'moment';
+import { Component, Input, ElementRef, AfterViewInit, NgZone, ApplicationRef } from '@angular/core';
 import { FilesComponent } from '../pages/files.component';
+import { Observable } from 'rxjs/Observable';
+import * as moment from 'moment';
+import 'rxjs/add/operator/distinctUntilChanged';
+
+
+
 
 declare var $: any;
 
@@ -14,16 +15,28 @@ declare var $: any;
 })
 export class FileListItemComponent implements AfterViewInit {
 
-  constructor(private elementRef: ElementRef) {
+  constructor(private elementRef: ElementRef, private zone: NgZone, private appRef: ApplicationRef) {
     moment.locale('en-gb');
   }
 
   @Input() pobject;
   @Input() parent: FilesComponent;
 
-  lastModified = new Observable<string>((observer: Subscriber<string>) => {
+  lastModified = Observable.create(observer => {
     observer.next(moment(this.pobject.lastModified).fromNow());
-    setInterval(() => observer.next(moment(this.pobject.lastModified).fromNow()), 1000);
+    // Run this outside Angular to save on perfomance. Angular does not need to check state after each setInterval
+    this.zone.runOutsideAngular(() => {
+      setInterval(() => observer.next(moment(this.pobject.lastModified).fromNow()), 1000);
+    });
+
+  }).distinctUntilChanged((x, y) => {
+    if (x === y) {
+      return true;
+    } else {
+      // only if changed do we update
+      this.appRef.tick();
+      return false;
+    }
   });
 
   ngAfterViewInit() {
