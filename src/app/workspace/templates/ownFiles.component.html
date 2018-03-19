@@ -19,7 +19,7 @@
               data-container="body"
               title="{{parent.formatDate(pobject.lastModified)}}<br> by: {{pobject.modifiedBy.email}}"
         >
-            {{parent.formatDateFrom(pobject.lastModified)}}
+            {{lastModified | async }}
         </span>
       </div>
       <div class="col-md-3 text-center" (click)="pobject.open = !pobject.open">
@@ -67,6 +67,9 @@
             <li *ngIf="parent.canShare(pobject)" role="separator" class="divider"></li>
             <li *ngIf="parent.canShare(pobject)">
               <a (click)="parent.initShareModal(pobject.id)">Share</a>
+            </li>
+            <li *ngIf="parent.isPobjectDirectory(pobject)">
+              <a (click)="parent.initModal('publishFolderForm', pobject)">Publish files</a>
             </li>
             <li *ngIf="parent.canPublish(pobject)">
               <a (click)="parent.initPublishFileModal(pobject.id)">Publish</a>
@@ -159,9 +162,9 @@
       </div>
       <div class="modal-body">
         <ul class="move-container">
-            <span *ngIf="parent.moveObjectId == pobject.id">
+            <ng-container *ngIf="parent.moveObjectId == pobject.id">
               <li><move-pobjects [pobject]="pobject" [dest]="parent.getRoot()" [parent]="parent"></move-pobjects></li>
-            </span>
+            </ng-container>
         </ul>
       </div>
       <div class="modal-footer">
@@ -202,8 +205,8 @@
     </div>
   </div>
 </div>
-<span *ngIf="parent.isPobjectDirectory(pobject)">
+<ng-container *ngIf="parent.isPobjectDirectory(pobject)">
   <ul class="pobject-list subgroup" [hidden]="!pobject.open">
     <li class="pobject" *ngFor="let pobject of pobject.pobjects"><own-files [pobject]="pobject" [parent]="parent"></own-files></li>
   </ul>
-</span>
+</ng-container>

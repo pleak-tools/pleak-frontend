@@ -35,7 +35,7 @@ export class AuthService {
   }
 
   loadRequestOptions() {
-    var headers = new Headers();
+    let headers = new Headers();
     headers.append('JSON-Web-Token', localStorage.jwt);
     return new RequestOptions({ headers: headers });
   }
@@ -57,7 +57,7 @@ export class AuthService {
 
     return true;
 
-  }
+  };
 
   authStatusChanged(status: boolean) {
 

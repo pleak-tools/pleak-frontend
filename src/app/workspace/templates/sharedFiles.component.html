@@ -21,7 +21,7 @@
               data-container="body"
               title="{{parent.formatDate(pobject.lastModified)}}<br> by: {{pobject.modifiedBy.email}}"
         >
-            {{parent.formatDateFrom(pobject.lastModified)}}
+            {{lastModified | async }}
         </span>
 
       </div>
@@ -85,6 +85,9 @@
             <li *ngIf="parent.canShare(pobject)" role="separator" class="divider"></li>
             <li *ngIf="parent.canShare(pobject)">
               <a (click)="parent.initShareModal(pobject.id)">Share</a>
+            </li>
+            <li *ngIf="parent.isPobjectDirectory(pobject)">
+              <a (click)="parent.initModal('publishFolderForm', pobject)">Publish files</a>
             </li>
           </ul>
         </div>

@@ -1,5 +1,11 @@
 @import "../node_modules/bootstrap/less/bootstrap.less";
 
+@brand-primary:         darken(#4a85bf, 6.5%); // #337ab7
+@brand-success:         #6EAF6E;
+@brand-info:            #4a85bf;
+@brand-warning:         #ceba63;
+@brand-danger:          #ce6363;
+
 @font-family-sans-serif: 'Roboto', Helvetica, Arial, sans-serif;
 @font-letter-spacing: .3px;
 
@@ -62,33 +68,6 @@ body {
   display: none;
 }
 
-.spinner {
-  width: 40px;
-  height: 40px;
-
-  position: relative;
-  margin: 50px auto;
-}
-
-.double-bounce1, .double-bounce2 {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background-color: #333;
-  opacity: 0.6;
-  position: absolute;
-  top: 0;
-  left: 0;
-
-  -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
-  animation: sk-bounce 2.0s infinite ease-in-out;
-}
-
-.double-bounce2 {
-  -webkit-animation-delay: -1.0s;
-  animation-delay: -1.0s;
-}
-
 @-webkit-keyframes sk-bounce {
   0%, 100% {
     -webkit-transform: scale(0.0)
@@ -131,8 +110,6 @@ body {
   height: 100%;
   width: 100%;
 }
-
-
 
 .brand {
   width: 90px;
@@ -321,7 +298,7 @@ body {
     li.pobject,
     li.fhead,
     li.loading-container,
-    li.empty-list{
+    li.empty-list {
       list-style-type: none;
       padding: 0 15px;
       & > div.row {
@@ -331,7 +308,7 @@ body {
         .text-overflow();
       }
       shared-files,
-      own-files{
+      own-files {
         & > div.row {
           border-bottom: 1px solid #ddd;
           line-height: 40px;
@@ -351,7 +328,10 @@ body {
 
         }
       }
-
+    }
+    li.fhead,
+    li.empty-list {
+      border-bottom: 1px solid #ddd;
     }
   }
 }
@@ -415,15 +395,6 @@ body {
   display: none;
 }
 
-.files-list .no-files,
-.shared-files-list .no-files {
-  display: table-cell;
-  height: 50px;
-  padding: 10px 15px;
-  vertical-align: middle;
-  border-bottom: 1px solid #ddd;
-  width: 100%;
-}
 
 .move-container {
   border-bottom: 1px solid #ddd;
@@ -457,6 +428,32 @@ body {
 .shared-files-list .highlight,
 .shared-files-list .highlight:hover {
   background-color: #d4d4d4
+}
+
+.publish-list {
+  table {
+    margin: 1em 0;
+    border: 1px solid #ddd;
+    table-layout:fixed;
+    word-wrap: break-word;
+    tbody tr {
+      td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      color: @gray-light;
+      .glyphicon-link {
+        color: #bbb;
+      }
+      &.published {
+        color: @text-color;
+        .glyphicon-link {
+          color: @text-color;
+        }
+      }
+    }
+  }
 }
 
 #viewer-canvas {
@@ -681,4 +678,46 @@ body {
 .disabled {
   color: darkgray;
   font-style: italic;
+}
+
+.btn.with-spinner {
+  position: relative;
+  &:before {
+    content: " ";
+    display: block;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: all .3s;
+    transition-timing-function: ease-in;
+    background: rgba(255, 255, 255, .7);
+    border-radius: @border-radius-base;
+    &.btn-lg {
+      border-radius: @border-radius-large
+    }
+    &.btn-sm {
+      border-radius: @border-radius-small
+    }
+  }
+  &:after {
+    content: "";
+    display: block;
+    opacity: 0;
+    background: url("data:image/svg+xml;utf8,<svg version='1.1' id='L4' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 70 30' enable-background='new 0 0 0 0' xml:space='preserve'> <circle fill='#666' stroke='none' cx='15' cy='15' r='5'> <animate attributeName='opacity' dur='1s' values='0;1;0' repeatCount='indefinite' begin='0.1'/> </circle> <circle fill='#666' stroke='none' cx='35' cy='15' r='5'> <animate attributeName='opacity' dur='1s' values='0;1;0' repeatCount='indefinite' begin='0.2'/> </circle> <circle fill='#666' stroke='none' cx='55' cy='15' r='5'> <animate attributeName='opacity' dur='1s' values='0;1;0' repeatCount='indefinite' begin='0.3'/> </circle> </svg>") no-repeat;
+    height: 2em;
+    width: 4.6em;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -2.3em;
+    margin-top: -1em;
+  }
+  &.spinning {
+    &:before, &:after {
+      opacity: 1;
+    }
+  }
 }

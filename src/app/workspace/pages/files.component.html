@@ -60,18 +60,14 @@
                   </div>
                 </div>
               </li>
-              <li class="fluid empty-list" *ngIf="getRoot().pobjects.length === 0 && !ownFilesLoading">
-                <div class="no-files">No available files...</div>
-              </li>
-              <li class="fluid loading-container">
-                <div class="spinner" id="ownFilesLoader" *ngIf="ownFilesLoading">
-                  <div class="double-bounce1"></div>
-                  <div class="double-bounce2"></div>
+              <li class="empty-list" *ngIf="getRoot().pobjects.length === 0">
+                <div class="row">
+                  <div class="col-xs-12">No available files...</div>
                 </div>
               </li>
-              <ng-container *ngIf="!ownFilesLoading">
-                <li class="ng-fade pobject" *ngFor="let pobject of getRoot().pobjects"><own-files [pobject]="pobject" [parent]="this"></own-files></li>
-              </ng-container>
+              <li class="ng-fade pobject" *ngFor="let pobject of getRoot().pobjects">
+                <own-files [pobject]="pobject" [parent]="this"></own-files>
+              </li>
             </ul>
           </div>
         </div>
@@ -112,18 +108,14 @@
                   </div>
                 </div>
               </li>
-              <li class="fluid empty-list" *ngIf="getShared().pobjects.length === 0 && !sharedFilesLoading">
-                <div class="no-files">No available files...</div>
-              </li>
-              <li class="fluid loading-container">
-                <div class="spinner" id="sharedFilesLoader" *ngIf="sharedFilesLoading">
-                  <div class="double-bounce1"></div>
-                  <div class="double-bounce2"></div>
+              <li class="empty-list" *ngIf="getShared().pobjects.length === 0">
+                <div class="row">
+                  <div class="col-xs-12">No available files...</div>
                 </div>
               </li>
-              <ng-container *ngIf="!sharedFilesLoading">
-                <li class="ng-fade pobject" *ngFor="let pobject of getShared().pobjects"><shared-files [pobject]="pobject" [parent]="this"></shared-files></li>
-              </ng-container>
+              <li class="ng-fade pobject" *ngFor="let pobject of getShared().pobjects">
+                <shared-files [pobject]="pobject" [parent]="this"></shared-files>
+              </li>
             </ul>
           </div>
         </div>
@@ -243,7 +235,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button  (click)="deleteFile(deleteFileParentId.value)" class="btn btn-success">
+          <button (click)="deleteFile(deleteFileParentId.value)" class="btn btn-success">
             Confirm
           </button>
         </div>
@@ -265,7 +257,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button  (click)="deleteDirectory(deleteDirectoryParentId.value)" class="btn btn-success">
+          <button (click)="deleteDirectory(deleteDirectoryParentId.value)" class="btn btn-success">
             Confirm
           </button>
         </div>
@@ -286,13 +278,15 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button  (click)="removeOwnShare(removeSharingPobjectParentId.value)" data-dismiss="modal" class="btn btn-success">
+          <button (click)="removeOwnShare(removeSharingPobjectParentId.value)" data-dismiss="modal" class="btn btn-success">
             Confirm
           </button>
         </div>
       </div>
     </div>
-  </div> 
+  </div>
+
+  <app-publish-folder-form [pobject]="selectedPobject"></app-publish-folder-form>
 
 </div>
 
