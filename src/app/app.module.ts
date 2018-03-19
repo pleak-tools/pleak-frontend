@@ -26,6 +26,8 @@ import { ApiService } from './api.service';
 import { RouterModule, Routes } from '@angular/router';
 import { RouteService } from 'app/route/route.service';
 
+import { NguiAutoCompleteModule} from '@ngui/auto-complete';
+
 
 const appRoutes: Routes = [
   {
@@ -59,6 +61,7 @@ const appRoutes: Routes = [
     ReactiveFormsModule,
     HttpModule,
     HttpClientModule,
+    NguiAutoCompleteModule,
     RouterModule.forRoot(appRoutes)
     ],
   providers: [AuthService, UserService, RouteService, ApiService],

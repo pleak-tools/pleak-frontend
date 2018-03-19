@@ -17,15 +17,17 @@ export class ShareItemFormComponent {
   pobject: any;
   directory: any;
   newPermissionForm: FormGroup;
+  existingEmails: Array<string> = [];
 
   constructor(private fb: FormBuilder, private authService: AuthService, private apiService: ApiService, private zone: NgZone) {
     this.createForm();
   }
 
-  initModal(pobject, directory) {
+  initModal(pobject, directory, emails: Array<string>) {
 
     this.pobject = pobject;
     this.directory = directory;
+    this.existingEmails = emails;
 
     this.createForm();
 
@@ -59,6 +61,7 @@ export class ShareItemFormComponent {
   clearModal() {
     this.pobject = undefined;
     this.directory = undefined;
+    this.existingEmails = [];
     this.newPermissionForm.reset();
   }
 

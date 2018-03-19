@@ -26,6 +26,7 @@
     "@angular/platform-browser": "^5.2.0",
     "@angular/platform-browser-dynamic": "^5.2.0",
     "@angular/router": "^5.2.0",
+    "@ngui/auto-complete": "^0.16.1",
     "bootstrap": "^3.3.7",
     "bpmn-js": "^0.26.6",
     "core-js": "^2.4.1",

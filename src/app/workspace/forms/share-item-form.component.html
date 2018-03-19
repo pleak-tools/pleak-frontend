@@ -19,7 +19,7 @@
                 <td *ngIf="canEditShare(fp.value)" style="text-align: right;">
                   <div class="dropdown">
                     <button class="btn btn-default dropdown-toggle sharing" type="button"
-                             data-toggle="dropdown"
+                            data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="true">
                       {{fp.value.action.title}}
                       <span class="caret"></span>
@@ -44,7 +44,11 @@
           </table>
 
           <div class="form-group input-group">
-            <input type="email" class="form-control shareWithEmail" formControlName="email" placeholder="Enter e-mail address">
+            <input type="email" class="form-control shareWithEmail" placeholder="Enter e-mail address"
+                   ngui-auto-complete
+                   formControlName="email"
+                   [source]="existingEmails"
+            >
             <input type="hidden" hidden formControlName="action">
             <div class="input-group-btn">
               <button type="button" class="btn btn-default dropdown-toggle" style="border-radius:0"
