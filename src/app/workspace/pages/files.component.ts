@@ -2,7 +2,8 @@ import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Http } from '@angular/http';
 import { AuthService } from 'app/auth/auth.service';
 import * as moment from 'moment';
-import { ShareItemFormComponent } from '../forms/share-item-form.component';
+import { ShareItemFormComponent } from 'app/workspace/forms/share-item-form.component';
+import { PublishFolderFormComponent } from 'app/workspace/forms/publish-folder-form.component';
 
 declare var $: any;
 declare function require(name: string);
@@ -20,6 +21,7 @@ export class FilesComponent implements OnInit {
   @Input() authenticated: boolean;
 
   @ViewChild(ShareItemFormComponent) private shareItemForm: ShareItemFormComponent;
+  @ViewChild(PublishFolderFormComponent) private publishFolderForm: PublishFolderFormComponent;
 
   private rootDir: any = {};
   private sharedDir: any = {};
@@ -76,6 +78,10 @@ export class FilesComponent implements OnInit {
 
     this.shareItemForm.initModal(pobject, file, emails);
 
+  }
+
+  openPublishFolderModal(pobject) {
+    this.publishFolderForm.initModal(pobject);
   }
 
   isAuthenticated() {
@@ -1271,11 +1277,6 @@ export class FilesComponent implements OnInit {
     this.moveObjectId = id;
     $('#moveModal' + id).modal();
     this.selected = null;
-  }
-
-  initModal(modalName, pobject) {
-    this.selectedPobject = pobject;
-    $('#' + modalName).modal();
   }
 
   // Update only one row in own/shared files list when file is updated
