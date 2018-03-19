@@ -25,7 +25,7 @@
             </div>
           </div>
           <!-- Table -->
-          <div class="files-list" id="filesList">
+          <div class="files-list">
             <ul class="pobject-list">
               <li class="fhead">
                 <div class="row">
@@ -84,7 +84,7 @@
               <input type="search" class="form-control pull-right" placeholder="Search files" value="{{search}}" #searchBox (keyup)="setSearchInput(searchBox.value)">
             </div>
           </div>
-          <div class="shared-files-list" id="filesList">
+          <div class="shared-files-list">
             <ul class="pobject-list">
               <li class="fhead">
                 <div class="row">
@@ -287,6 +287,7 @@
   </div>
 
   <app-publish-folder-form [pobject]="selectedPobject"></app-publish-folder-form>
+  <app-share-item-form #shareItemForm ></app-share-item-form>
 
 </div>
 

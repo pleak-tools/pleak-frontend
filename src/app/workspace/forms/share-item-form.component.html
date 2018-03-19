@@ -1,0 +1,71 @@
+<div class="modal fade" id="shareItemForm" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-md" *ngIf="pobject">
+    <div class="modal-content">
+      <div class="modal-header">
+        Share: "{{pobject.title}}"
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="newPermissionForm">
+          <table class="table sharing">
+            <thead>
+            <tr>
+              <td colspan="3"><strong>Shared with: </strong></td>
+            </tr>
+            </thead>
+            <tbody formArrayName="permissions">
+            <tr *ngFor="let fp of permissions.controls; let i=index" [formGroupName]="i">
+              <ng-container *ngIf="pobject.user.email !== fp.value.user.email">
+                <td class="{{!canEditShare(fp.value) ? 'disabled' : ''}}">{{fp.value.user.email}}</td>
+                <td *ngIf="canEditShare(fp.value)" style="text-align: right;">
+                  <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle sharing" type="button"
+                             data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="true">
+                      {{fp.value.action.title}}
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><a (click)="fp.patchValue({'action': {'title': 'view'}}); fp.markAsDirty();">view</a></li>
+                      <li><a (click)="fp.patchValue({'action': {'title': 'edit'}}); fp.markAsDirty();">edit</a></li>
+                    </ul>
+                  </div>
+                </td>
+                <td *ngIf="!canEditShare(fp.value)" style="text-align: right;">
+                  <span class="disabled">{{fp.value.action.title}}</span>
+                </td>
+                <td style="text-align: right;">
+                  <a class="icon-link" (click)="permissions.removeAt(i); permissions.markAsDirty()" *ngIf="canEditShare(fp.value)" style="cursor: pointer">
+                    <span class="glyphicon glyphicon-remove"></span>
+                  </a>
+                </td>
+              </ng-container>
+            </tr>
+            </tbody>
+          </table>
+
+          <div class="form-group input-group">
+            <input type="email" class="form-control shareWithEmail" formControlName="email" placeholder="Enter e-mail address">
+            <input type="hidden" hidden formControlName="action">
+            <div class="input-group-btn">
+              <button type="button" class="btn btn-default dropdown-toggle" style="border-radius:0"
+                      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> {{newPermissionForm.value.action}} <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-right">
+                <li><a (click)="newPermissionForm.patchValue({'action': 'view'})">view</a></li>
+                <li><a (click)="newPermissionForm.patchValue({'action': 'edit'})">edit</a></li>
+              </ul>
+              <button type="submit" class="btn btn-default" (click)="addPermission()">
+                <span class="glyphicon glyphicon-plus"></span>
+              </button>
+            </div>
+          </div>
+          <span class="error-block" *ngIf="error">{{error}}</span>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" (click)="closeModal()">Cancel</button>
+        <button type="button" class="btn btn-success with-spinner" [ngClass]="{spinning: saving}" (click)="savePermissions()" [disabled]="permissions.pristine">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
