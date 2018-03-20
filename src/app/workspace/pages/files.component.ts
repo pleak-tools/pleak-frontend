@@ -73,6 +73,7 @@ export class FilesComponent implements OnInit {
     };
 
     recursiveSearch(this.rootDir);
+    recursiveSearch(this.sharedDir);
 
     emails = emails.filter((value, index, self) => self.indexOf(value) === index ).sort();
 
