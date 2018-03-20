@@ -62,11 +62,10 @@ export class FilesComponent implements OnInit {
 
     let recursiveSearch = (directory) => {
       for (let item of directory.pobjects) {
-        if (item.type === 'file') {
-          for (let permission of item.permissions) {
-            emails.push(permission.user.email);
-          }
-        } else {
+        for (let permission of item.permissions) {
+          emails.push(permission.user.email);
+        }
+        if (item.type === 'directory') {
           recursiveSearch(item);
         }
       }
