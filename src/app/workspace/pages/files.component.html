@@ -1,13 +1,13 @@
 <div class="container" *ngIf="isAuthenticated()">
   <ul class="nav nav-tabs">
-    <li role="presentation" class="{{getRoot().open ? 'active' : ''}}" (click)="checkIfOwnFilesLoaded()">
+    <li role="presentation" class="{{tab === 'own' ? 'active' : ''}}" (click)="checkIfOwnFilesLoaded()">
       <a class="clickable">My models</a>
     </li>
-    <li role="presentation" class="{{getShared().open ? 'active' : ''}}" (click)="checkIfSharedFilesLoaded()">
+    <li role="presentation" class="{{tab === 'shared' ? 'active' : ''}}" (click)="checkIfSharedFilesLoaded()">
       <a class="clickable">Shared models</a>
     </li>
   </ul>
-  <div class="row topMargin" *ngIf="getRoot().open">
+  <div class="row topMargin" *ngIf="tab === 'own'">
     <div class="col-sm-12">
       <div class="panel panel-default">
         <div class="panel-body">
@@ -60,9 +60,15 @@
                   </div>
                 </div>
               </li>
-              <li class="empty-list" *ngIf="getRoot().pobjects.length === 0">
+              <li class="empty-list" *ngIf="getRoot()?.pobjects?.length === 0">
                 <div class="row">
                   <div class="col-xs-12">No available files...</div>
+                </div>
+              </li>
+              <li class="loading-container" *ngIf="ownFilesLoading">
+                <div class="spinner" id="ownFilesLoader">
+                  <div class="double-bounce1"></div>
+                  <div class="double-bounce2"></div>
                 </div>
               </li>
               <li class="ng-fade pobject" *ngFor="let pobject of getRoot().pobjects">
@@ -75,7 +81,7 @@
     </div>
   </div>
 
-  <div class="row topMargin" *ngIf="getShared().open">
+  <div class="row topMargin" *ngIf="tab === 'shared'">
     <div class="col-sm-12">
       <div class="panel panel-default">
         <div class="panel-body">
@@ -108,9 +114,15 @@
                   </div>
                 </div>
               </li>
-              <li class="empty-list" *ngIf="getShared().pobjects.length === 0">
+              <li class="empty-list" *ngIf="getShared()?.pobjects?.length === 0">
                 <div class="row">
                   <div class="col-xs-12">No available files...</div>
+                </div>
+              </li>
+              <li class="loading-container" *ngIf="sharedFilesLoading">
+                <div class="spinner">
+                  <div class="double-bounce1"></div>
+                  <div class="double-bounce2"></div>
                 </div>
               </li>
               <li class="ng-fade pobject" *ngFor="let pobject of getShared().pobjects">

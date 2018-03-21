@@ -4,6 +4,7 @@ import { AuthService } from 'app/auth/auth.service';
 import * as moment from 'moment';
 import { ShareItemFormComponent } from 'app/workspace/forms/share-item-form.component';
 import { PublishFolderFormComponent } from 'app/workspace/forms/publish-folder-form.component';
+import 'rxjs/add/operator/finally';
 
 declare var $: any;
 declare function require(name: string);
@@ -16,8 +17,6 @@ let config = require('../../../config.json');
 })
 export class FilesComponent implements OnInit {
 
-  selectedPobject: object;
-
   @Input() authenticated: boolean;
 
   @ViewChild(ShareItemFormComponent) private shareItemForm: ShareItemFormComponent;
@@ -25,7 +24,6 @@ export class FilesComponent implements OnInit {
 
   private rootDir: any = {};
   private sharedDir: any = {};
-  private files = null;
   private pobjects = null;
   public selected = null;
   private sort = 0;
@@ -35,10 +33,14 @@ export class FilesComponent implements OnInit {
   public moveObjectId = null;
   private canExportModel = false;
 
+  public ownFilesLoading = false;
+  public sharedFilesLoading = false;
+  public tab = 'own';
+
   constructor(public http: Http, private authService: AuthService) {
 
     this.authService.authStatus.subscribe(status => {
-      if (this.authenticated !== status) {
+      if (this.authenticated === false && status === true) {
         this.getRootDirectory();
         this.getSharedDirectory();
       }
@@ -115,22 +117,30 @@ export class FilesComponent implements OnInit {
   /** BACK-END RELATED FUNCTIONS */
 
   getRootDirectory() {
-    this.http.get(config.backend.host + '/rest/directories/root', this.authService.loadRequestOptions()).subscribe(
-      success => {
+    this.ownFilesLoading = true;
+
+    this.http.get(config.backend.host + '/rest/directories/root', this.authService.loadRequestOptions())
+      .finally(() => {
+        this.ownFilesLoading = false;
+      })
+      .subscribe(success => {
         this.rootDir = JSON.parse((<any>success)._body);
         this.createPublicUrls(this.rootDir);
         this.rootDir.open = true;
-      }
-    );
+      });
   }
 
   getSharedDirectory() {
-    this.http.get(config.backend.host + '/rest/directories/shared', this.authService.loadRequestOptions()).subscribe(
-      success => {
+    this.sharedFilesLoading = true;
+
+    this.http.get(config.backend.host + '/rest/directories/shared', this.authService.loadRequestOptions())
+      .finally(() => {
+        this.sharedFilesLoading = false;
+      })
+      .subscribe(success => {
         this.sharedDir = JSON.parse((<any>success)._body);
         this.createPublicUrls(this.sharedDir);
-      }
-    );
+      });
   }
 
   createDirectoryREST(directory, parent, callback) {
@@ -753,17 +763,6 @@ export class FilesComponent implements OnInit {
     );
   }
 
-  isExistingFileName(fileName) {
-    // Console error fix.
-    if (this.files === null) return false;
-
-    var bpmnFileName = this.addBpmn(fileName);
-    for (var fIx = 0; fIx < this.files.length; fIx++) {
-      if (this.files[fIx].title === bpmnFileName) return true;
-    }
-    return false;
-  };
-
   canMove(pobject, destination) {
     // Can not move pobject into file
     if (this.isPobjectFile(destination)) {
@@ -1132,8 +1131,8 @@ export class FilesComponent implements OnInit {
   checkIfOwnFilesLoaded() {
     this.sharedDir.open = false;
     this.rootDir.open = true;
-    if (this.rootDir != {}) {
-    } else {
+    this.tab = 'own';
+    if (this.rootDir == {}) {
       this.getRootDirectory();
     }
   }
@@ -1141,8 +1140,8 @@ export class FilesComponent implements OnInit {
   checkIfSharedFilesLoaded() {
     this.rootDir.open = false;
     this.sharedDir.open = true;
-    if (this.sharedDir != {}) {
-    } else {
+    this.tab = 'shared';
+    if (this.sharedDir == {}) {
       this.getSharedDirectory();
     }
   }
