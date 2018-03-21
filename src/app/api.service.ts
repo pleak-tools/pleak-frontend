@@ -13,6 +13,10 @@ export class ApiService {
   constructor(private http: HttpClient) {
   }
 
+  userExists(email: string): Observable<any> {
+    return this.http.post(config.backend.host + '/rest/user/exists', {email: email}, {headers: {'JSON-Web-Token': localStorage.jwt}});
+  }
+
   updateFile(pobject: any, values: Object = {}): Observable<any> {
 
     let requestItem = Object.assign({}, pobject);
@@ -29,6 +33,21 @@ export class ApiService {
         } else {
           pobject.publicUrl = '';
         }
+        return response;
+      }
+    );
+  }
+
+  updateDirectory(directory: any, values: Object = {}): Observable<any> {
+
+    let requestItem = Object.assign({}, directory);
+    Object.assign(requestItem, values);
+    delete requestItem.open;
+    requestItem.pobjects = [];
+
+    return this.http.put(config.backend.host + '/rest/directories/' + directory.id, requestItem, {headers: {'JSON-Web-Token': localStorage.jwt}}).map(
+      (response: any) => {
+        Object.assign(directory, response);
         return response;
       }
     );

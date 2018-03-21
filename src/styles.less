@@ -38,6 +38,8 @@ body {
   letter-spacing: @font-letter-spacing;
 }
 
+
+
 .icon-pleaks-query {
   background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="#357986" width="270" height="240"><path d="M22,8 L36,15 L36,29 L22,36 L8,29 L8,15 Z"/></svg>');
 }
@@ -241,7 +243,7 @@ body {
   border-top-right-radius: 0px;
 }
 
-.table .sharing > tbody > tr > td {
+.table.sharing > tbody > tr > td {
   vertical-align: middle;
 }
 
@@ -259,9 +261,8 @@ body {
 }
 
 .error-block {
-  display: block;
+  display: none;
   color: #a94442;
-  display: none; /* so we can .show() and it's block */
 }
 
 .model-viewer,
@@ -706,13 +707,13 @@ body {
     content: "";
     display: block;
     opacity: 0;
-    background: url("data:image/svg+xml;utf8,<svg version='1.1' id='L4' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 70 30' enable-background='new 0 0 0 0' xml:space='preserve'> <circle fill='#666' stroke='none' cx='15' cy='15' r='5'> <animate attributeName='opacity' dur='1s' values='0;1;0' repeatCount='indefinite' begin='0.1'/> </circle> <circle fill='#666' stroke='none' cx='35' cy='15' r='5'> <animate attributeName='opacity' dur='1s' values='0;1;0' repeatCount='indefinite' begin='0.2'/> </circle> <circle fill='#666' stroke='none' cx='55' cy='15' r='5'> <animate attributeName='opacity' dur='1s' values='0;1;0' repeatCount='indefinite' begin='0.3'/> </circle> </svg>") no-repeat;
+    background: url("data:image/svg+xml;utf8,<svg version='1.1' id='L4' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 50 30' enable-background='new 0 0 0 0' xml:space='preserve'> <circle fill='#666' stroke='none' cx='5' cy='15' r='5'> <animate attributeName='opacity' dur='1s' values='0;1;0' repeatCount='indefinite' begin='0.1'/> </circle> <circle fill='#666' stroke='none' cx='25' cy='15' r='5'> <animate attributeName='opacity' dur='1s' values='0;1;0' repeatCount='indefinite' begin='0.2'/> </circle> <circle fill='#666' stroke='none' cx='45' cy='15' r='5'> <animate attributeName='opacity' dur='1s' values='0;1;0' repeatCount='indefinite' begin='0.3'/> </circle> </svg>") no-repeat;
     height: 2em;
-    width: 4.6em;
+    width: 3.33em;
     position: absolute;
     top: 50%;
     left: 50%;
-    margin-left: -2.3em;
+    margin-left: -1.66em;
     margin-top: -1em;
   }
   &.spinning {

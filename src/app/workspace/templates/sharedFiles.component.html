@@ -60,7 +60,7 @@
             </li>
             <li *ngIf="parent.canShare(pobject)" role="separator" class="divider"></li>
             <li *ngIf="parent.canShare(pobject)">
-              <a (click)="parent.initShareModal(pobject.id)">Share</a>
+              <a (click)="parent.openShareItemModal(pobject)">Share</a>
             </li>
             <li *ngIf="parent.canPublish(pobject)">
               <a (click)="parent.initPublishFileModal(pobject.id)">Publish</a>
@@ -90,75 +90,10 @@
               <a (click)="parent.initShareModal(pobject.id)">Share</a>
             </li>
             <li *ngIf="parent.isPobjectDirectory(pobject)">
-              <a (click)="parent.initModal('publishFolderForm', pobject)">Publish files</a>
+              <a (click)="parent.openPublishFolderModal(pobject)">Publish files</a>
             </li>
           </ul>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Share modal -->
-<div class="modal fade" id="shareModal{{pobject.id}}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-  <div class="modal-dialog modal-md">
-    <div class="modal-content">
-      <div class="modal-body">
-        <p>Shared with:</p>
-        <table class="table sharing">
-          <tbody>
-          <tr *ngFor="let fp of pobject.permissions">
-            <td class="{{!parent.canEditShare(pobject,fp) ? 'disabled' : ''}}" *ngIf="pobject.user.email != fp.user.email">{{fp.user.email}}</td>
-            <td *ngIf="parent.canEditShare(pobject,fp) && pobject.user.email != fp.user.email" style="text-align: right;">
-              <div class="dropdown">
-                <button class="btn btn-default dropdown-toggle sharing" type="button"
-                        id="dropdownMenu1" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="true">
-                  {{fp.action.title}}
-                  <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                  <li><a (click)="fp.action.title = 'view'">view</a></li>
-                  <li><a (click)="fp.action.title = 'edit'">edit</a></li>
-                </ul>
-              </div>
-            </td>
-            <td *ngIf="!parent.canEditShare(pobject,fp) && pobject.user.email != fp.user.email">
-              <span class="disabled">{{fp.action.title}}</span>
-            </td>
-            <td *ngIf="parent.canEditShare(pobject,fp) && pobject.user.email != fp.user.email" style="text-align: right;">
-              <a class="icon-link" (click)="parent.removeShare(pobject, fp.user.email)">
-                <span class="glyphicon glyphicon-remove"></span>
-              </a>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-        <form>
-          <div class="form-group input-group">
-            <input type="email" class="form-control shareWithEmail" #shareWithEmail (keyup)="parent.setShareUserEmail(shareWithEmail.value)" (input)="parent.setShareUserEmail(shareWithEmail.value)" placeholder="Enter e-mail address">
-            <input type="hidden" #shareWithEmailRights value="{{parent.shareWithEmailRights}}" hidden>
-            <div class="input-group-btn">
-              <button type="button" class="btn btn-default dropdown-toggle" style="border-radius:0px"
-                      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {{parent.shareWithEmailRights}} <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu dropdown-menu-right">
-                <li><a (click)="parent.setShareWithEmailRights('view')">view</a></li>
-                <li><a (click)="parent.setShareWithEmailRights('edit')">edit</a></li>
-              </ul>
-              <button type="submit" class="btn btn-default" (click)="parent.sharePobjectWithoutCallback(pobject, shareWithEmailRights.value)">
-                <span class="glyphicon glyphicon-plus"></span>
-              </button>
-            </div>
-          </div>
-          <span class="error-block">Email not found.</span>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button (click)="parent.sharePobject(pobject, shareWithEmailRights.value)" class="btn btn-success">
-          Confirm
-        </button>
       </div>
     </div>
   </div>

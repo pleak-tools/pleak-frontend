@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -14,7 +15,9 @@ import { FileListItemComponent } from './workspace/templates/file-list-item.comp
 import { OwnFilesComponent } from './workspace/templates/ownFiles.component';
 import { SharedFilesComponent } from './workspace/templates/sharedFiles.component';
 import { MovePobjectsComponent } from './workspace/templates/move.component';
+
 import { PublishFolderFormComponent } from './workspace/forms/publish-folder-form.component';
+import { ShareItemFormComponent} from './workspace/forms/share-item-form.component';
 
 import { AuthService } from './auth/auth.service';
 import { UserService } from './user/user.service';
@@ -22,6 +25,8 @@ import { ApiService } from './api.service';
 
 import { RouterModule, Routes } from '@angular/router';
 import { RouteService } from 'app/route/route.service';
+
+import { NguiAutoCompleteModule} from '@ngui/auto-complete';
 
 
 const appRoutes: Routes = [
@@ -46,14 +51,17 @@ const appRoutes: Routes = [
     OwnFilesComponent,
     SharedFilesComponent,
     MovePobjectsComponent,
-    PublishFolderFormComponent
+    PublishFolderFormComponent,
+    ShareItemFormComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpModule,
     HttpClientModule,
+    NguiAutoCompleteModule,
     RouterModule.forRoot(appRoutes)
     ],
   providers: [AuthService, UserService, RouteService, ApiService],

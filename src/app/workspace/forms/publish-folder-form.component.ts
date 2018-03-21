@@ -1,9 +1,11 @@
-import { Component, Input, NgZone } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { trigger, style, animate, transition } from '@angular/animations';
-import { HttpClient } from '@angular/common/http';
 import { ApiService } from 'app/api.service';
 import 'rxjs/add/observable/forkJoin';
+import 'rxjs/add/operator/finally';
 import { Observable } from 'rxjs/Observable';
+
+declare var $: any;
 
 @Component({
   selector: 'app-publish-folder-form',
@@ -18,9 +20,31 @@ import { Observable } from 'rxjs/Observable';
 export class PublishFolderFormComponent {
   publishing = false;
   unpublishing = false;
-  @Input() pobject: any;
+  pobject: any;
 
-  constructor(private http: HttpClient, private apiService: ApiService, private zone: NgZone) {
+  constructor(private apiService: ApiService, private zone: NgZone) {
+  }
+
+  initModal(pobject) {
+    this.pobject = pobject;
+
+    let $selector = $('#publishFolderForm');
+
+    $selector.modal();
+
+    let clearModal = () => {
+      this.zone.run(() => {
+        this.clearModal();
+      });
+      $selector.off('hidden.bs.modal', clearModal);
+    };
+
+    $selector.on('hidden.bs.modal', clearModal);
+  }
+
+
+  clearModal() {
+    this.pobject = undefined;
   }
 
   publishAllFiles() {
@@ -41,13 +65,11 @@ export class PublishFolderFormComponent {
     this.zone.runOutsideAngular(() => {
       recursion(this.pobject);
 
-      Observable.forkJoin(observables).subscribe(
-        () => {},
-        () => {},
-        () => {
+      Observable.forkJoin(observables)
+        .finally(() => {
           this.zone.run(() => this.publishing = false);
-        }
-      );
+        })
+        .subscribe();
     });
   }
 
@@ -69,13 +91,11 @@ export class PublishFolderFormComponent {
     this.zone.runOutsideAngular(() => {
       recursion(this.pobject);
 
-      Observable.forkJoin(observables).subscribe(
-        () => {},
-        () => {},
-        () => {
+      Observable.forkJoin(observables)
+        .finally(() => {
           this.zone.run(() => this.unpublishing = false);
-        }
-      );
+        })
+        .subscribe();
     });
   }
 
