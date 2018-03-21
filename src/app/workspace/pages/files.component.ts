@@ -1054,6 +1054,10 @@ export class FilesComponent implements OnInit {
     window.open(this.getFileSqlEditorUrl(pobject), '_blank');
   };
 
+  openFileSQLDerivativeSensitivityEditor(pobject) {
+    window.open(this.getFileSqlDerivativeSensitivityEditorUrl(pobject), '_blank');
+  };
+
   openFilePEBPMNEditor(pobject) {
     window.open(this.getFilePEBPMNEditorUrl(pobject), '_blank');
   }
@@ -1064,6 +1068,10 @@ export class FilesComponent implements OnInit {
 
   getFileSqlEditorUrl(pobject) {
     return config ? config.frontend.host + "/sql-privacy-editor/" + pobject.id : '';
+  }
+
+  getFileSqlDerivativeSensitivityEditorUrl(pobject) {
+    return config ? config.frontend.host + "/sql-derivative-sensitivity-editor/" + pobject.id : '';
   }
 
   getFilePEBPMNEditorUrl(pobject) {

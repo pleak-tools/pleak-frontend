@@ -79,6 +79,9 @@
               <a (click)="parent.openFileSQLEditor(pobject)">Open in SQL-editor</a>
             </li>
             <li *ngIf="parent.canEditFileInRoot(pobject)">
+              <a (click)="parent.openFileSQLDerivativeSensitivityEditor(pobject)">Open in SQL DS editor</a>
+            </li>
+            <li *ngIf="parent.canEditFileInRoot(pobject)">
               <a (click)="parent.openFilePEBPMNEditor(pobject)">Open in PE-BPMN editor</a>
             </li>
           </ul>
