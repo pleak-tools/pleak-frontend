@@ -7,6 +7,7 @@ app.set('port', config.frontend.port);
 app.use('/app/', express.static(__dirname + '/../' + config.frontend.folder + '/dist'));
 app.use('/sql-privacy-editor/:id', express.static(__dirname + '/../' + config.sql_editor.folder + '/dist'));
 app.use('/pe-bpmn-editor/:id', express.static(__dirname + '/../' + config.pe_bpmn_editor.folder + '/dist'));
+app.use('/sql-derivative-sensitivity-editor/:id', express.static(__dirname + '/../' + config.sql_derivative_sensitivity_editor.folder + '/dist'));
 app.use('/', express.static(__dirname + '/../' + config.frontend.folder + '/dist'));
 app.use(express.static(__dirname + '/../'));
 app.listen(app.get('port'), function() {

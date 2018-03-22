@@ -1,0 +1,42 @@
+<div class="modal fade" id="publishFolderForm" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" *ngIf="pobject && pobject.pobjects">
+    <div class="modal-content">
+      <div class="modal-header">
+        Publish files in folder
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12 text-right">
+            <button type="button" class="btn btn-success with-spinner" [ngClass]="{spinning: publishing}" (click)="publishAllFiles()">Publish all files</button>
+            <button type="button" class="btn btn-warning with-spinner" [ngClass]="{spinning: unpublishing}" (click)="unpublishAllFiles()">Remove all public links</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 publish-list">
+            <table *ngIf="pobject.pobjects.length > 0" class="table table-striped table-sm">
+              <tbody>
+              <ng-template #pobjectItem let-pobjects let-dirname="dirname">
+                <ng-container *ngFor="let pobject of pobjects">
+                  <tr *ngIf="pobject.type !== 'directory'" [ngClass]="{'published': pobject.published}">
+                    <td>
+                      <span title="{{dirname}}{{pobject.title}}"><span class="glyphicon glyphicon-link"></span> {{dirname}}{{pobject.title}}</span>
+                    </td>
+                    <td><span *ngIf="pobject.published" [@pobjectPublished]="pobject.published">{{pobject.publicUrl}}</span></td>
+                  </tr>
+                  <ng-container *ngIf="pobject.type == 'directory' && pobject.pobjects.length > 0">
+                    <ng-container *ngTemplateOutlet="pobjectItem; context:{$implicit: pobject.pobjects, dirname: dirname + pobject.title + '/'}"></ng-container>
+                  </ng-container>
+                </ng-container>
+              </ng-template>
+              <ng-container *ngTemplateOutlet="pobjectItem; context:{$implicit: pobject.pobjects, dirname: ''}"></ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
