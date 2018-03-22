@@ -5,8 +5,6 @@ import * as moment from 'moment';
 import 'rxjs/add/operator/distinctUntilChanged';
 
 
-
-
 declare var $: any;
 
 @Component({
@@ -41,6 +39,26 @@ export class FileListItemComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     $('[data-toggle="tooltip"]', this.elementRef.nativeElement).tooltip();
+
+
+
+    $('.dropdown-menu', this.elementRef.nativeElement).parent().on('show.bs.dropdown', event => {
+
+        let $target = $(event.target);
+        let $window = $(window);
+        let $dropdown = $('.dropdown-menu', $target);
+
+        let topSpace = $target.offset().top - $window.scrollTop();
+        let bottomSpace = $window.height() - (topSpace + $target.innerHeight());
+
+        if (topSpace > bottomSpace && bottomSpace < $dropdown.innerHeight()) {
+          $dropdown.css('top', ($dropdown.innerHeight() + 10) * -1);
+        } else {
+          $dropdown.css('top', '');
+        }
+      }
+    );
+
   }
 
 }
