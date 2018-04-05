@@ -50,10 +50,7 @@
               <a (click)="parent.exportFile(pobject)" id="export-{{pobject.id}}">Export</a>
             </li>
             <li *ngIf="parent.isOwner(pobject)">
-              <a (click)="parent.initMoveModal(pobject.id)">Move</a>
-            </li>
-            <li *ngIf="parent.isOwner(pobject)">
-              <a (click)="parent.openMoveItemModal(pobject)">Move2</a>
+              <a (click)="parent.openMoveItemModal(pobject)">Move</a>
             </li>
             <li *ngIf="parent.canDeleteFile(pobject)">
               <a (click)="parent.initDeleteFileModal(pobject.id)">Delete</a>
