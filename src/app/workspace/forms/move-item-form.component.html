@@ -1,0 +1,49 @@
+<div class="modal fade" id="moveItemForm" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" *ngIf="pobject">
+    <div class="modal-content">
+      <div class="modal-header">
+        Move <b>{{pobject.title}}</b> to <b> {{target?.title}}</b>
+      </div>
+      <div class="modal-body">
+
+        <div class="move-container">
+          <ul class="nav nav-tabs">
+            <li role="presentation" [ngClass]="{'active': tab == 'own'}"><a class="clickable" (click)="tab = 'own'">My models</a></li>
+            <li *ngIf="pobject.type == 'file'" role="presentation" [ngClass]="{'active': tab == 'shared'}"><a class="clickable" (click)="tab = 'shared'">Shared models</a></li>
+            <li *ngIf="pobject.type == 'directory'" role="presentation" class="disabled"><a>Shared models</a></li>
+          </ul>
+
+          <ng-template #pobjectItem let-dest>
+            <li class="pobject" *ngIf="dest.type === 'directory' && filesComponent.canMove(pobject, dest)">
+              <div class="move-item" (click)="target = dest" [ngClass]="{'active': target === dest}">
+                <div class="row">
+                  <div class="col-xs-12">
+                    <span class="title"><span class="glyphicon glyphicon-folder-open"></span> {{dest.title}}</span>
+                  </div>
+                </div>
+              </div>
+              <ul class="pobject-list subgroup">
+                <ng-container *ngFor="let item of dest.pobjects">
+                  <ng-container *ngTemplateOutlet="pobjectItem; context:{$implicit: item}"></ng-container>
+                </ng-container>
+              </ul>
+            </li>
+          </ng-template>
+
+          <ul class="pobject-list" *ngIf="tab == 'own'">
+            <ng-container *ngTemplateOutlet="pobjectItem; context:{$implicit: rootDir}"></ng-container>
+          </ul>
+          <ul class="pobject-list" *ngIf="tab == 'shared'">
+            <ng-container *ngFor="let item of sharedDir.pobjects">
+              <ng-container *ngTemplateOutlet="pobjectItem; context:{$implicit: item}"></ng-container>
+            </ng-container>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-success with-spinner" (click)="moveItem()" [ngClass]="{spinning: saving}" [disabled]="!target">Move</button>
+      </div>
+    </div>
+  </div>
+</div>

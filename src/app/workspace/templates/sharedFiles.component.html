@@ -52,6 +52,9 @@
             <li *ngIf="parent.isOwner(pobject)">
               <a (click)="parent.initMoveModal(pobject.id)">Move</a>
             </li>
+            <li *ngIf="parent.isOwner(pobject)">
+              <a (click)="parent.openMoveItemModal(pobject)">Move2</a>
+            </li>
             <li *ngIf="parent.canDeleteFile(pobject)">
               <a (click)="parent.initDeleteFileModal(pobject.id)">Delete</a>
             </li>
@@ -94,28 +97,6 @@
             </li>
           </ul>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Move modal -->
-<div class="modal fade move" id="moveModal{{pobject.id}}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-  <div class="modal-dialog modal-md">
-    <div class="modal-content">
-      <div class="modal-header">
-        Move <b>{{pobject.title}}</b> to <b>{{parent.selected === null ? '(select a directory)' : parent.selected.title}}</b>
-      </div>
-      <div class="modal-body">
-        <ul class="move-container">
-            <span *ngIf="parent.moveObjectId == pobject.id">
-              <li><move-pobjects [pobject]="pobject" [dest]="parent.getRoot()" [parent]="parent"></move-pobjects></li>
-            </span>
-        </ul>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-success" (click)="parent.movePobject(pobject)">Move</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
       </div>
     </div>
   </div>

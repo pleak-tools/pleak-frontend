@@ -14,10 +14,10 @@ import { FilesComponent } from './workspace/pages/files.component';
 import { FileListItemComponent } from './workspace/templates/file-list-item.component';
 import { OwnFilesComponent } from './workspace/templates/ownFiles.component';
 import { SharedFilesComponent } from './workspace/templates/sharedFiles.component';
-import { MovePobjectsComponent } from './workspace/templates/move.component';
 
 import { PublishFolderFormComponent } from './workspace/forms/publish-folder-form.component';
 import { ShareItemFormComponent} from './workspace/forms/share-item-form.component';
+import { MoveItemFormComponent} from './workspace/forms/move-item-form.component';
 
 import { AuthService } from './auth/auth.service';
 import { UserService } from './user/user.service';
@@ -50,9 +50,9 @@ const appRoutes: Routes = [
     FileListItemComponent,
     OwnFilesComponent,
     SharedFilesComponent,
-    MovePobjectsComponent,
     PublishFolderFormComponent,
-    ShareItemFormComponent
+    ShareItemFormComponent,
+    MoveItemFormComponent
   ],
   imports: [
     BrowserModule,
