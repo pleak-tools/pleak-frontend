@@ -81,7 +81,7 @@ export class ModelerComponent implements OnInit {
             self.modeler = null;
             var reader = new FileReader();
             reader.onload = (e:any) => {
-              var content = e.target.result.replace(/\n/g, "").replace(/entity/gi, "").replace(/\<\!DOCTYPE.+]\>/gi, ""); // Minor cleaning
+              var content = e.target.result.replace(/\n/g, ' ').replace(/  +/g, ' ').replace(/entity/gi, "").replace(/\<\!DOCTYPE.+]\>/gi, ""); // Minor cleaning
               if (this.isXML(content)) {
                 this.file.content = content;
                 this.openDiagram(content);
