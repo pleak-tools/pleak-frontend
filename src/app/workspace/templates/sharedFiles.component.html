@@ -1,10 +1,12 @@
 <div class="row {{parent.isPobjectDirectory(pobject) ? ' group' : ''}} {{parent.isPobjectHighlighted(pobject) ? ' highlight' : ''}}" *ngIf="parent.isMatchingSearch(pobject)">
   <div class="col-xs-6 col-md-5 col-lg-6 text-column" (click)="pobject.open = !pobject.open">
-    <span *ngIf="parent.isPobjectDirectory(pobject)" class="title">
-      <span class="glyphicon " [ngClass]="pobject.open ? 'glyphicon-folder-open' : 'glyphicon-folder-close'"></span> {{pobject.title}}
-    </span>
-    <span *ngIf="parent.isPobjectFile(pobject)" class="title">
-      <span class="glyphicon glyphicon-file"></span> <a class="clickable" (click)="parent.openFile(pobject)" title="{{pobject.title}}">{{pobject.title}}</a>
+    <span [ngStyle]="{'margin-left.px': Math.max(0, (depth-1) * 30) }">
+      <span *ngIf="parent.isPobjectDirectory(pobject)" class="title">
+        <span class="glyphicon " [ngClass]="pobject.open ? 'glyphicon-folder-open' : 'glyphicon-folder-close'"></span> {{pobject.title}}
+      </span>
+      <span *ngIf="parent.isPobjectFile(pobject)" class="title">
+        <span class="glyphicon glyphicon-file"></span> <a class="clickable" (click)="parent.openFile(pobject)" title="{{pobject.title}}">{{pobject.title}}</a>
+      </span>
     </span>
   </div>
   <div class="col-xs-6 col-md-7 col-lg-6">
@@ -134,6 +136,6 @@
 </div>
 <span *ngIf="parent.isPobjectDirectory(pobject)">
   <ul class="pobject-list subgroup" [hidden]="!pobject.open">
-    <li class="pobject" *ngFor="let pobject of pobject.pobjects"><shared-files [pobject]="pobject" [parent]="parent"></shared-files></li>
+    <li class="pobject" *ngFor="let pobject of pobject.pobjects"><shared-files [pobject]="pobject" [parent]="parent" [depth]="depth + 1"></shared-files></li>
   </ul>
 </span>
