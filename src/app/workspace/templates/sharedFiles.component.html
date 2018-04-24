@@ -85,6 +85,9 @@
             <li *ngIf="parent.canCreateFile(pobject)">
               <a (click)="parent.initCreateNewFileModal(pobject.id)">New model</a>
             </li>
+            <li *ngIf="parent.canCreateDirectory(pobject)">
+              <a (click)="parent.initCreateNewDirectoryModal(pobject.id)">New directory</a>
+            </li>
             <li *ngIf="parent.canShare(pobject)" role="separator" class="divider"></li>
             <li *ngIf="parent.canShare(pobject)">
               <a (click)="parent.initShareModal(pobject.id)">Share</a>

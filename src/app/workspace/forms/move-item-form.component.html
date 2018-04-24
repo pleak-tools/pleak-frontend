@@ -9,12 +9,11 @@
         <div class="move-container">
           <ul class="nav nav-tabs">
             <li role="presentation" [ngClass]="{'active': tab == 'own'}"><a class="clickable" (click)="tab = 'own'">My models</a></li>
-            <li *ngIf="pobject.type == 'file'" role="presentation" [ngClass]="{'active': tab == 'shared'}"><a class="clickable" (click)="tab = 'shared'">Shared models</a></li>
-            <li *ngIf="pobject.type == 'directory'" role="presentation" class="disabled"><a>Shared models</a></li>
+            <li role="presentation" [ngClass]="{'active': tab == 'shared'}"><a class="clickable" (click)="tab = 'shared'">Shared models</a></li>
           </ul>
 
           <ng-template #pobjectItem let-dest>
-            <li class="pobject" *ngIf="dest.type === 'directory' && filesComponent.canMove(pobject, dest)">
+            <li class="pobject" *ngIf="dest.type === 'directory' && canMove(pobject, dest)">
               <div class="move-item" (click)="target = dest" [ngClass]="{'active': target === dest}">
                 <div class="row">
                   <div class="col-xs-12">

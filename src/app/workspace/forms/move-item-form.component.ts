@@ -108,4 +108,29 @@ export class MoveItemFormComponent {
       );
   }
 
+  canMove(pobject, destination) {
+    // Can not move pobject into file
+    if (destination.type === 'file') {
+      return false;
+      // Can not move pobject into itself
+    } else if (pobject.id === destination.id) {
+      return false;
+      // Can move pobjects to root directory
+    } else if (destination.title === 'root') {
+      return true;
+      // Can move files to all directories
+    } else if (pobject.type === 'file') {
+      return true;
+    }
+    // Can not move directories into their child directories to prevent infinity
+    for (let pIx = 0; pIx < pobject.pobjects.length; pIx++) {
+      if (pobject.pobjects[pIx].id === destination.id) {
+        return false;
+      } else if (!this.canMove(pobject.pobjects[pIx], destination)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
 }

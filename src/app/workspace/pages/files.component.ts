@@ -313,8 +313,12 @@ export class FilesComponent implements OnInit {
 
 
   createDirectory(parentId) {
-    var parent = this.getPobjectById(Number.parseInt(parentId), this.getRoot());
-    var newDirectory = {
+    let rootParent = this.getPobjectById(Number.parseInt(parentId), this.getRoot());
+    let sharedParent = this.getPobjectById(Number.parseInt(parentId), this.getShared());
+
+    let parent = rootParent ? rootParent : sharedParent;
+
+    let newDirectory = {
       title: this.newPobjectTitle,
       directory: {
         id: parent.id
@@ -590,8 +594,8 @@ export class FilesComponent implements OnInit {
   }
 
   canEdit(file) {
-    if (this.isOwner(file)) return true;
-    for (var pIx = 0; pIx < file.permissions.length; pIx++) {
+    if (this.isOwner(file)) { return true; }
+    for (let pIx = 0; pIx < file.permissions.length; pIx++) {
       if (file.permissions[pIx].action.title === 'edit' &&
           this.authService.user ? file.permissions[pIx].user.id === parseInt(this.authService.user.sub) : false) {
         return true;
@@ -691,31 +695,6 @@ export class FilesComponent implements OnInit {
       }
     );
   }
-
-  canMove(pobject, destination) {
-    // Can not move pobject into file
-    if (this.isPobjectFile(destination)) {
-      return false;
-    // Can not move pobject into itself
-    } else if (pobject.id === destination.id) {
-      return false;
-    // Can move pobjects to root directory
-    } else if (destination.title === 'root') {
-      return true;
-    // Can move files to all directories
-    } else if (this.isPobjectFile(pobject)) {
-      return true;
-    }
-    // Can not move directories into their child directories to prevent infinity
-    for (var pIx = 0; pIx < pobject.pobjects.length; pIx++) {
-      if (pobject.pobjects[pIx].id === destination.id) {
-        return false;
-      } else if (!this.canMove(pobject.pobjects[pIx], destination)) {
-        return false;
-      }
-    }
-    return true;
-  };
 
   isMatchingSearch(pobject) {
     // If search string is empty stop here
