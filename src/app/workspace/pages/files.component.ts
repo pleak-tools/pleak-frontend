@@ -1262,17 +1262,6 @@ export class FilesComponent implements OnInit {
     });
   }
 
-  initShareModal(id) {
-    this.setShareUserEmail("");
-    $('.form-group.input-group').removeClass('has-error');
-    $('.error-block').hide();
-    $('#shareModal' + id).find('.shareWithEmail').val('');
-    $('#shareModal' + id).modal();
-    this.waitForElement("shareModal" + id, () => {
-      $('#shareModal' + id).find('.shareWithEmail').focus();
-    });
-  }
-
   initRemoveShareModal(id) {
     let pobject = this.getPobjectById(id, this.getShared());
     $('#removeSharedFileModal').find('.removeSharingPobjectParentId').val(id);

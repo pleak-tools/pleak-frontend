@@ -87,7 +87,7 @@
             </li>
             <li *ngIf="parent.canShare(pobject)" role="separator" class="divider"></li>
             <li *ngIf="parent.canShare(pobject)">
-              <a (click)="parent.initShareModal(pobject.id)">Share</a>
+              <a (click)="parent.openShareItemModal(pobject)">Share</a>
             </li>
             <li *ngIf="parent.isPobjectDirectory(pobject)">
               <a (click)="parent.openPublishFolderModal(pobject)">Publish files</a>
