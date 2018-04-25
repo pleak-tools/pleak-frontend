@@ -11,6 +11,7 @@ declare var $: any;
 })
 export class MoveItemFormComponent {
 
+  Math: Math = Math;
   @Input() filesComponent: FilesComponent;
   pobject: any;
   rootDir: any;

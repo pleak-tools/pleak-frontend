@@ -329,7 +329,7 @@ export class FilesComponent implements OnInit {
 
   renameDirectory(oldDirectoryId, title) {
     let oldDirectory = this.getPobjectById(Number.parseInt(oldDirectoryId), this.getRoot());
-    var newDirectory= Object.assign({}, oldDirectory);
+    let newDirectory = Object.assign({}, oldDirectory);
     newDirectory.title = title;
     // sending generic classes as JSON to java is not smart enough, TODO: get better JSON<->POJO lib?
     newDirectory.pobjects = [];
