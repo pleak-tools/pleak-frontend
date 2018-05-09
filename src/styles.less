@@ -271,7 +271,16 @@ body {
 }
 
 .files-list,
-.shared-files-list {
+.shared-files-list,
+.move-container {
+  .nav-tabs {
+    border-bottom: 0;
+    & > li {
+      margin-bottom: 0;
+    }
+  }
+
+
   font-size: 14px;
   .glyphicon {
     margin-right: 0.3em;
@@ -309,7 +318,8 @@ body {
         .text-overflow();
       }
       shared-files,
-      own-files {
+      own-files,
+      .move-item {
         & > div.row {
           border-bottom: 1px solid #ddd;
           line-height: 40px;
@@ -326,7 +336,16 @@ body {
               display: inline-block;
             }
           }
-
+        }
+      }
+      .move-item {
+        cursor: pointer;
+        &.active > div.row {
+          background: #f5f5f5;
+          font-weight: bold;
+          .glyphicon {
+            color: #666;
+          }
         }
       }
     }
@@ -377,16 +396,6 @@ body {
   content: '';
 }
 
-.files-list ul ul ul .title,
-.shared-files-list ul ul ul .title {
-  margin-left: 30px;
-}
-
-.files-list ul ul ul ul .title,
-.shared-files-list ul ul ul ul .title {
-  margin-left: 60px;
-}
-
 .files-list,
 .shared-files-list {
   border-bottom: none;
@@ -394,28 +403,6 @@ body {
 
 .hidden {
   display: none;
-}
-
-
-.move-container {
-  border-bottom: 1px solid #ddd;
-  padding: 0;
-  ul {
-    padding: 0;
-  }
-  li {
-    list-style-type: none;
-    line-height: 40px;
-  }
-
-}
-
-.move-container ul ul .title {
-  margin-left: 30px;
-}
-
-.move-container ul ul ul .title {
-  margin-left: 60px;
 }
 
 .move-element {

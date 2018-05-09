@@ -17,8 +17,11 @@ export class FileListItemComponent implements AfterViewInit {
     moment.locale('en-gb');
   }
 
+  Math: Math = Math;
+
   @Input() pobject;
   @Input() parent: FilesComponent;
+  @Input() depth;
 
   lastModified = Observable.create(observer => {
     observer.next(moment(this.pobject.lastModified).fromNow());

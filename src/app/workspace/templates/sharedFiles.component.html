@@ -1,10 +1,12 @@
 <div class="row {{parent.isPobjectDirectory(pobject) ? ' group' : ''}} {{parent.isPobjectHighlighted(pobject) ? ' highlight' : ''}}" *ngIf="parent.isMatchingSearch(pobject)">
   <div class="col-xs-6 col-md-5 col-lg-6 text-column" (click)="pobject.open = !pobject.open">
-    <span *ngIf="parent.isPobjectDirectory(pobject)" class="title">
-      <span class="glyphicon " [ngClass]="pobject.open ? 'glyphicon-folder-open' : 'glyphicon-folder-close'"></span> {{pobject.title}}
-    </span>
-    <span *ngIf="parent.isPobjectFile(pobject)" class="title">
-      <span class="glyphicon glyphicon-file"></span> <a class="clickable" (click)="parent.openFile(pobject)" title="{{pobject.title}}">{{pobject.title}}</a>
+    <span [ngStyle]="{'margin-left.px': Math.max(0, (depth-1) * 30) }">
+      <span *ngIf="parent.isPobjectDirectory(pobject)" class="title">
+        <span class="glyphicon " [ngClass]="pobject.open ? 'glyphicon-folder-open' : 'glyphicon-folder-close'"></span> {{pobject.title}}
+      </span>
+      <span *ngIf="parent.isPobjectFile(pobject)" class="title">
+        <span class="glyphicon glyphicon-file"></span> <a class="clickable" (click)="parent.openFile(pobject)" title="{{pobject.title}}">{{pobject.title}}</a>
+      </span>
     </span>
   </div>
   <div class="col-xs-6 col-md-7 col-lg-6">
@@ -50,7 +52,7 @@
               <a (click)="parent.exportFile(pobject)" id="export-{{pobject.id}}">Export</a>
             </li>
             <li *ngIf="parent.isOwner(pobject)">
-              <a (click)="parent.initMoveModal(pobject.id)">Move</a>
+              <a (click)="parent.openMoveItemModal(pobject)">Move</a>
             </li>
             <li *ngIf="parent.canDeleteFile(pobject)">
               <a (click)="parent.initDeleteFileModal(pobject.id)">Delete</a>
@@ -85,6 +87,9 @@
             <li *ngIf="parent.canCreateFile(pobject)">
               <a (click)="parent.initCreateNewFileModal(pobject.id)">New model</a>
             </li>
+            <li *ngIf="parent.canCreateDirectory(pobject)">
+              <a (click)="parent.initCreateNewDirectoryModal(pobject.id)">New directory</a>
+            </li>
             <li *ngIf="parent.canShare(pobject)" role="separator" class="divider"></li>
             <li *ngIf="parent.canShare(pobject)">
               <a (click)="parent.openShareItemModal(pobject)">Share</a>
@@ -94,28 +99,6 @@
             </li>
           </ul>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Move modal -->
-<div class="modal fade move" id="moveModal{{pobject.id}}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-  <div class="modal-dialog modal-md">
-    <div class="modal-content">
-      <div class="modal-header">
-        Move <b>{{pobject.title}}</b> to <b>{{parent.selected === null ? '(select a directory)' : parent.selected.title}}</b>
-      </div>
-      <div class="modal-body">
-        <ul class="move-container">
-            <span *ngIf="parent.moveObjectId == pobject.id">
-              <li><move-pobjects [pobject]="pobject" [dest]="parent.getRoot()" [parent]="parent"></move-pobjects></li>
-            </span>
-        </ul>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-success" (click)="parent.movePobject(pobject)">Move</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
       </div>
     </div>
   </div>
@@ -153,6 +136,6 @@
 </div>
 <span *ngIf="parent.isPobjectDirectory(pobject)">
   <ul class="pobject-list subgroup" [hidden]="!pobject.open">
-    <li class="pobject" *ngFor="let pobject of pobject.pobjects"><shared-files [pobject]="pobject" [parent]="parent"></shared-files></li>
+    <li class="pobject" *ngFor="let pobject of pobject.pobjects"><shared-files [pobject]="pobject" [parent]="parent" [depth]="depth + 1"></shared-files></li>
   </ul>
 </span>

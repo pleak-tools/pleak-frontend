@@ -4,7 +4,9 @@ import { AuthService } from 'app/auth/auth.service';
 import * as moment from 'moment';
 import { ShareItemFormComponent } from 'app/workspace/forms/share-item-form.component';
 import { PublishFolderFormComponent } from 'app/workspace/forms/publish-folder-form.component';
+import { MoveItemFormComponent } from 'app/workspace/forms/move-item-form.component';
 import 'rxjs/add/operator/finally';
+
 
 declare var $: any;
 declare function require(name: string);
@@ -21,16 +23,15 @@ export class FilesComponent implements OnInit {
 
   @ViewChild(ShareItemFormComponent) private shareItemForm: ShareItemFormComponent;
   @ViewChild(PublishFolderFormComponent) private publishFolderForm: PublishFolderFormComponent;
+  @ViewChild(MoveItemFormComponent) private moveItemForm: MoveItemFormComponent;
 
   private rootDir: any = {};
   private sharedDir: any = {};
   private pobjects = null;
-  public selected = null;
   private sort = 0;
   private userEmail = '';
   private search = '';
   private newPobjectTitle = '';
-  public moveObjectId = null;
   private canExportModel = false;
 
   public ownFilesLoading = false;
@@ -84,6 +85,10 @@ export class FilesComponent implements OnInit {
 
   openPublishFolderModal(pobject) {
     this.publishFolderForm.initModal(pobject);
+  }
+
+  openMoveItemModal(pobject) {
+    this.moveItemForm.initModal(pobject, this.rootDir, this.sharedDir);
   }
 
   isAuthenticated() {
@@ -306,32 +311,14 @@ export class FilesComponent implements OnInit {
     this.deleteFilePermissions(pobject);
   }
 
-  movePobject(pobject) {
-    var newPobject= Object.assign({}, pobject);
-    newPobject.directory.id = this.selected.id;
-    if (this.isOwner(pobject)) {
-      newPobject.permissions = this.selected.permissions; // Inherit permissions of the new location folder
-    } else if (pobject.directory && this.isOwnerByPobjectId(pobject.directory.id)) {
-      newPobject.permissions = this.selected.permissions;
-      if (!this.isOwner(pobject)) {
-        this.setShareUserEmail(this.getCurrentUserEmail());
-        this.addRightsREST(pobject, 'edit', true);
-      }
-    }
-    delete newPobject.open;
-    if (this.isPobjectFile(pobject)) {
-      delete newPobject.publicUrl;
-      this.updateFileREST(newPobject, pobject, this.callbacks.moveFile);
-    } else if (this.isPobjectDirectory(pobject)) {
-      newPobject.pobjects = [];
-      this.updateDirectoryREST(newPobject, pobject, this.callbacks.moveDirectory);
-    }
-  }
 
   createDirectory(parentId) {
-    var parent = this.getPobjectById(Number.parseInt(parentId), this.getRoot());
-    if (this.getInversePobjectDepth(parent) > 3) return false;
-    var newDirectory = {
+    let rootParent = this.getPobjectById(Number.parseInt(parentId), this.getRoot());
+    let sharedParent = this.getPobjectById(Number.parseInt(parentId), this.getShared());
+
+    let parent = rootParent ? rootParent : sharedParent;
+
+    let newDirectory = {
       title: this.newPobjectTitle,
       directory: {
         id: parent.id
@@ -342,7 +329,7 @@ export class FilesComponent implements OnInit {
 
   renameDirectory(oldDirectoryId, title) {
     let oldDirectory = this.getPobjectById(Number.parseInt(oldDirectoryId), this.getRoot());
-    var newDirectory= Object.assign({}, oldDirectory);
+    let newDirectory = Object.assign({}, oldDirectory);
     newDirectory.title = title;
     // sending generic classes as JSON to java is not smart enough, TODO: get better JSON<->POJO lib?
     newDirectory.pobjects = [];
@@ -499,20 +486,6 @@ export class FilesComponent implements OnInit {
       error: (response) => {
       }
     },
-    moveDirectory: {
-      success: function(response, oldParentId, self) {
-        self.deletePobjectById(response.id, self.getPobjectById(oldParentId, self.rootDir));
-        response.open = true;
-        self.getPobjectById(response.directory.id, self.rootDir).pobjects.push(response);
-        self.getPobjectById(response.directory.id, self.rootDir).open = true;
-        self.selected = null;
-        $('#moveModal' + response.id).modal('hide');
-        $('body').removeClass('modal-open');
-        $('.modal-backdrop').remove();
-        self.getRootDirectory();
-      },
-      error: function(response) {}
-    },
     newFile: {
       success: function(response) {
         $('#newFileModal').modal('hide');
@@ -535,42 +508,6 @@ export class FilesComponent implements OnInit {
         $('.file-name-input').addClass('has-error');
         $('.file-name-error').show();
       }
-    },
-    moveFile: {
-      success: function(response, oldParentId, self) {
-        let ownParent = self.getPobjectById(oldParentId, self.rootDir);
-        let sharedParent = self.getPobjectById(oldParentId, self.sharedDir);
-        let ownNew = self.getPobjectById(response.directory.id, self.rootDir);
-        let sharedNew = self.getPobjectById(response.directory.id, self.sharedDir);
-        if (ownParent) {
-          self.deletePobjectById(response.id, self.getPobjectById(oldParentId, self.rootDir));
-          response.open = true;
-          self.getPobjectById(response.directory.id, self.rootDir).pobjects.push(response);
-          self.getPobjectById(response.directory.id, self.rootDir).open = true;
-          self.selected = null;
-          $('#moveModal' + response.id).modal('hide');
-          $('body').removeClass('modal-open');
-          $('.modal-backdrop').remove();
-          self.checkIfOwnFilesLoaded();
-        } else if (sharedParent) {
-          self.deletePobjectById(response.id, self.getPobjectById(oldParentId, self.sharedDir));
-          response.open = true;
-          self.getPobjectById(response.directory.id, self.sharedDir).pobjects.push(response);
-          self.getPobjectById(response.directory.id, self.sharedDir).open = true;
-          self.selected = null;
-          $('#moveModal' + response.id).modal('hide');
-          $('body').removeClass('modal-open');
-          $('.modal-backdrop').remove();
-        }
-        if (ownNew) {
-          self.getSharedDirectory();
-          self.getRootDirectory();
-        } else if (sharedNew) {
-          self.getSharedDirectory();
-          self.getSharedDirectory();
-        }
-      },
-      error: function(response) {}
     },
     shareFile: {
       success: (response) => {
@@ -616,16 +553,12 @@ export class FilesComponent implements OnInit {
 
   /* OTHER TEMPLATE FUNCTIONS */
 
-  getOwner(email) {
-    return email === this.getCurrentUserEmail() ? 'Myself' : email;
-  };
-
   canCreateFile(parent) {
     return this.isPobjectDirectory(parent) && this.canEdit(parent);
   }
 
   canCreateDirectory(parent) {
-    return this.isPobjectDirectory(parent) && this.canEdit(parent) && this.getInversePobjectDepth(parent) < 4;
+    return this.isPobjectDirectory(parent) && this.canEdit(parent);
   }
 
   canDeleteFile(pobject) {
@@ -661,8 +594,8 @@ export class FilesComponent implements OnInit {
   }
 
   canEdit(file) {
-    if (this.isOwner(file)) return true;
-    for (var pIx = 0; pIx < file.permissions.length; pIx++) {
+    if (this.isOwner(file)) { return true; }
+    for (let pIx = 0; pIx < file.permissions.length; pIx++) {
       if (file.permissions[pIx].action.title === 'edit' &&
           this.authService.user ? file.permissions[pIx].user.id === parseInt(this.authService.user.sub) : false) {
         return true;
@@ -763,34 +696,6 @@ export class FilesComponent implements OnInit {
     );
   }
 
-  canMove(pobject, destination) {
-    // Can not move pobject into file
-    if (this.isPobjectFile(destination)) {
-      return false;
-    // Can not move pobject into itself
-    } else if (pobject.id === destination.id) {
-      return false;
-    // Can not move pobject into directory when the resulting depth from root is > 5
-    } else if (this.getPobjectDepth(pobject) + this.getInversePobjectDepth(destination) > 5) {
-      return false;
-    // Can move pobjects to root directory
-    } else if (destination.title === 'root') {
-      return true;
-    // Can move files to all directories
-    } else if (this.isPobjectFile(pobject)) {
-      return true;
-    }
-    // Can not move directories into their child directories to prevent infinity
-    for (var pIx = 0; pIx < pobject.pobjects.length; pIx++) {
-      if (pobject.pobjects[pIx].id === destination.id) {
-        return false;
-      } else if (!this.canMove(pobject.pobjects[pIx], destination)) {
-        return false;
-      }
-    }
-    return true;
-  };
-
   isMatchingSearch(pobject) {
     // If search string is empty stop here
     if (this.search.length === 0) {
@@ -842,18 +747,6 @@ export class FilesComponent implements OnInit {
       } else if (this.containsById(id, dir.pobjects[pIx])) {
         return true;
       }
-    }
-
-    return false;
-  };
-
-  // Searches all parents recursively for id
-  inverseContainsById(id, pobject) {
-    if (id === undefined || pobject === undefined) return false;
-
-    if (pobject.directory.id === id ||
-        this.inverseContainsById(id, this.getPobjectById(pobject.directory.id, this.rootDir))) {
-      return true;
     }
 
     return false;
@@ -1269,173 +1162,41 @@ export class FilesComponent implements OnInit {
     $('#removeSharedFileModal').modal();
   }
 
-  initMoveModal(id) {
-    this.moveObjectId = id;
-    $('#moveModal' + id).modal();
-    this.selected = null;
+  // Update only one row in own/shared files list when model is updated
+  updateFileListRecursively(pobject: any, pobjects: any) {
+    if (pobjects) {
+      for (let i = 0; i < pobjects.length; i++) {
+        let pobj = pobjects[i];
+        if (pobj.id == pobject.id) {
+          pobjects[i] = pobject;
+          this.createPublicUrl(pobjects[i]);
+          return;
+        }
+        if (pobj.pobjects) {
+          this.updateFileListRecursively(pobject, pobj.pobjects);
+        }
+      }
+    }
   }
 
-  // Update only one row in own/shared files list when file is updated
-
-  updateRootDirectory() {
-
+  updateFilesLists() {
     if (localStorage.lastModifiedFileId) {
-
       var pid = parseInt(localStorage.lastModifiedFileId.replace('"',''));
-
       this.http.get(config.backend.host + '/rest/directories/files/' + pid, this.authService.loadRequestOptions()).subscribe(
         success => {
-
-          let pobject = JSON.parse((<any>success)._body);
-
-          for (let i = 0; i < this.rootDir.pobjects.length; i++) {
-
-            // Update row in root
-            let pobj1 = this.rootDir.pobjects[i];
-            if (pobj1.id == pid) {
-              this.rootDir.pobjects[i] = pobject;
-              this.createPublicUrl(this.rootDir.pobjects[i]);
-              break;
-            }
-
-            // Update row in sub folder (level 1)
-            if (pobj1.pobjects) {
-
-              for (let j = 0; j < pobj1.pobjects.length; j++) {
-
-                let pobj2 = pobj1.pobjects[j];
-                if (pobj2.id == pid) {
-                  this.rootDir.pobjects[i].pobjects[j] = pobject;
-                  this.createPublicUrl(this.rootDir.pobjects[i].pobjects[j]);
-                  break;
-                }
-
-                // Update row in sub folder (level 2)
-                if (pobj2.pobjects) {
-
-                  for (let k = 0; k < pobj2.pobjects.length; k++) {
-
-                    let pobj3 = pobj2.pobjects[k];
-                    if (pobj3.id == pid) {
-                      this.rootDir.pobjects[i].pobjects[j].pobjects[k] = pobject;
-                      this.createPublicUrl(this.rootDir.pobjects[i].pobjects[j].pobjects[k]);
-                      break;
-                    }
-
-                    // Update row in sub folder (level 3)
-                    if (pobj3.pobjects) {
-
-                      for (let l = 0; l < pobj3.pobjects.length; l++) {
-
-                        let pobj4 = pobj3.pobjects[l];
-                        if (pobj4.id == pid) {
-                          this.rootDir.pobjects[i].pobjects[j].pobjects[k].pobjects[l] = pobject;
-                          this.createPublicUrl(this.rootDir.pobjects[i].pobjects[j].pobjects[k].pobjects[l]);
-                          break;
-                        }
-
-                      }
-
-                    }
-
-                  }
-
-                }
-
-              }
-
-            }
-          }
-
+          let pobject = success.json();
+          this.updateFileListRecursively(pobject, this.rootDir.pobjects);
+          this.updateFileListRecursively(pobject, this.sharedDir.pobjects);
         }
       );
-
     }
-
   }
-
-  updateSharedDirectory() {
-
-    if (localStorage.lastModifiedFileId) {
-
-      var pid = parseInt(localStorage.lastModifiedFileId.replace('"',''));
-
-      this.http.get(config.backend.host + '/rest/directories/files/' + pid, this.authService.loadRequestOptions()).subscribe(
-        success => {
-
-          let pobject = JSON.parse((<any>success)._body);
-
-          for (let i = 0; i < this.sharedDir.pobjects.length; i++) {
-
-            // Update row in root
-            let pobj1 = this.sharedDir.pobjects[i];
-            if (pobj1.id == pid) {
-              this.sharedDir.pobjects[i] = pobject;
-              this.createPublicUrl(this.sharedDir.pobjects[i]);
-              break;
-            }
-
-            // Update row in sub folder (level 1)
-            if (pobj1.pobjects) {
-
-              for (let j = 0; j < pobj1.pobjects.length; j++) {
-
-                let pobj2 = pobj1.pobjects[j];
-                if (pobj2.id == pid) {
-                  this.sharedDir.pobjects[i].pobjects[j] = pobject;
-                  this.createPublicUrl(this.sharedDir.pobjects[i].pobjects[j]);
-                  break;
-                }
-
-                // Update row in sub folder (level 2)
-                if (pobj2.pobjects) {
-
-                  for (let k = 0; k < pobj2.pobjects.length; k++) {
-
-                    let pobj3 = pobj2.pobjects[k];
-                    if (pobj3.id == pid) {
-                      this.sharedDir.pobjects[i].pobjects[j].pobjects[k] = pobject;
-                      this.createPublicUrl(this.sharedDir.pobjects[i].pobjects[j].pobjects[k]);
-                      break;
-                    }
-
-                    // Update row in sub folder (level 3)
-                    if (pobj3.pobjects) {
-
-                      for (let l = 0; l < pobj3.pobjects.length; l++) {
-
-                        let pobj4 = pobj3.pobjects[l];
-                        if (pobj4.id == pid) {
-                          this.sharedDir.pobjects[i].pobjects[j].pobjects[k].pobjects[l] = pobject;
-                          this.createPublicUrl(this.sharedDir.pobjects[i].pobjects[j].pobjects[k].pobjects[l]);
-                          break;
-                        }
-
-                      }
-
-                    }
-
-                  }
-
-                }
-
-              }
-
-            }
-          }
-
-        }
-      );
-
-    }
-
-  };
 
   ngOnInit() {
     window.addEventListener('storage', (e) => {
+      // If a model is updated in modeler / editors, update files lists
       if (e.storageArea === localStorage) {
-        this.updateRootDirectory();
-        this.updateSharedDirectory();
+        this.updateFilesLists();
         $('#loginModal').modal('hide');
       }
     });
