@@ -3,7 +3,7 @@ import { Http, RequestOptions, Headers } from '@angular/http';
 import { AuthService } from "app/auth/auth.service";
 import { RouteService } from "app/route/route.service";
 
-import * as Modeler from 'bpmn-js/lib/Modeler';
+import Modeler from 'bpmn-js/lib/Modeler';
 import { Comments } from 'assets/comments/comments';
 import { SqlBPMNModdle } from "assets/bpmn-labels-extension";
 

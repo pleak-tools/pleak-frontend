@@ -3,7 +3,7 @@ import { Http, RequestOptions, Headers } from '@angular/http';
 import { AuthService } from "app/auth/auth.service";
 import { RouteService } from "app/route/route.service";
 import { SqlBPMNModdle } from "assets/bpmn-labels-extension";
-import * as Viewer from 'bpmn-js/lib/NavigatedViewer';
+import NavigatedViewer from 'bpmn-js/lib/NavigatedViewer';
 import { ElementsHandler } from "../../../../pleak-pe-bpmn-editor/src/app/editor/handler/elements-handler"; // If you don't have PE-BPMN editor installed, comment this line out!
 // import { Comments } from 'assets/comments/comments';
 
@@ -23,7 +23,7 @@ export class ViewerComponent implements OnInit {
   @Input() authenticated: boolean;
 
   file;
-  viewer: Viewer;
+  viewer: NavigatedViewer;
 
   private modelId = this.routeService.getCurrentUrl().split('/')[3];
 
@@ -34,7 +34,7 @@ export class ViewerComponent implements OnInit {
       success => {
         if (success.status == 200) {
         self.file = JSON.parse((<any>success)._body);
-        self.viewer = new Viewer({
+        self.viewer = new NavigatedViewer({
           container: '#viewer-canvas',
           moddleExtensions: {
             sqlExt: SqlBPMNModdle
@@ -42,7 +42,8 @@ export class ViewerComponent implements OnInit {
         });
         self.viewer.importXML(self.file.content, (err) => {
           if (!err) {
-            self.viewer.get('#viewer-canvas').zoom('fit-viewport');
+            let canvas = self.viewer.get('canvas');
+            canvas.zoom('fit-viewport');
           }
         });
         new ElementsHandler(self.viewer, self.file.content, self, "public");  // If you don't have PE-BPMN editor installed, comment this line out!
