@@ -67,14 +67,14 @@
             <li *ngIf="parent.canPublish(pobject)">
               <a (click)="parent.initPublishFileModal(pobject.id)">Publish</a>
             </li>
-            <li *ngIf="parent.canEditFileInShared(pobject)" role="separator" class="divider"></li>
-            <li *ngIf="parent.canEditFileInShared(pobject)">
+            <li role="separator" class="divider"></li>
+            <li>
               <a (click)="parent.openFileSQLEditor(pobject)">Open in SQL-editor</a>
             </li>
-            <li *ngIf="parent.canEditFileInShared(pobject)">
+            <li>
               <a (click)="parent.openFileSQLDerivativeSensitivityEditor(pobject)">Open in SQL DS editor</a>
             </li>
-            <li *ngIf="parent.canEditFileInShared(pobject)">
+            <li>
               <a (click)="parent.openFilePEBPMNEditor(pobject)">Open in PE-BPMN editor</a>
             </li>
           </ul>

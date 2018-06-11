@@ -51,7 +51,7 @@ export class RouteService {
       } else if (event['url'].indexOf('/app#/view/') !== -1) {
 
         var modelId = event['url'].split(/\//)[3];
-        router.navigateByUrl('/#/viewer/' + modelId);
+        window.location.href = '/pe-bpmn-editor/viewer/' + modelId;
 
       } else {
 

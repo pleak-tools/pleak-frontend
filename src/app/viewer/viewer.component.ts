@@ -46,7 +46,7 @@ export class ViewerComponent implements OnInit {
             canvas.zoom('fit-viewport');
           }
         });
-        new ElementsHandler(self.viewer, self.file.content, self, "public");  // If you don't have PE-BPMN editor installed, comment this line out!
+        new ElementsHandler(self.viewer, self.file.content, self, false);  // If you don't have PE-BPMN editor installed, comment this line out!
         $(window).on('wheel', (event) => {
           // Change the color of stereotype labels more visible when zooming out
           var zoomLevel = self.viewer.get('canvas').zoom();
