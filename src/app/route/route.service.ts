@@ -50,6 +50,7 @@ export class RouteService {
 
       } else if (event['url'].indexOf('/app#/view/') !== -1) {
 
+        this.routePageId.next('redirect');
         var modelId = event['url'].split(/\//)[3];
         window.location.href = '/pe-bpmn-editor/viewer/' + modelId;
 
