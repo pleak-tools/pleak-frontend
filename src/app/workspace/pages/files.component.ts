@@ -957,6 +957,10 @@ export class FilesComponent implements OnInit {
     window.open(this.getFilePEBPMNEditorUrl(pobject), '_blank');
   }
 
+  openFilePolicyEditor(pobject) {
+    window.open(this.getFilePolicyEditorUrl(pobject), '_blank');
+  }
+
   getFileUrl(pobject) {
     return config ? config.frontend.host + "/#/modeler/" + pobject.id : '';
   };
@@ -971,6 +975,10 @@ export class FilesComponent implements OnInit {
 
   getFilePEBPMNEditorUrl(pobject) {
     return config ? config.frontend.host + "/pe-bpmn-editor/" + pobject.id : '';
+  }
+
+  getFilePolicyEditorUrl(pobject) {
+    return config ? config.frontend.host + "/policy-editor/" + pobject.id : '';
   }
 
   sortPobjects(dir, sortFunction) {
