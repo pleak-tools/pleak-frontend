@@ -4,7 +4,7 @@ import { AuthService } from "app/auth/auth.service";
 import { RouteService } from "app/route/route.service";
 import { SqlBPMNModdle } from "assets/bpmn-labels-extension";
 import NavigatedViewer from 'bpmn-js/lib/NavigatedViewer';
-import { ElementsHandler } from "../../../../pleak-pe-bpmn-editor/src/app/editor/handler/elements-handler"; // If you don't have PE-BPMN editor installed, comment this line out!
+//import { ElementsHandler } from "../../../../pleak-pe-bpmn-editor/src/app/editor/handler/elements-handler"; // If you don't have PE-BPMN editor installed, comment this line out!
 // import { Comments } from 'assets/comments/comments';
 
 declare var $: any;
@@ -46,7 +46,7 @@ export class ViewerComponent implements OnInit {
             canvas.zoom('fit-viewport');
           }
         });
-        new ElementsHandler(self.viewer, self.file.content, self, false);  // If you don't have PE-BPMN editor installed, comment this line out!
+        //new ElementsHandler(self.viewer, self.file.content, self, false);  // If you don't have PE-BPMN editor installed, comment this line out!
         $(window).on('wheel', (event) => {
           // Change the color of stereotype labels more visible when zooming out
           var zoomLevel = self.viewer.get('canvas').zoom();
