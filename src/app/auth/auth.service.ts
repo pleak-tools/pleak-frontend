@@ -4,6 +4,7 @@ import { Location } from "@angular/common"
 import { HttpClient, HttpResponse } from '@angular/common/http';
 
 import { BehaviorSubject } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 
 declare var $: any;
 
@@ -15,7 +16,7 @@ const config = require('../../config.json');
 @Injectable()
 export class AuthService {
 
-  constructor(public http: HttpClient, private router: Router, private location: Location) {
+  constructor(public http: HttpClient, private router: Router, private location: Location, private toastr: ToastrService) {
     this.verifyToken();
   }
 
@@ -92,6 +93,7 @@ export class AuthService {
             this.location.replaceState('/home');
           }
 
+          this.toastr.success('Logged in successfully');
 
         }
 
@@ -111,6 +113,8 @@ export class AuthService {
         this.user = null;
         this.authStatusChanged(false);
         this.hideLogoutLoading();
+
+        this.toastr.info('Logged out successfully');
       },
       fail => {
         delete localStorage.jwt;

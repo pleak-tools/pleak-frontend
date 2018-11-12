@@ -26,6 +26,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { NguiAutoCompleteModule} from '@ngui/auto-complete';
 import { HomeComponent } from './workspace/pages/home.component';
 import { RedirectComponent } from './redirect.component';
+import { ToastrModule } from 'ngx-toastr';
 
 
 @NgModule({
@@ -50,7 +51,12 @@ import { RedirectComponent } from './redirect.component';
     ReactiveFormsModule,
     HttpClientModule,
     NguiAutoCompleteModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ToastrModule.forRoot({
+      timeOut: 5000,
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+    })
     ],
   providers: [AuthService, UserService, ApiService],
   bootstrap: [AppComponent]
