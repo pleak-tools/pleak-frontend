@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 
 declare function require(name: string);
 
-let config = require('../config.json');
+const config = require('../config.json');
 
 @Injectable()
 export class ApiService {
@@ -19,12 +19,15 @@ export class ApiService {
 
   updateFile(pobject: any, values: Object = {}): Observable<any> {
 
-    let requestItem = Object.assign({}, pobject);
+    const requestItem = Object.assign({}, pobject);
     Object.assign(requestItem, values);
     delete requestItem.publicUrl;
     delete requestItem.open;
 
-    return this.http.put(config.backend.host + '/rest/directories/files/' + pobject.id, requestItem, {headers: {'JSON-Web-Token': localStorage.jwt}}).map(
+    return this.http.put(config.backend.host + '/rest/directories/files/' + pobject.id,
+      requestItem,
+      {headers: {'JSON-Web-Token': localStorage.jwt}}
+    ).map(
       (response: any) => {
         Object.assign(pobject, response);
 
@@ -40,12 +43,15 @@ export class ApiService {
 
   updateDirectory(directory: any, values: Object = {}): Observable<any> {
 
-    let requestItem = Object.assign({}, directory);
+    const requestItem = Object.assign({}, directory);
     Object.assign(requestItem, values);
     delete requestItem.open;
     requestItem.pobjects = [];
 
-    return this.http.put(config.backend.host + '/rest/directories/' + directory.id, requestItem, {headers: {'JSON-Web-Token': localStorage.jwt}}).map(
+    return this.http.put(config.backend.host + '/rest/directories/' + directory.id,
+      requestItem,
+      {headers: {'JSON-Web-Token': localStorage.jwt}}
+    ).map(
       (response: any) => {
         Object.assign(directory, response);
         return response;

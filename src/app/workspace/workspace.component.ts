@@ -1,7 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { AuthService } from "app/auth/auth.service";
-import { RouteService } from "app/route/route.service";
-import { UserService } from "app/user/user.service";
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from 'app/auth/auth.service';
+import { UserService } from 'app/user/user.service';
+import { ActivatedRoute } from '@angular/router';
 
 declare var $: any;
 
@@ -11,35 +11,16 @@ declare var $: any;
 })
 export class WorkspaceComponent implements OnInit {
 
-  constructor(private authService: AuthService, private routeService: RouteService, private userService: UserService) {
-
-    this.authService.authStatus.subscribe(status => {
-      this.authenticated = status;
+  constructor(public authService: AuthService, private userService: UserService, private route: ActivatedRoute) {
+    route.data.subscribe(data => {
+      if ('showLogin' in data && data.showLogin) {
+        this.initLoginModal();
+      }
     });
-
-    this.routeService.routeSubPage.subscribe(page => {
-      this.subpage = page;
-    });
-
-  }
-
-  authenticated: boolean;
-  subpage;
-
-  isAuthenticated() {
-    return this.authenticated;
   }
 
   getUserEmail() {
     return this.authService.getUserEmail();
-  }
-
-  getClass(url) {
-    return url === this.subpage ? 'active' : '';
-  }
-
-  getCurrentLocation() {
-    return this.routeService.getCurrentUrl();
   }
 
   initLoginModal() {
@@ -55,10 +36,9 @@ export class WorkspaceComponent implements OnInit {
   }
 
   ngOnInit() {
-    var self = this;
-    window.addEventListener('storage', function(e) {
-      if (e.storageArea === localStorage) {
-        self.authService.verifyToken();
+    window.addEventListener('storage', (event: StorageEvent) => {
+      if (event.storageArea === localStorage) {
+        this.authService.verifyToken();
       }
     });
   }

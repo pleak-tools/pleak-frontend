@@ -1,30 +1,38 @@
 import { Injectable } from '@angular/core';
-import { Http, RequestOptions, Headers } from '@angular/http';
-import { Subject } from "rxjs/Subject";
-import { RouteService } from "app/route/route.service";
+import { Router } from '@angular/router';
+import { Location } from "@angular/common"
+import { HttpClient, HttpResponse } from '@angular/common/http';
+
+import { BehaviorSubject } from 'rxjs';
 
 declare var $: any;
-declare function require(name:string);
 
-let jwt_decode = require('jwt-decode');
-let config = require('../../config.json');
+declare function require(name: string);
+
+const jwt_decode = require('jwt-decode');
+const config = require('../../config.json');
 
 @Injectable()
 export class AuthService {
 
-  constructor(public http: Http, private routeService: RouteService) {
+  constructor(public http: HttpClient, private router: Router, private location: Location) {
     this.verifyToken();
   }
 
   user = null;
+  redirectUrl = '';
 
   private loginCredentials = {
     email: '',
     password: ''
   };
 
-  private authStatusBool = new Subject<boolean>();
+  private authStatusBool = new BehaviorSubject<boolean|null>(null);
   authStatus = this.authStatusBool.asObservable();
+
+  static loadRequestOptions(input: object | null = null): object {
+    return Object.assign({headers: {'JSON-Web-Token': localStorage.jwt || ''}}, input);
+  }
 
   setLoginCredentialsEmail(value: string) {
     this.loginCredentials.email = value;
@@ -34,15 +42,10 @@ export class AuthService {
     this.loginCredentials.password = value;
   }
 
-  loadRequestOptions() {
-    let headers = new Headers();
-    headers.append('JSON-Web-Token', localStorage.jwt);
-    return new RequestOptions({ headers: headers });
-  }
 
-  verifyToken = function() {
+  verifyToken() {
 
-    this.http.get(config.backend.host + '/rest/auth', this.loadRequestOptions()).subscribe(
+    this.http.get(config.backend.host + '/rest/auth', AuthService.loadRequestOptions()).subscribe(
       success => {
         this.user = jwt_decode(localStorage.jwt);
         this.authStatusChanged(true);
@@ -65,32 +68,44 @@ export class AuthService {
 
   }
 
-  loginREST = function(user) {
+  loginREST(user) {
 
-    this.http.post(config.backend.host + '/rest/auth/login', user, this.loadRequestOptions()).subscribe(
-      success => {
+    this.http.post(config.backend.host + '/rest/auth/login', user, AuthService.loadRequestOptions({observe: 'response'})).subscribe(
+      (response: HttpResponse<any>) => {
 
-        if (success.status === 200) {
+        if (response.status === 200) {
 
-          var token = JSON.parse(success._body).token;
+          const token = response.body.token;
           localStorage.jwt = token;
           this.user = jwt_decode(token);
           this.authStatusChanged(true);
           this.loginSuccess();
 
+          let redirect = this.redirectUrl ? this.redirectUrl : '';
+
+          if (redirect) {
+            this.router.navigate([redirect], {skipLocationChange: true});
+            this.location.replaceState(redirect);
+            this.redirectUrl = '';
+          } else if (this.router.routerState.snapshot.url === '/home/login') {
+            this.router.navigate(['/home'], {skipLocationChange: true});
+            this.location.replaceState('/home');
+          }
+
+
         }
 
       },
-      fail => {
+      (fail: HttpResponse<any>) => {
         this.loginError(fail.status);
       }
     );
 
   }
 
-  logoutREST = function() {
+  logoutREST() {
 
-    this.http.get(config.backend.host + '/rest/auth/logout', this.loadRequestOptions()).subscribe(
+    this.http.get(config.backend.host + '/rest/auth/logout', AuthService.loadRequestOptions()).subscribe(
       success => {
         delete localStorage.jwt;
         this.user = null;
@@ -102,7 +117,7 @@ export class AuthService {
         this.user = null;
         this.authStatusChanged(false);
         this.hideLogoutLoading();
-      } 
+      }
     );
 
   }
@@ -124,7 +139,7 @@ export class AuthService {
   };
 
   loginSuccess() {
-    $('#loginLoading').fadeOut("slow", function() {
+    $('#loginLoading').fadeOut('slow', function () {
       $('#loginForm').trigger('reset').show();
       $('#loginForm .help-block').hide();
       $('#loginForm .form-group').removeClass('has-error');
@@ -139,11 +154,11 @@ export class AuthService {
   };
 
   loginError(code) {
-    $('#loginLoading').fadeOut("slow", function() {
+    $('#loginLoading').fadeOut('slow', function () {
       $('#loginForm .help-block').hide();
       $('#loginForm .form-group').addClass('has-error');
       $('#loginForm').show();
-      if (code === 403 || code === 404 || code == 401) {
+      if (code === 403 || code === 404 || code === 401) {
         $('#loginHelpCredentials').show();
       } else {
         $('#loginHelpServer').show();
@@ -166,13 +181,15 @@ export class AuthService {
   };
 
   hideLogoutLoading() {
-    $('#logoutLoading').fadeOut("slow", function() {
+    $('#logoutLoading').fadeOut('slow', function () {
       $('#logoutText').show();
     });
     $('#logoutModal').modal('hide');
     $('body').removeClass('modal-open');
     $('.modal-backdrop').remove();
-    this.routeService.navigateToHome();
+
+    // this.router.navigateByUrl('/home');
+
   };
 
   waitForElement(id, callback) {
@@ -186,7 +203,7 @@ export class AuthService {
 
   initLoginModal() {
     $('#loginModal').modal();
-    this.waitForElement("loginModal", () => {
+    this.waitForElement('loginModal', () => {
       $('#loginModal').find('#userEmail').focus();
     });
   }

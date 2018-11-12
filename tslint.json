@@ -10,16 +10,14 @@
       true,
       "check-space"
     ],
-    "curly": true,
+    "curly": false,
     "deprecation": {
       "severity": "warn"
     },
     "eofline": true,
     "forin": true,
     "import-blacklist": [
-      true,
-      "rxjs",
-      "rxjs/Rx"
+      true
     ],
     "import-spacing": true,
     "indent": [
@@ -28,10 +26,7 @@
     ],
     "interface-over-type-literal": true,
     "label-position": true,
-    "max-line-length": [
-      true,
-      140
-    ],
+    "max-line-length": false,
     "member-access": false,
     "member-ordering": [
       true,
@@ -83,12 +78,12 @@
       "check-else",
       "check-whitespace"
     ],
-    "prefer-const": true,
+    "prefer-const": false,
     "quotemark": [
       true,
       "single"
     ],
-    "radix": true,
+    "radix": false,
     "semicolon": [
       true,
       "always"

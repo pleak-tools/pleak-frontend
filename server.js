@@ -18,6 +18,7 @@ app.use('/', express.static(__dirname + '/../' + config.frontend.folder + '/dist
 app.use('/combined-sensitivity-editor/:id', express.static(__dirname + '/../' + config.combined_sensitivity_editor.folder + '/dist'));
 app.use('/combined-sensitivity-editor/viewer/:id', express.static(__dirname + '/../' + config.combined_sensitivity_editor.folder + '/dist'));
 app.use(express.static(__dirname + '/../'));
+app.use('*',express.static(__dirname + '/../' + config.frontend.folder + '/dist'));
 app.listen(app.get('port'), function() {
   console.log("App is running at: http://localhost:" + app.get('port') + "/app/#/");
 });

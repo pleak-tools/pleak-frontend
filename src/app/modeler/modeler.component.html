@@ -1,7 +1,7 @@
   <div class="row import-export">
     <div class="col-lg-12">
       <div class="row">
-        <div class="col-lg-4 form-group file-name-container" *ngIf="isAuthenticated() && canEdit()">
+        <div class="col-lg-4 form-group file-name-container" *ngIf="(authService.authStatus | async) && canEdit()">
           <input type="text" class="form-control pull-right file-name-box" id="fileName" placeholder="File name" *ngIf="fileLoaded">
           <span id="fileNameError" class="help-block error-message" style="display: none;">
             Incorrect file name, please use symbols: a-z, A-Z, 0-9, ".", "-", "_"
@@ -17,14 +17,14 @@
           </span>
         </div>
         <div class="col-lg-8 buttons-container">
-          <ul class="buttons" *ngIf="isAuthenticated() && fileLoaded && canEdit()">
+          <ul class="buttons" *ngIf="(authService.authStatus | async) && fileLoaded && canEdit()">
             <li>
               <a id="save-diagram" title="save BPMN diagram" href="#">
                 <span class="glyphicon glyphicon-floppy-disk"></span> Save diagram
               </a>
             </li>
           </ul>
-          <ul class="buttons" *ngIf="isAuthenticated() && fileLoaded">
+          <ul class="buttons" *ngIf="(authService.authStatus | async) && fileLoaded">
             <li>
               <a id="download-diagram" title="download BPMN diagram" href="#">
                 <span class="glyphicon glyphicon-cloud-download"></span> BPMN diagram
@@ -37,16 +37,16 @@
               </a>
             </li>
           </ul>
-          <ul class="buttons analyze" id="login-container" *ngIf="!isAuthenticated()">
+          <ul class="buttons analyze" id="login-container" *ngIf="!(authService.authStatus | async)">
             <li>
-              <a class="active" id="log-in" (click)="initLoginModal()" href="{{getCurrentLocation()}}">
+              <a [routerLink]="" class="active" id="log-in" (click)="initLoginModal()">
                 <span class="glyphicon glyphicon-log-in"></span> Log in
               </a>
             </li>
           </ul>
-          <ul class="buttons analyze" id="login-container" *ngIf="isAuthenticated()">
+          <ul class="buttons analyze" id="login-container" *ngIf="(authService.authStatus | async)">
             <li>
-              <a class="active" id="log-out" (click)="initLogoutModal()" href="{{getCurrentLocation()}}">
+              <a [routerLink]="" class="active" id="log-out" (click)="initLogoutModal()">
                 <span class="glyphicon glyphicon-log-in"></span> Log out
               </a>
             </li>

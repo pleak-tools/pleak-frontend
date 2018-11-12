@@ -1,13 +1,14 @@
 import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
 import { Http, RequestOptions, Headers } from '@angular/http';
 import { AuthService } from "app/auth/auth.service";
-import { RouteService } from "app/route/route.service";
 
 import Modeler from 'bpmn-js/lib/Modeler';
 import { Comments } from 'assets/comments/comments';
 import { SqlBPMNModdle } from "assets/bpmn-labels-extension";
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 
-declare function require(name:string);
+declare function require(name: string);
 declare let $: any;
 let is = (element, type) => element.$instanceOf(type);
 
@@ -22,21 +23,13 @@ const initialBpmn = require('raw-loader!assets/newDiagram.bpmn');
 })
 export class ModelerComponent implements OnInit {
 
-  constructor(public http: Http, private authService: AuthService, private routeService: RouteService) {
-    this.authService.authStatus.subscribe(status => {
-      this.authenticated = status;
-      if (!status || !this.file) {
-        this.getModel();
-      }
-    });
-    this.getModel();
-  }
+  constructor(public http: HttpClient, public authService: AuthService, private route: ActivatedRoute) {}
 
   private modeler;
   private eventBus;
   private overlays;
 
-  private modelId = this.routeService.getCurrentUrl().split('/')[3];
+  private modelId;
 
   private saveFailed: Boolean = false;
   private lastContent: String = '';
@@ -44,16 +37,11 @@ export class ModelerComponent implements OnInit {
   private fileId: Number = null;
   private file: any = null;
 
-  @Input() authenticated: boolean;
   fileLoaded = false;
 
   private dataObjectSettings = null;
 
   private lastModified: Number = null;
-
-  isAuthenticated() {
-    return this.authenticated;
-  }
 
   getModel() {
     let self = this;
@@ -63,25 +51,25 @@ export class ModelerComponent implements OnInit {
     $('.buttons-container').off('click', '.buttons a');
     $(window).off('keydown');
     $(window).off('mouseup');
-    self.http.get(config.backend.host + '/rest/directories/files/' + self.modelId, self.authService.loadRequestOptions()).subscribe(
+    self.http.get(config.backend.host + '/rest/directories/files/' + self.modelId, AuthService.loadRequestOptions()).subscribe(
       success => {
-        self.file = JSON.parse((<any>success)._body);
+        self.file = success;
         self.fileId = self.file.id;
         if (self.file.content.length === 0) { // If no content added yet, show option to import or create a new model
           $('#template-selector-overlay, #template-selector').show();
           document.getElementById('importModel').onclick = (e) => {
             document.getElementById('fileImportInput').click();
           };
-          document.getElementById('fileImportInput').onchange = (e:any) => {
+          document.getElementById('fileImportInput').onchange = (e: any) => {
             let file = null;
             file = e.target.files[0];
             if (!file) {
               return;
             }
             self.modeler = null;
-            var reader = new FileReader();
-            reader.onload = (e:any) => {
-              var content = e.target.result.replace(/\n/g, ' ').replace(/  +/g, ' ').replace(/entity/gi, "").replace(/\<\!DOCTYPE.+]\>/gi, ""); // Minor cleaning
+            const reader = new FileReader();
+            reader.onload = (e: any) => {
+              const content = e.target.result.replace(/\n/g, ' ').replace(/  +/g, ' ').replace(/entity/gi, "").replace(/\<\!DOCTYPE.+]\>/gi, ""); // Minor cleaning
               if (this.isXML(content)) {
                 this.file.content = content;
                 this.openDiagram(content);
@@ -231,10 +219,10 @@ export class ModelerComponent implements OnInit {
         } else {
           self.file.title = $('#fileName').val();
           self.file.content = xml;
-          self.http.put(config.backend.host + '/rest/directories/files/' + self.fileId, self.file, self.authService.loadRequestOptions()).subscribe(
-            success => {
-              if (success.status == 200 || success.status == 201) {
-                let data = JSON.parse((<any>success)._body);
+          self.http.put(config.backend.host + '/rest/directories/files/' + self.fileId, self.file, AuthService.loadRequestOptions({observe: 'response'})).subscribe(
+            (success: HttpResponse<any>) => {
+              if (success.status === 200 || success.status === 201) {
+                let data = success.body;
                 $('.error-message').hide();
                 $('#fileSaveSuccess').show();
                 $('#fileSaveSuccess').fadeOut(5000);
@@ -253,14 +241,14 @@ export class ModelerComponent implements OnInit {
                 document.title = 'Pleak editor - ' + self.file.title;
               }
             },
-            fail => {
-              if (fail.status == 400) {
+            (fail: HttpResponse<any>) => {
+              if (fail.status === 400) {
                 self.saveFailed = true;
                 $('#fileNameError').show();
-              } else if (fail.status == 401) {
+              } else if (fail.status === 401) {
                 self.saveFailed = true;
                 $('#loginModal').modal();
-              } else if (fail.status == 409) {
+              } else if (fail.status === 409) {
                 self.saveFailed = true;
                 delete self.file.id;
                 if (parseInt(jwt_decode(localStorage.jwt).sub) !== self.file.user.id) {
@@ -365,9 +353,6 @@ export class ModelerComponent implements OnInit {
     }
   }
 
-  getCurrentLocation() {
-    return this.routeService.getCurrentUrl();
-  }
 
   initLoginModal() {
     this.authService.initLoginModal();
@@ -405,8 +390,8 @@ export class ModelerComponent implements OnInit {
   }
 
   ngOnInit() {
-    window.addEventListener('storage', (e) => {
-      if (e.storageArea === localStorage) {
+    window.addEventListener('storage', (event: StorageEvent) => {
+      if (event.storageArea === localStorage) {
         if (!this.authService.verifyToken()) {
           this.getModel();
         } else {
@@ -415,7 +400,7 @@ export class ModelerComponent implements OnInit {
           if (this.file) {
             currentFileId = this.file.id;
           }
-          let localStorageLastModifiedTime = Number(localStorage.getItem('lastModified').replace(/['"]+/g, ''))
+          let localStorageLastModifiedTime = Number(localStorage.getItem('lastModified').replace(/['"]+/g, ''));
           let lastModifiedTime = this.lastModified;
           if (lastModifiedFileId && currentFileId && localStorageLastModifiedTime && lastModifiedTime && lastModifiedFileId == currentFileId && localStorageLastModifiedTime > lastModifiedTime) {
             this.getModel();
@@ -423,7 +408,15 @@ export class ModelerComponent implements OnInit {
         }
       }
     });
-    this.getModel();
+
+    this.route.paramMap
+      .subscribe((params: ParamMap) => {
+        this.modelId = params.get('id');
+        this.getModel();
+      });
+
   }
+
+
 
 }

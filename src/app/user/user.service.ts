@@ -1,22 +1,22 @@
 import { Injectable } from '@angular/core';
-import { Http, RequestOptions, Headers } from '@angular/http';
-import { AuthService } from "app/auth/auth.service";
+import { AuthService } from 'app/auth/auth.service';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 
 declare var $: any;
-declare function require(name:string);
+declare function require(name: string);
 
-let config = require('../../config.json');
+const config = require('../../config.json');
 
 @Injectable()
 export class UserService {
 
-  constructor(public http: Http, private authService: AuthService) {}
+  constructor(public http: HttpClient) {}
 
   private userExtension = {
     currentPassword: '',
     newPassword1: '',
     newPassword2: ''
-  }
+  };
 
 
   setUserCurrentPassword(value: string) {
@@ -33,15 +33,13 @@ export class UserService {
 
   changePasswordREST(user) {
 
-    var userObject = {currentPassword: user.currentPassword, newPassword: user.newPassword1};
+    const userObject = {currentPassword: user.currentPassword, newPassword: user.newPassword1};
 
-    this.http.put(config.backend.host + '/rest/user/password', userObject, this.authService.loadRequestOptions()).subscribe(
-      success => {
+    this.http.put(config.backend.host + '/rest/user/password', userObject, AuthService.loadRequestOptions({observe: 'response'})).subscribe(
+      (success: HttpResponse<any>) => {
 
         if (success.status === 200) {
-
           this.changePasswordSuccess();
-
         }
 
       },
@@ -65,7 +63,7 @@ export class UserService {
       currentPassword: '',
       newPassword1: '',
       newPassword2: ''
-    }
+    };
   };
 
   showChangePasswordLoading() {

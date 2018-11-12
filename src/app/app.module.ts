@@ -3,12 +3,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { ModelerComponent } from './modeler/modeler.component';
-import { ViewerComponent } from './viewer/viewer.component';
 import { WorkspaceComponent } from './workspace/workspace.component';
 import { FilesComponent } from './workspace/pages/files.component';
 import { FileListItemComponent } from './workspace/templates/file-list-item.component';
@@ -23,28 +21,19 @@ import { AuthService } from './auth/auth.service';
 import { UserService } from './user/user.service';
 import { ApiService } from './api.service';
 
-import { RouterModule, Routes } from '@angular/router';
-import { RouteService } from 'app/route/route.service';
+import { AppRoutingModule } from './app-routing.module';
 
 import { NguiAutoCompleteModule} from '@ngui/auto-complete';
+import { HomeComponent } from './workspace/pages/home.component';
+import { RedirectComponent } from './redirect.component';
 
-
-const appRoutes: Routes = [
-  {
-    path: '',
-    component: WorkspaceComponent
-  },
-  {
-    path: '**',
-    component: WorkspaceComponent
-  }
-];
 
 @NgModule({
   declarations: [
     AppComponent,
+    HomeComponent,
+    RedirectComponent,
     ModelerComponent,
-    ViewerComponent,
     WorkspaceComponent,
     FilesComponent,
     FileListItemComponent,
@@ -59,12 +48,11 @@ const appRoutes: Routes = [
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpModule,
     HttpClientModule,
     NguiAutoCompleteModule,
-    RouterModule.forRoot(appRoutes)
+    AppRoutingModule
     ],
-  providers: [AuthService, UserService, RouteService, ApiService],
+  providers: [AuthService, UserService, ApiService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

@@ -1,29 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-import { RouteService } from "app/route/route.service";
-import { AuthService } from "app/auth/auth.service";
-import { UserService } from "app/user/user.service";
+import { NavigationStart, Router } from '@angular/router';
+
+import { Observable } from 'rxjs';
+
+import { AuthService } from 'app/auth/auth.service';
+import { UserService } from 'app/user/user.service';
+import { filter } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html'
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit {
 
-  constructor(private authService: AuthService, private routeService: RouteService, private userService: UserService) {
-    this.authService.authStatus.subscribe(status => {
-      this.authenticated = status;
-    });
-    this.routeService.routePage.subscribe(page => {
-      this.page = page;
-    });
-  }
-  
-  page;
-  private subpage;
-  private authenticated;
+  navStart: Observable<NavigationStart>;
 
-  isAuthenticated() {
-    return this.authenticated;
+  constructor(private authService: AuthService, private userService: UserService, private router: Router) {
+    this.navStart = router.events.pipe(
+      filter(evt => evt instanceof NavigationStart)
+    ) as Observable<NavigationStart>;
   }
 
   setUserEmail(value: string) {
@@ -56,15 +52,34 @@ export class AppComponent implements OnInit{
 
   changePassword() {
     this.userService.changePassword();
-  };
+  }
 
   ngOnInit() {
-    var self = this;
-    window.addEventListener('storage', function(e) {
-      if (e.storageArea === localStorage) {
-        self.authService.verifyToken();
+    window.addEventListener('storage', (event: StorageEvent) => {
+      if (event.storageArea === localStorage) {
+        this.authService.verifyToken();
       }
     });
+
+    this.navStart.subscribe(evt => {
+
+      if (evt.url === '/#/files') {
+        this.router.navigateByUrl('/files');
+        return;
+
+      } else if (evt.url.match(/\/#\/modeler\/(\d+)/)) {
+        this.router.navigate(['modeler', evt.url.match(/\/#\/modeler\/(\d+)/)[1]]);
+        return;
+
+      } else if (evt.url.match(/\/app#\/view\/(\S+)/)) {
+        this.router.navigateByUrl('/redirect');
+        window.location.href = '/pe-bpmn-editor/viewer/' + evt.url.match(/\/app#\/view\/(\S+)/)[1];
+        return;
+      }
+
+
+    });
+
   }
 
 }

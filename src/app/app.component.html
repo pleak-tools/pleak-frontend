@@ -1,13 +1,5 @@
-<div [ngSwitch]="page" class="pageContainer">
-  <div *ngSwitchCase="'redirect'">
-    <div class="spinner">
-      <div class="double-bounce1"></div>
-      <div class="double-bounce2"></div>
-    </div>
-  </div>
-  <app-modeler *ngSwitchCase="'modeler'" [authenticated]="authenticated"></app-modeler>
-  <app-viewer *ngSwitchCase="'viewer'" [authenticated]="authenticated"></app-viewer>
-  <app-workspace *ngSwitchDefault></app-workspace>
+<div class="pageContainer">
+  <router-outlet></router-outlet>
 </div>
 
 <!-- Login -->
