@@ -90,7 +90,7 @@ export class UserService {
       $('#changePasswordHelpCredentials1').show();
     } else if (code === 400) {
       $('#changePasswordHelpCredentials2').show();
-    } else if (code == 409) {
+    } else if (code === 409) {
       $('#changePasswordHelpServer').show();
     } else {
       $('#changePasswordHelpCredentials3').show();
@@ -108,7 +108,7 @@ export class UserService {
 
   initChangePasswordModal() {
     $('#changePasswordModal').modal();
-    this.waitForElement("changePasswordModal", () => {
+    this.waitForElement('changePasswordModal', () => {
       $('#changePasswordModal').find('#currentPassword').focus();
     });
   }

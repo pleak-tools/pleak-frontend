@@ -6,6 +6,7 @@ import { PublishFolderFormComponent } from 'app/workspace/forms/publish-folder-f
 import { MoveItemFormComponent } from 'app/workspace/forms/move-item-form.component';
 import 'rxjs/add/operator/finally';
 import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
 
 
 declare var $: any;
@@ -37,7 +38,7 @@ export class FilesComponent implements OnInit {
   public tab = 'own';
 
 
-  constructor(public http: HttpClient, private authService: AuthService) {
+  constructor(public http: HttpClient, private authService: AuthService, private toastr: ToastrService) {
 
     this.getRootDirectory();
     this.getSharedDirectory();
@@ -145,6 +146,7 @@ export class FilesComponent implements OnInit {
         parent.pobjects.push(data);
         parent.open = true;
         callback.success(data);
+        this.toastr.success('Folder created successfully', directory.title);
       },
       fail => {
         let data = JSON.parse((<any>fail)._body);
@@ -178,6 +180,7 @@ export class FilesComponent implements OnInit {
       success => {
         this.deletePobjectById(id, this.rootDir);
         this.triggerLocalStorageChangeEvent();
+        this.toastr.success('Folder deleted successfully');
       },
       fail => {
       }
@@ -197,6 +200,8 @@ export class FilesComponent implements OnInit {
           this.addRightsREST(data, 'edit', true);
         }
         callback.success(data);
+
+        this.toastr.success('File created successfully');
       },
       fail => {
         callback.error(fail);
@@ -244,6 +249,7 @@ export class FilesComponent implements OnInit {
       success => {
         if (fileInOwnFiles) {
           this.deletePobjectById(id, this.rootDir);
+          this.toastr.success('File deleted successfully');
         }
         if (fileInSharedFiles) {
           this.deletePobjectById(id, this.sharedDir);

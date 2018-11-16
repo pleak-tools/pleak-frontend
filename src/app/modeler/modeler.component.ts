@@ -1,11 +1,10 @@
-import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
-import { Http, RequestOptions, Headers } from '@angular/http';
-import { AuthService } from "app/auth/auth.service";
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from 'app/auth/auth.service';
 
 import Modeler from 'bpmn-js/lib/Modeler';
 import { Comments } from 'assets/comments/comments';
-import { SqlBPMNModdle } from "assets/bpmn-labels-extension";
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { SqlBPMNModdle } from 'assets/bpmn-labels-extension';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 
 declare function require(name: string);
@@ -23,7 +22,7 @@ const initialBpmn = require('raw-loader!assets/newDiagram.bpmn');
 })
 export class ModelerComponent implements OnInit {
 
-  constructor(public http: HttpClient, public authService: AuthService, private route: ActivatedRoute) {}
+  constructor(public http: HttpClient, public authService: AuthService, private route: ActivatedRoute, private router: Router) {}
 
   private modeler;
   private eventBus;
@@ -232,7 +231,7 @@ export class ModelerComponent implements OnInit {
                 localStorage.setItem("lastModifiedFileId", '"' + data.id + '"');
                 localStorage.setItem("lastModified", '"' + date.getTime() + '"');
                 if (self.fileId !== data.id) {
-                  window.location.href = config.frontend.host + '/#/modeler/' + data.id;
+                  this.router.navigate(['modeler', data.id]);
                 }
                 self.file.md5Hash = data.md5Hash;
                 self.lastContent = self.file.content;
