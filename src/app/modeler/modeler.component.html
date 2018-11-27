@@ -2,19 +2,11 @@
     <div class="col-lg-12">
       <div class="row">
         <div class="col-lg-4 form-group file-name-container" *ngIf="(authService.authStatus | async) && canEdit()">
-          <input type="text" class="form-control pull-right file-name-box" id="fileName" placeholder="File name" *ngIf="fileLoaded">
-          <span id="fileNameError" class="help-block error-message" style="display: none;">
-            Incorrect file name, please use symbols: a-z, A-Z, 0-9, ".", "-", "_"
-          </span>
-          <span id="fileContentError" class="help-block error-message" style="display: none;">
-            File has changed on the server. Please set new file name to save a copy.
-          </span>
+          <input type="text" class="form-control pull-right file-name-box" id="fileName" [(ngModel)]="file.title" placeholder="File name" *ngIf="fileLoaded">
           <span id="fileCannotBeOpenedError" class="help-block error-message" style="display: none;">
             File cannot be found or opened!
           </span>
-          <span id="fileSaveSuccess" class="help-block success-message" style="display: none;">
-            Successfully saved the file.
-          </span>
+
         </div>
         <div class="col-lg-8 buttons-container">
           <ul class="buttons" *ngIf="(authService.authStatus | async) && fileLoaded && canEdit()">
