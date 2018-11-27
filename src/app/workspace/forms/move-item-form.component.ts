@@ -2,6 +2,7 @@ import { Component, Input, NgZone } from '@angular/core';
 import { ApiService } from 'app/api.service';
 import { FilesComponent } from 'app/workspace/pages/files.component';
 import { AuthService } from 'app/auth/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 declare var $: any;
 
@@ -20,7 +21,7 @@ export class MoveItemFormComponent {
   saving = false;
   tab = 'own';
 
-  constructor(private apiService: ApiService, private authService: AuthService, private zone: NgZone) {
+  constructor(private apiService: ApiService, private authService: AuthService, private zone: NgZone, private toastr: ToastrService) {
   }
 
   initModal(pobject, rootDir, sharedDir) {
@@ -105,6 +106,11 @@ export class MoveItemFormComponent {
         () => {
           this.filesComponent.getSharedDirectory();
           this.filesComponent.getRootDirectory();
+
+          if (this.pobject.type === 'file')
+            this.toastr.success('File moved');
+          else
+            this.toastr.success('Folder moved');
         }
       );
   }
