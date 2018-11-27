@@ -6,6 +6,7 @@ import { Comments } from 'assets/comments/comments';
 import { SqlBPMNModdle } from 'assets/bpmn-labels-extension';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { HttpClient, HttpResponse } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
 
 declare function require(name: string);
 declare let $: any;
@@ -22,7 +23,7 @@ const initialBpmn = require('raw-loader!assets/newDiagram.bpmn');
 })
 export class ModelerComponent implements OnInit {
 
-  constructor(public http: HttpClient, public authService: AuthService, private route: ActivatedRoute, private router: Router) {}
+  constructor(public http: HttpClient, public authService: AuthService, private route: ActivatedRoute, private router: Router, private toastr: ToastrService) {}
 
   private modeler;
   private eventBus;
@@ -105,7 +106,9 @@ export class ModelerComponent implements OnInit {
             e.stopPropagation();
           }
         });
-        $('#fileCannotBeOpenedError').show();
+
+        this.toastr.error('File cannot be found or opened!', '', {disableTimeOut: true});
+
       }
     );
   }
@@ -223,9 +226,9 @@ export class ModelerComponent implements OnInit {
               if (success.status === 200 || success.status === 201) {
                 let data = success.body;
                 $('.error-message').hide();
-                $('#fileSaveSuccess').show();
-                $('#fileSaveSuccess').fadeOut(5000);
                 $('#save-diagram').removeClass('active');
+
+                this.toastr.success('File saved');
                 let date = new Date();
                 self.lastModified = date.getTime();
                 localStorage.setItem("lastModifiedFileId", '"' + data.id + '"');
@@ -243,7 +246,7 @@ export class ModelerComponent implements OnInit {
             (fail: HttpResponse<any>) => {
               if (fail.status === 400) {
                 self.saveFailed = true;
-                $('#fileNameError').show();
+                this.toastr.error('Incorrect file name, please use symbols: a-z, A-Z, 0-9, ".", "-", "_"');
               } else if (fail.status === 401) {
                 self.saveFailed = true;
                 $('#loginModal').modal();
@@ -254,7 +257,7 @@ export class ModelerComponent implements OnInit {
                   delete self.file.directory.id;
                   self.file.directory.title = 'root';
                 }
-                $('#fileContentError').show();
+                this.toastr.error('File has changed on the server. Please set new file name to save a copy.');
               }
             }
           );
