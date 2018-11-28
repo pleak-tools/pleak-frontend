@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Location } from "@angular/common"
+import { Location } from '@angular/common';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 
 import { BehaviorSubject } from 'rxjs';
@@ -18,6 +18,23 @@ export class AuthService {
 
   constructor(public http: HttpClient, private router: Router, private location: Location, private toastr: ToastrService) {
     this.verifyToken();
+
+    this.authStatus.subscribe((status) =>{
+      if (status === true) {
+        let redirect = this.redirectUrl ? this.redirectUrl : '';
+
+        if (redirect) {
+          this.router.navigate([redirect], {skipLocationChange: true});
+          this.location.replaceState(redirect);
+          this.redirectUrl = '';
+        } else if (this.router.routerState.snapshot.url === '/home/login') {
+          this.router.navigate(['/home'], {skipLocationChange: true});
+          this.location.replaceState('/home');
+        }
+
+        $('#loginModal').modal('hide');
+      }
+    });
   }
 
   user = null;
@@ -81,17 +98,6 @@ export class AuthService {
           this.user = jwt_decode(token);
           this.authStatusChanged(true);
           this.loginSuccess();
-
-          let redirect = this.redirectUrl ? this.redirectUrl : '';
-
-          if (redirect) {
-            this.router.navigate([redirect], {skipLocationChange: true});
-            this.location.replaceState(redirect);
-            this.redirectUrl = '';
-          } else if (this.router.routerState.snapshot.url === '/home/login') {
-            this.router.navigate(['/home'], {skipLocationChange: true});
-            this.location.replaceState('/home');
-          }
 
           this.toastr.success('Logged in successfully');
 
