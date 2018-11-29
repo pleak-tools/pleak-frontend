@@ -179,7 +179,7 @@ export class FilesComponent implements OnInit {
       success => {
         this.deletePobjectById(id, this.rootDir);
         this.triggerLocalStorageChangeEvent();
-        this.toastr.success('Folder deleted');
+        this.toastr.success('Directory deleted');
       },
       fail => {
       }
@@ -235,6 +235,7 @@ export class FilesComponent implements OnInit {
     this.http.delete(config.backend.host + '/rest/directories/files/permissions/' + pobject.id, AuthService.loadRequestOptions()).subscribe(
       success => {
         this.unShareFileWithUser(pobject, this.sharedDir);
+        this.toastr.success('Share removed');
       }
     );
   }
@@ -448,7 +449,7 @@ export class FilesComponent implements OnInit {
         $('#newDirectoryModal').modal('hide');
         $('body').removeClass('modal-open');
         $('.modal-backdrop').remove();
-        this.toastr.success('Folder created');
+        this.toastr.success('Directory created');
       },
       error: () => {
         $('.directory-name-input').addClass('has-error');
@@ -460,7 +461,7 @@ export class FilesComponent implements OnInit {
         $('#renameDirectoryModal').modal('hide');
         $('body').removeClass('modal-open');
         $('.modal-backdrop').remove();
-        this.toastr.success('Folder renamed');
+        this.toastr.success('Directory renamed');
       },
       error: () => {
         $('.directory-name-input').addClass('has-error');
@@ -473,7 +474,7 @@ export class FilesComponent implements OnInit {
         $('#shareModal' + response.id).modal('hide');
         $('body').removeClass('modal-open');
         $('.modal-backdrop').remove();
-        this.toastr.success('Folder shared');
+        this.toastr.success('Directory shared');
       },
       error: () => {
       }
@@ -514,7 +515,7 @@ export class FilesComponent implements OnInit {
       error: () => {
       }
     },
-    publishFile: {
+     publishFile: {
       success: (response) => {
         $('#server-error').hide();
         $('.form-group.input-group').removeClass('has-error');
@@ -524,7 +525,7 @@ export class FilesComponent implements OnInit {
             $('#publishFileModal' + response.id).find('.publicLink')[0].setSelectionRange(0, $('#publishFileModal' + response.id).find('.publicLink').val().length);
           }
         });
-        this.toastr.success('File published');
+        this.toastr.success('Publishing changed');
       },
       error: () => {
         $('#server-error').show();
@@ -683,7 +684,7 @@ export class FilesComponent implements OnInit {
             this.canExportModel = false;
           }
         } else {
-          alert('File is empty!');
+          this.toastr.error('File is empty!');
         }
         this.canExportModel = false;
         document.getElementById('export-' + file.id).removeAttribute('href');

@@ -110,7 +110,7 @@ export class MoveItemFormComponent {
           if (this.pobject.type === 'file')
             this.toastr.success('File moved');
           else
-            this.toastr.success('Folder moved');
+            this.toastr.success('Directory moved');
         }
       );
   }

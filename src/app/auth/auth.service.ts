@@ -19,7 +19,7 @@ export class AuthService {
   constructor(public http: HttpClient, private router: Router, private location: Location, private toastr: ToastrService) {
     this.verifyToken();
 
-    this.authStatus.subscribe((status) =>{
+    this.authStatus.subscribe((status) => {
       if (status === true) {
         let redirect = this.redirectUrl ? this.redirectUrl : '';
 

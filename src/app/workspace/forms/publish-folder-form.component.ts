@@ -4,6 +4,7 @@ import { ApiService } from 'app/api.service';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/finally';
 import { Observable } from 'rxjs/Observable';
+import { ToastrService } from 'ngx-toastr';
 
 declare var $: any;
 
@@ -22,7 +23,7 @@ export class PublishFolderFormComponent {
   unpublishing = false;
   pobject: any;
 
-  constructor(private apiService: ApiService, private zone: NgZone) {
+  constructor(private apiService: ApiService, private zone: NgZone, private toastr: ToastrService) {
   }
 
   initModal(pobject) {
@@ -69,7 +70,9 @@ export class PublishFolderFormComponent {
         .finally(() => {
           this.zone.run(() => this.publishing = false);
         })
-        .subscribe();
+        .subscribe(() => {
+          this.zone.run(() => this.toastr.success('All files published'));
+        });
     });
   }
 
@@ -95,7 +98,9 @@ export class PublishFolderFormComponent {
         .finally(() => {
           this.zone.run(() => this.unpublishing = false);
         })
-        .subscribe();
+        .subscribe(() => {
+          this.zone.run(() => this.toastr.success('Public links removed'));
+        });
     });
   }
 

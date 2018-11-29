@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AuthService } from 'app/auth/auth.service';
 import { HttpClient, HttpResponse } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
 
 declare var $: any;
 declare function require(name: string);
@@ -10,7 +11,7 @@ const config = require('../../config.json');
 @Injectable()
 export class UserService {
 
-  constructor(public http: HttpClient) {}
+  constructor(public http: HttpClient, private toastr: ToastrService) {}
 
   private userExtension = {
     currentPassword: '',
@@ -64,12 +65,12 @@ export class UserService {
       newPassword1: '',
       newPassword2: ''
     };
-  };
+  }
 
   showChangePasswordLoading() {
     $('#changePasswordLoading').show();
     $('#changePasswordForm').hide();
-  };
+  }
 
   changePasswordSuccess() {
     $('#changePasswordLoading').hide();
@@ -79,7 +80,9 @@ export class UserService {
     $('#changePasswordModal').modal('hide');
     $('body').removeClass('modal-open');
     $('.modal-backdrop').remove();
-  };
+
+    this.toastr.success('Password changed');
+  }
 
   changePasswordError(code) {
     $('#changePasswordLoading').hide();
@@ -95,7 +98,7 @@ export class UserService {
     } else {
       $('#changePasswordHelpCredentials3').show();
     }
-  };
+  }
 
   waitForElement(id, callback) {
     let interval = setInterval(() => {

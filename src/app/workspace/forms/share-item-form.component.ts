@@ -3,6 +3,7 @@ import { ApiService } from 'app/api.service';
 import { AuthService } from 'app/auth/auth.service';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import 'rxjs/add/operator/finally';
+import { ToastrService } from 'ngx-toastr';
 
 declare var $: any;
 
@@ -19,7 +20,7 @@ export class ShareItemFormComponent {
   newPermissionForm: FormGroup;
   existingEmails: Array<string> = [];
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private apiService: ApiService, private zone: NgZone) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private apiService: ApiService, private zone: NgZone, private toastr: ToastrService) {
     this.createForm();
   }
 
@@ -118,7 +119,7 @@ export class ShareItemFormComponent {
         this.saving = false;
         $('#shareItemForm').modal('hide');
       })
-      .subscribe();
+      .subscribe(() => this.toastr.success('Permissions updated'));
   }
 
   get permissions(): FormArray {
