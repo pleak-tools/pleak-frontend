@@ -23,7 +23,7 @@ const initialBpmn = require('raw-loader!assets/newDiagram.bpmn');
 })
 export class ModelerComponent implements OnInit {
 
-  constructor(public http: HttpClient, public authService: AuthService, private route: ActivatedRoute, private router: Router, private toastr: ToastrService) {}
+  constructor(public http: HttpClient, public authService: AuthService, private route: ActivatedRoute, private router: Router, private toastr: ToastrService) { }
 
   private modeler;
   private eventBus;
@@ -31,7 +31,6 @@ export class ModelerComponent implements OnInit {
 
   private modelId;
 
-  private saveFailed: Boolean = false;
   private lastContent: String = '';
 
   private fileId: Number = null;
@@ -56,36 +55,40 @@ export class ModelerComponent implements OnInit {
         self.file = success;
         self.fileId = self.file.id;
         if (self.file.content.length === 0) { // If no content added yet, show option to import or create a new model
-          $('#template-selector-overlay, #template-selector').show();
-          document.getElementById('importModel').onclick = (e) => {
-            document.getElementById('fileImportInput').click();
-          };
-          document.getElementById('fileImportInput').onchange = (e: any) => {
-            let file = null;
-            file = e.target.files[0];
-            if (!file) {
-              return;
-            }
-            self.modeler = null;
-            const reader = new FileReader();
-            reader.onload = (e: any) => {
-              const content = e.target.result.replace(/\n/g, ' ').replace(/  +/g, ' ').replace(/entity/gi, "").replace(/\<\!DOCTYPE.+]\>/gi, ""); // Minor cleaning
-              if (this.isXML(content)) {
-                this.file.content = content;
-                this.openDiagram(content);
-                $('#template-selector-overlay, #template-selector').hide();
-                $('#save-diagram').addClass('active');
-              } else {
-                alert("File cannot be opened!");
-              }
+          if (self.canEdit()) {
+            $('#template-selector-overlay, #template-selector').show();
+            document.getElementById('importModel').onclick = (e) => {
+              document.getElementById('fileImportInput').click();
             };
-            reader.readAsText(file);
-          };
-          $(document).on('click', '#createNewModel', (e) => {
-            self.file.content = initialBpmn;
-            self.openDiagram(self.file.content);
-            $('#template-selector-overlay, #template-selector').hide();
-          });
+            document.getElementById('fileImportInput').onchange = (e: any) => {
+              let file = null;
+              file = e.target.files[0];
+              if (!file) {
+                return;
+              }
+              self.modeler = null;
+              const reader = new FileReader();
+              reader.onload = (e: any) => {
+                const content = e.target.result.replace(/\n/g, ' ').replace(/  +/g, ' ').replace(/entity/gi, "").replace(/\<\!DOCTYPE.+]\>/gi, ""); // Minor cleaning
+                if (this.isXML(content)) {
+                  this.file.content = content;
+                  this.openDiagram(content);
+                  $('#template-selector-overlay, #template-selector').hide();
+                  $('#save-diagram').addClass('active');
+                } else {
+                  alert("File cannot be opened!");
+                }
+              };
+              reader.readAsText(file);
+            };
+            $(document).on('click', '#createNewModel', (e) => {
+              self.file.content = initialBpmn;
+              self.openDiagram(self.file.content);
+              $('#template-selector-overlay, #template-selector').hide();
+            });
+          } else {
+            this.toastr.error('File is empty!', '', { disableTimeOut: true });
+          }
         } else { // Content is already added, so just open the model
           self.openDiagram(self.file.content);
         }
@@ -99,7 +102,6 @@ export class ModelerComponent implements OnInit {
         self.fileId = null;
         self.file = null;
         self.lastContent = '';
-        self.saveFailed = false;
         $('.buttons-container').on('click', '.buttons a', (e) => {
           if (!$(e.target).is('.active')) {
             e.preventDefault();
@@ -107,7 +109,7 @@ export class ModelerComponent implements OnInit {
           }
         });
 
-        this.toastr.error('File cannot be found or opened!', '', {disableTimeOut: true});
+        this.toastr.error('File cannot be found or opened!', '', { disableTimeOut: true });
 
       }
     );
@@ -122,7 +124,7 @@ export class ModelerComponent implements OnInit {
       self.modeler = new Modeler({
         container: '#canvas',
         keyboard: {
-          bindTo: document 
+          bindTo: document
         },
         moddleExtensions: {
           sqlExt: SqlBPMNModdle
@@ -212,57 +214,53 @@ export class ModelerComponent implements OnInit {
     let self = this;
     if ($('#save-diagram').is('.active')) {
       self.modeler.saveXML(
-      {
-        format: true
-      },
-      (err: any, xml: string) => {
-        if (err) {
-          console.log(err)
-        } else {
-          self.file.title = $('#fileName').val();
-          self.file.content = xml;
-          self.http.put(config.backend.host + '/rest/directories/files/' + self.fileId, self.file, AuthService.loadRequestOptions({observe: 'response'})).subscribe(
-            (success: HttpResponse<any>) => {
-              if (success.status === 200 || success.status === 201) {
-                let data = success.body;
-                $('.error-message').hide();
-                $('#save-diagram').removeClass('active');
+        {
+          format: true
+        },
+        (err: any, xml: string) => {
+          if (err) {
+            console.log(err);
+          } else {
+            self.file.title = $('#fileName').val();
+            self.file.content = xml;
+            self.http.put(config.backend.host + '/rest/directories/files/' + self.fileId, self.file, AuthService.loadRequestOptions({ observe: 'response' })).subscribe(
+              (success: HttpResponse<any>) => {
+                if (success.status === 200 || success.status === 201) {
+                  let data = success.body;
+                  $('.error-message').hide();
+                  $('#save-diagram').removeClass('active');
 
-                this.toastr.success('File saved');
-                let date = new Date();
-                self.lastModified = date.getTime();
-                localStorage.setItem("lastModifiedFileId", '"' + data.id + '"');
-                localStorage.setItem("lastModified", '"' + date.getTime() + '"');
-                if (self.fileId !== data.id) {
-                  this.router.navigate(['modeler', data.id]);
+                  this.toastr.success('File saved');
+                  let date = new Date();
+                  self.lastModified = date.getTime();
+                  localStorage.setItem("lastModifiedFileId", '"' + data.id + '"');
+                  localStorage.setItem("lastModified", '"' + date.getTime() + '"');
+                  if (self.fileId !== data.id) {
+                    this.router.navigate(['modeler', data.id]);
+                  }
+                  self.file.md5Hash = data.md5Hash;
+                  self.lastContent = self.file.content;
+                  self.fileId = data.id;
+                  document.title = 'Pleak editor - ' + self.file.title;
                 }
-                self.file.md5Hash = data.md5Hash;
-                self.lastContent = self.file.content;
-                self.fileId = data.id;
-                self.saveFailed = false;
-                document.title = 'Pleak editor - ' + self.file.title;
-              }
-            },
-            (fail: HttpResponse<any>) => {
-              if (fail.status === 400) {
-                self.saveFailed = true;
-                this.toastr.error('Incorrect file name, please use symbols: a-z, A-Z, 0-9, ".", "-", "_"');
-              } else if (fail.status === 401) {
-                self.saveFailed = true;
-                $('#loginModal').modal();
-              } else if (fail.status === 409) {
-                self.saveFailed = true;
-                delete self.file.id;
-                if (parseInt(jwt_decode(localStorage.jwt).sub) !== self.file.user.id) {
-                  delete self.file.directory.id;
-                  self.file.directory.title = 'root';
+              },
+              (fail: HttpResponse<any>) => {
+                if (fail.status === 400) {
+                  this.toastr.error('Incorrect file name, please use symbols: a-z, A-Z, 0-9, ".", "-", "_"');
+                } else if (fail.status === 401) {
+                  $('#loginModal').modal();
+                } else if (fail.status === 409) {
+                  delete self.file.id;
+                  if (parseInt(jwt_decode(localStorage.jwt).sub) !== self.file.user.id) {
+                    delete self.file.directory.id;
+                    self.file.directory.title = 'root';
+                  }
+                  this.toastr.error('File has changed on the server. Please set new file name to save a copy.');
                 }
-                this.toastr.error('File has changed on the server. Please set new file name to save a copy.');
               }
-            }
-          );
-        }
-      });
+            );
+          }
+        });
     }
   }
 
@@ -277,7 +275,7 @@ export class ModelerComponent implements OnInit {
     self.modeler.saveSVG((err, svg) => {
       let encodedData = encodeURIComponent(svg);
       if (svg) {
-        self.file.content = svg;
+        // self.file.content = svg;
         $('#download-svg').addClass('active').attr({
           'href': 'data:application/bpmn20-xml;charset=UTF-8,' + encodedData,
           'download': self.file.title + '.svg'
@@ -289,7 +287,7 @@ export class ModelerComponent implements OnInit {
     self.modeler.saveXML({ format: true }, (err, xml) => {
       let encodedData = encodeURIComponent(xml);
       if (xml) {
-        self.file.content = xml;
+        // self.file.content = xml;
         $('#download-diagram').addClass('active').attr({
           'href': 'data:application/bpmn20-xml;charset=UTF-8,' + encodedData,
           'download': self.file.title
@@ -345,13 +343,13 @@ export class ModelerComponent implements OnInit {
         });
       }
 
-    } 
+    }
 
   }
 
   terminateDataObjectSettings() {
     if (this.dataObjectSettings != null) {
-      this.overlays.remove({id: this.dataObjectSettings});
+      this.overlays.remove({ id: this.dataObjectSettings });
     }
   }
 
