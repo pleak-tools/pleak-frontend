@@ -275,7 +275,9 @@ export class ModelerComponent implements OnInit {
     self.modeler.saveSVG((err, svg) => {
       let encodedData = encodeURIComponent(svg);
       if (svg) {
-        // self.file.content = svg;
+        if (self.canEdit()) {
+          self.file.content = svg;
+        }
         $('#download-svg').addClass('active').attr({
           'href': 'data:application/bpmn20-xml;charset=UTF-8,' + encodedData,
           'download': self.file.title + '.svg'
@@ -287,7 +289,9 @@ export class ModelerComponent implements OnInit {
     self.modeler.saveXML({ format: true }, (err, xml) => {
       let encodedData = encodeURIComponent(xml);
       if (xml) {
-        // self.file.content = xml;
+        if (self.canEdit()) {
+          self.file.content = xml;
+        }
         $('#download-diagram').addClass('active').attr({
           'href': 'data:application/bpmn20-xml;charset=UTF-8,' + encodedData,
           'download': self.file.title
