@@ -76,7 +76,7 @@ export class ModelerComponent implements OnInit {
                   $('#template-selector-overlay, #template-selector').hide();
                   $('#save-diagram').addClass('active');
                 } else {
-                  alert("File cannot be opened!");
+                  this.toastr.error('File cannot be opened!', '', { disableTimeOut: true });
                 }
               };
               reader.readAsText(file);
@@ -137,7 +137,7 @@ export class ModelerComponent implements OnInit {
           canvas.zoom('fit-viewport');
           self.loadExportButtons();
         } else {
-          alert("File cannot be opened!");
+          this.toastr.error('File cannot be opened!', '', { disableTimeOut: true });
           this.getModel();
         }
       });

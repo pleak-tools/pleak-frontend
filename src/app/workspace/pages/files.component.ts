@@ -691,7 +691,7 @@ export class FilesComponent implements OnInit {
         document.getElementById('export-' + file.id).removeAttribute('download');
       },
       fail => {
-        alert('File cannot be found/opened!');
+        this.toastr.error('File cannot be found / opened!', '', { disableTimeOut: true });
         this.canExportModel = false;
       }
     );
