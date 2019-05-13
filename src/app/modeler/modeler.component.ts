@@ -68,8 +68,8 @@ export class ModelerComponent implements OnInit {
               }
               self.modeler = null;
               const reader = new FileReader();
-              reader.onload = (e: any) => {
-                const content = e.target.result.replace(/\n/g, ' ').replace(/  +/g, ' ').replace(/entity/gi, "").replace(/\<\!DOCTYPE.+]\>/gi, ""); // Minor cleaning
+              reader.onload = (event: any) => {
+                const content = event.target.result.replace(/\n/g, ' ').replace(/  +/g, ' ').replace(/entity/gi, '').replace(/\<\!DOCTYPE.+]\>/gi, ''); // Minor cleaning
                 if (this.isXML(content)) {
                   this.file.content = content;
                   this.openDiagram(content);
@@ -145,6 +145,7 @@ export class ModelerComponent implements OnInit {
       self.eventBus = self.modeler.get('eventBus');
       self.overlays = self.modeler.get('overlays');
 
+      // tslint:disable-next-line:no-unused-expression
       new Comments(self.overlays, self.eventBus);
 
       self.eventBus.on('element.click', (e) => {
@@ -176,7 +177,7 @@ export class ModelerComponent implements OnInit {
       });
 
       $(window).bind('beforeunload', (e) => {
-        if (self.file.content != self.lastContent) {
+        if (self.file.content !== self.lastContent) {
           return 'Are you sure you want to close this tab? Unsaved progress will be lost.';
         }
       });
@@ -233,8 +234,8 @@ export class ModelerComponent implements OnInit {
                   this.toastr.success('File saved');
                   let date = new Date();
                   self.lastModified = date.getTime();
-                  localStorage.setItem("lastModifiedFileId", '"' + data.id + '"');
-                  localStorage.setItem("lastModified", '"' + date.getTime() + '"');
+                  localStorage.setItem('lastModifiedFileId', '"' + data.id + '"');
+                  localStorage.setItem('lastModified', '"' + date.getTime() + '"');
                   if (self.fileId !== data.id) {
                     this.router.navigate(['modeler', data.id]);
                   }
@@ -313,7 +314,7 @@ export class ModelerComponent implements OnInit {
       let dObj = event.element.businessObject.dataObjectRef;
       let overlayHtml = `<div class="collection-editor" id="` + event.element.businessObject.id + `-collection-selector" style="background:white; padding:10px; border-radius:2px">`;
 
-      if (event.element.businessObject.dataObjectRef.isCollection == true) {
+      if (event.element.businessObject.dataObjectRef.isCollection === true) {
         overlayHtml += `<button class="btn btn-default" id="` + event.element.businessObject.id + `-collection-off-button">-> Object</button><br>`;
       } else {
         overlayHtml += `<button class="btn btn-default" id="` + event.element.businessObject.id + `-collection-on-button">-> Collection</button><br>`;
@@ -329,7 +330,7 @@ export class ModelerComponent implements OnInit {
         html: overlayHtml
       });
 
-      if (event.element.businessObject.dataObjectRef.isCollection == true) {
+      if (event.element.businessObject.dataObjectRef.isCollection === true) {
         $(overlayHtml).on('click', '#' + event.element.businessObject.id + '-collection-off-button', (ev1) => {
           dObj.isCollection = false;
           self.eventBus.fire('shape.changed', event);
@@ -368,7 +369,7 @@ export class ModelerComponent implements OnInit {
 
   isOwner(pobject) {
     return this.authService.user ? pobject.user.id === parseInt(this.authService.user.sub) : false;
-  };
+  }
 
   canEdit() {
     if (this.file != null && this.authService.user != null) {
@@ -406,7 +407,7 @@ export class ModelerComponent implements OnInit {
           }
           let localStorageLastModifiedTime = Number(localStorage.getItem('lastModified').replace(/['"]+/g, ''));
           let lastModifiedTime = this.lastModified;
-          if (lastModifiedFileId && currentFileId && localStorageLastModifiedTime && lastModifiedTime && lastModifiedFileId == currentFileId && localStorageLastModifiedTime > lastModifiedTime) {
+          if (lastModifiedFileId && currentFileId && localStorageLastModifiedTime && lastModifiedTime && lastModifiedFileId === currentFileId && localStorageLastModifiedTime > lastModifiedTime) {
             this.getModel();
           }
         }

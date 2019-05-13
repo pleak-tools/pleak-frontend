@@ -3,8 +3,6 @@ import { AuthService } from 'app/auth/auth.service';
 import { UserService } from 'app/user/user.service';
 import { ActivatedRoute } from '@angular/router';
 
-declare var $: any;
-
 @Component({
   selector: 'app-workspace',
   templateUrl: './workspace.component.html'

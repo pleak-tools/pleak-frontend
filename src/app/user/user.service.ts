@@ -53,7 +53,7 @@ export class UserService {
 
   changePassword() {
     this.showChangePasswordLoading();
-    if (this.userExtension.currentPassword && this.userExtension.newPassword1 && this.userExtension.newPassword2 && this.userExtension.newPassword1 == this.userExtension.newPassword2) {
+    if (this.userExtension.currentPassword && this.userExtension.newPassword1 && this.userExtension.newPassword2 && this.userExtension.newPassword1 === this.userExtension.newPassword2) {
       this.changePasswordREST(this.userExtension);
     } else if (!this.userExtension.currentPassword) {
       this.changePasswordError(403);

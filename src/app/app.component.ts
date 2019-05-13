@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavigationStart, Router } from '@angular/router';
+import { NavigationStart, Router, RouterEvent } from '@angular/router';
 
 import { Observable } from 'rxjs';
 
@@ -18,8 +18,8 @@ export class AppComponent implements OnInit {
 
   constructor(private authService: AuthService, private userService: UserService, private router: Router) {
     this.navStart = router.events.pipe(
-      filter(evt => evt instanceof NavigationStart)
-    ) as Observable<NavigationStart>;
+      filter((event: RouterEvent): event is NavigationStart => event instanceof NavigationStart)
+    );
   }
 
   setUserEmail(value: string) {

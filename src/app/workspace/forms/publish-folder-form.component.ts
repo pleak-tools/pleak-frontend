@@ -1,10 +1,10 @@
 import { Component, NgZone } from '@angular/core';
 import { trigger, style, animate, transition } from '@angular/animations';
 import { ApiService } from 'app/api.service';
-import 'rxjs/add/observable/forkJoin';
-import 'rxjs/add/operator/finally';
-import { Observable } from 'rxjs/Observable';
+
+import { forkJoin } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
+import { finalize } from 'rxjs/operators';
 
 declare var $: any;
 
@@ -66,10 +66,10 @@ export class PublishFolderFormComponent {
     this.zone.runOutsideAngular(() => {
       recursion(this.pobject);
 
-      Observable.forkJoin(observables)
-        .finally(() => {
+      forkJoin(observables).pipe(
+        finalize(() => {
           this.zone.run(() => this.publishing = false);
-        })
+        }))
         .subscribe(() => {
           this.zone.run(() => this.toastr.success('All files published'));
         });
@@ -94,10 +94,10 @@ export class PublishFolderFormComponent {
     this.zone.runOutsideAngular(() => {
       recursion(this.pobject);
 
-      Observable.forkJoin(observables)
-        .finally(() => {
+      forkJoin(observables).pipe(
+        finalize(() => {
           this.zone.run(() => this.unpublishing = false);
-        })
+        }))
         .subscribe(() => {
           this.zone.run(() => this.toastr.success('Public links removed'));
         });

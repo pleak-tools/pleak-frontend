@@ -30,24 +30,24 @@
               <li class="fhead">
                 <div class="row">
                   <div class="col-xs-6 col-md-5 col-lg-6">
-                    <b (mouseenter)="showTitle = true" (mouseleave)="showTitle = false">File Name
+                    <b>File Name
                       <span (click)="sortPobjectsByTitleDesc()"
-                            ng-show="sort !== 2"
-                            class="glyphicon glyphicon-chevron-up clickable {{sort > 0 && sort < 3 || showTitle ? '' : 'invisible'}}"></span>
+                            *ngIf="sort !== 2"
+                            class="glyphicon glyphicon-chevron-up clickable"></span>
                       <span (click)="sortPobjectsByTitleAsc()"
-                            ng-show="sort === 2"
+                            *ngIf="sort === 2"
                             class="glyphicon glyphicon-chevron-down clickable"></span>
                     </b>
                   </div>
                   <div class="col-xs-6 col-md-7 col-lg-6">
                     <div class="row">
                       <div class="col-md-6 text-center hidden-xs hidden-sm">
-                        <b (mouseenter)="showLastModified = true" (mouseleave)="showLastModified = false">Last Modified
+                        <b>Last Modified
                           <span (click)="sortPobjectsByLastModifiedDesc()"
-                                ng-show="sort !== 4"
-                                class="glyphicon glyphicon-chevron-up clickable {{sort > 2 || showLastModified ? '' : 'invisible'}}"></span>
+                                *ngIf="sort !== 4"
+                                class="glyphicon glyphicon-chevron-up clickable"></span>
                           <span (click)="sortPobjectsByLastModifiedAsc()"
-                                ng-show="sort === 4"
+                                *ngIf="sort === 4"
                                 class="glyphicon glyphicon-chevron-down clickable"></span>
                         </b>
                       </div>

@@ -2,8 +2,9 @@ import { Component, NgZone } from '@angular/core';
 import { ApiService } from 'app/api.service';
 import { AuthService } from 'app/auth/auth.service';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import 'rxjs/add/operator/finally';
+
 import { ToastrService } from 'ngx-toastr';
+import { finalize } from 'rxjs/operators';
 
 declare var $: any;
 
@@ -115,10 +116,11 @@ export class ShareItemFormComponent {
     this.saving = true;
 
     this.apiService[this.pobject.type === 'file' ? 'updateFile' : 'updateDirectory'](this.pobject, {permissions: this.permissions.getRawValue()})
-      .finally(() => {
-        this.saving = false;
-        $('#shareItemForm').modal('hide');
-      })
+      .pipe(
+        finalize(() => {
+          this.saving = false;
+          $('#shareItemForm').modal('hide');
+        }))
       .subscribe(() => this.toastr.success('Permissions updated'));
   }
 

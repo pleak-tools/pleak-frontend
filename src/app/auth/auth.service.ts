@@ -78,7 +78,7 @@ export class AuthService {
 
     return true;
 
-  };
+  }
 
   authStatusChanged(status: boolean) {
 
@@ -146,7 +146,7 @@ export class AuthService {
   showLoginLoading() {
     $('#loginLoading').show();
     $('#loginForm').hide();
-  };
+  }
 
   loginSuccess() {
     $('#loginLoading').fadeOut('slow', function () {
@@ -161,7 +161,7 @@ export class AuthService {
       email: '',
       password: ''
     };
-  };
+  }
 
   loginError(code) {
     $('#loginLoading').fadeOut('slow', function () {
@@ -174,7 +174,7 @@ export class AuthService {
         $('#loginHelpServer').show();
       }
     });
-  };
+  }
 
   logout() {
     this.showLogoutLoading();
@@ -188,7 +188,7 @@ export class AuthService {
   showLogoutLoading() {
     $('#logoutLoading').show();
     $('#logoutText').hide();
-  };
+  }
 
   hideLogoutLoading() {
     $('#logoutLoading').fadeOut('slow', function () {
@@ -200,7 +200,7 @@ export class AuthService {
 
     // this.router.navigateByUrl('/home');
 
-  };
+  }
 
   waitForElement(id, callback) {
     let interval = setInterval(() => {

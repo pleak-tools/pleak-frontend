@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import 'rxjs/add/operator/map';
-import { Observable } from 'rxjs/Observable';
+
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 declare function require(name: string);
 
@@ -27,7 +28,7 @@ export class ApiService {
     return this.http.put(config.backend.host + '/rest/directories/files/' + pobject.id,
       requestItem,
       {headers: {'JSON-Web-Token': localStorage.jwt}}
-    ).map(
+    ).pipe(map(
       (response: any) => {
         Object.assign(pobject, response);
 
@@ -38,7 +39,7 @@ export class ApiService {
         }
         return response;
       }
-    );
+    ));
   }
 
   updateDirectory(directory: any, values: Object = {}): Observable<any> {
@@ -51,11 +52,11 @@ export class ApiService {
     return this.http.put(config.backend.host + '/rest/directories/' + directory.id,
       requestItem,
       {headers: {'JSON-Web-Token': localStorage.jwt}}
-    ).map(
+    ).pipe(map(
       (response: any) => {
         Object.assign(directory, response);
         return response;
       }
-    );
+    ));
   }
 }

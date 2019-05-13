@@ -1,9 +1,8 @@
 import { Component, Input, ElementRef, AfterViewInit, NgZone, ApplicationRef } from '@angular/core';
 import { FilesComponent } from '../pages/files.component';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import * as moment from 'moment';
-import 'rxjs/add/operator/distinctUntilChanged';
-
+import { distinctUntilChanged } from 'rxjs/operators';
 
 declare var $: any;
 
@@ -23,14 +22,14 @@ export class FileListItemComponent implements AfterViewInit {
   @Input() parent: FilesComponent;
   @Input() depth;
 
-  lastModified = Observable.create(observer => {
+  lastModified = new Observable(observer => {
     observer.next(moment(this.pobject.lastModified).fromNow());
     // Run this outside Angular to save on perfomance. Angular does not need to check state after each setInterval
     this.zone.runOutsideAngular(() => {
       setInterval(() => observer.next(moment(this.pobject.lastModified).fromNow()), 1000);
     });
 
-  }).distinctUntilChanged((x, y) => {
+  }).pipe(distinctUntilChanged((x, y) => {
     if (x === y) {
       return true;
     } else {
@@ -38,11 +37,10 @@ export class FileListItemComponent implements AfterViewInit {
       this.appRef.tick();
       return false;
     }
-  });
+  }));
 
   ngAfterViewInit() {
     $('[data-toggle="tooltip"]', this.elementRef.nativeElement).tooltip();
-
 
     $('.dropdown-menu', this.elementRef.nativeElement).parent().on('show.bs.dropdown', event => {
 

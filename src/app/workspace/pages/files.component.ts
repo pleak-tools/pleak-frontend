@@ -4,9 +4,10 @@ import * as moment from 'moment';
 import { ShareItemFormComponent } from 'app/workspace/forms/share-item-form.component';
 import { PublishFolderFormComponent } from 'app/workspace/forms/publish-folder-form.component';
 import { MoveItemFormComponent } from 'app/workspace/forms/move-item-form.component';
-import 'rxjs/add/operator/finally';
+
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
+import { finalize } from 'rxjs/operators';
 
 
 declare var $: any;
@@ -19,6 +20,14 @@ const config = require('../../../config.json');
   templateUrl: './files.component.html'
 })
 export class FilesComponent implements OnInit {
+
+
+  constructor(public http: HttpClient, private authService: AuthService, private toastr: ToastrService) {
+
+    this.getRootDirectory();
+    this.getSharedDirectory();
+
+  }
 
   @ViewChild(ShareItemFormComponent) private shareItemForm: ShareItemFormComponent;
   @ViewChild(PublishFolderFormComponent) private publishFolderForm: PublishFolderFormComponent;
@@ -37,13 +46,112 @@ export class FilesComponent implements OnInit {
   public sharedFilesLoading = false;
   public tab = 'own';
 
-
-  constructor(public http: HttpClient, private authService: AuthService, private toastr: ToastrService) {
-
-    this.getRootDirectory();
-    this.getSharedDirectory();
-
-  }
+  callbacks = {
+    createDirectory: {
+      success: () => {
+        $('#newDirectoryModal').modal('hide');
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
+        this.toastr.success('Directory created');
+      },
+      error: () => {
+        $('.directory-name-input').addClass('has-error');
+        $('.directory-name-error').show();
+      }
+    },
+    renameDirectory: {
+      success: () => {
+        $('#renameDirectoryModal').modal('hide');
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
+        this.toastr.success('Directory renamed');
+      },
+      error: () => {
+        $('.directory-name-input').addClass('has-error');
+        $('.directory-name-error').show();
+      }
+    },
+    shareDirectory: {
+      success: (response) => {
+        this.setShareUserEmail('');
+        $('#shareModal' + response.id).modal('hide');
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
+        this.toastr.success('Directory shared');
+      },
+      error: () => {
+      }
+    },
+    newFile: {
+      success: () => {
+        $('#newFileModal').modal('hide');
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
+        this.toastr.success('File created');
+      },
+      error: () => {
+        $('.file-name-input').addClass('has-error');
+        $('.file-name-error').show();
+      }
+    },
+    renameFile: {
+      success: () => {
+        $('#renameFileModal').modal('hide');
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
+        this.triggerLocalStorageChangeEvent();
+        this.toastr.success('File renamed');
+      },
+      error: () => {
+        $('.file-name-input').addClass('has-error');
+        $('.file-name-error').show();
+      }
+    },
+    shareFile: {
+      success: (response) => {
+        this.setShareUserEmail('');
+        $('#shareModal' + response.id).modal('hide');
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
+        this.toastr.success('File shared');
+      },
+      error: () => {
+      }
+    },
+     publishFile: {
+      success: (response) => {
+        $('#server-error').hide();
+        $('.form-group.input-group').removeClass('has-error');
+        this.waitForElement('publishFileModal' + response.id, () => {
+          $('#publishFileModal' + response.id).find('.publicLink').focus();
+          if ($('#publishFileModal' + response.id).find('.publicLink').val().length > 0) {
+            $('#publishFileModal' + response.id).find('.publicLink')[0].setSelectionRange(0, $('#publishFileModal' + response.id).find('.publicLink').val().length);
+          }
+        });
+        this.toastr.success('Publishing changed');
+      },
+      error: () => {
+        $('#server-error').show();
+        $('.form-group.input-group').addClass('has-error');
+      }
+    },
+    copyOwnFile: {
+      success: () => {
+        this.rootDir.open = true;
+        this.sharedDir.open = false;
+        this.toastr.success('File duplicated');
+      },
+      error: () => {}
+    },
+    copySharedFile: {
+      success: () => {
+        this.rootDir.open = false;
+        this.sharedDir.open = true;
+        this.toastr.success('File duplicated');
+      },
+      error: () => {}
+    }
+  };
 
   openShareItemModal(pobject) {
 
@@ -116,9 +224,10 @@ export class FilesComponent implements OnInit {
     this.ownFilesLoading = true;
 
     this.http.get(config.backend.host + '/rest/directories/root', AuthService.loadRequestOptions())
-      .finally(() => {
-        this.ownFilesLoading = false;
-      })
+      .pipe(
+        finalize(() => {
+          this.ownFilesLoading = false;
+        }))
       .subscribe(success => {
         this.rootDir = success;
         this.createPublicUrls(this.rootDir);
@@ -130,9 +239,10 @@ export class FilesComponent implements OnInit {
     this.sharedFilesLoading = true;
 
     this.http.get(config.backend.host + '/rest/directories/shared', AuthService.loadRequestOptions())
-      .finally(() => {
-        this.sharedFilesLoading = false;
-      })
+      .pipe(
+        finalize(() => {
+          this.sharedFilesLoading = false;
+        }))
       .subscribe(success => {
         this.sharedDir = success;
         this.createPublicUrls(this.sharedDir);
@@ -442,113 +552,6 @@ export class FilesComponent implements OnInit {
       this.createFileREST(newFile, this.rootDir, this.callbacks.copyOwnFile, 'own');
     }
   }
-
-  callbacks = {
-    createDirectory: {
-      success: () => {
-        $('#newDirectoryModal').modal('hide');
-        $('body').removeClass('modal-open');
-        $('.modal-backdrop').remove();
-        this.toastr.success('Directory created');
-      },
-      error: () => {
-        $('.directory-name-input').addClass('has-error');
-        $('.directory-name-error').show();
-      }
-    },
-    renameDirectory: {
-      success: () => {
-        $('#renameDirectoryModal').modal('hide');
-        $('body').removeClass('modal-open');
-        $('.modal-backdrop').remove();
-        this.toastr.success('Directory renamed');
-      },
-      error: () => {
-        $('.directory-name-input').addClass('has-error');
-        $('.directory-name-error').show();
-      }
-    },
-    shareDirectory: {
-      success: (response) => {
-        this.setShareUserEmail('');
-        $('#shareModal' + response.id).modal('hide');
-        $('body').removeClass('modal-open');
-        $('.modal-backdrop').remove();
-        this.toastr.success('Directory shared');
-      },
-      error: () => {
-      }
-    },
-    newFile: {
-      success: () => {
-        $('#newFileModal').modal('hide');
-        $('body').removeClass('modal-open');
-        $('.modal-backdrop').remove();
-        this.toastr.success('File created');
-      },
-      error: () => {
-        $('.file-name-input').addClass('has-error');
-        $('.file-name-error').show();
-      }
-    },
-    renameFile: {
-      success: () => {
-        $('#renameFileModal').modal('hide');
-        $('body').removeClass('modal-open');
-        $('.modal-backdrop').remove();
-        this.triggerLocalStorageChangeEvent();
-        this.toastr.success('File renamed');
-      },
-      error: () => {
-        $('.file-name-input').addClass('has-error');
-        $('.file-name-error').show();
-      }
-    },
-    shareFile: {
-      success: (response) => {
-        this.setShareUserEmail('');
-        $('#shareModal' + response.id).modal('hide');
-        $('body').removeClass('modal-open');
-        $('.modal-backdrop').remove();
-        this.toastr.success('File shared');
-      },
-      error: () => {
-      }
-    },
-     publishFile: {
-      success: (response) => {
-        $('#server-error').hide();
-        $('.form-group.input-group').removeClass('has-error');
-        this.waitForElement('publishFileModal' + response.id, () => {
-          $('#publishFileModal' + response.id).find('.publicLink').focus();
-          if ($('#publishFileModal' + response.id).find('.publicLink').val().length > 0) {
-            $('#publishFileModal' + response.id).find('.publicLink')[0].setSelectionRange(0, $('#publishFileModal' + response.id).find('.publicLink').val().length);
-          }
-        });
-        this.toastr.success('Publishing changed');
-      },
-      error: () => {
-        $('#server-error').show();
-        $('.form-group.input-group').addClass('has-error');
-      }
-    },
-    copyOwnFile: {
-      success: () => {
-        this.rootDir.open = true;
-        this.sharedDir.open = false;
-        this.toastr.success('File duplicated');
-      },
-      error: () => {}
-    },
-    copySharedFile: {
-      success: () => {
-        this.rootDir.open = false;
-        this.sharedDir.open = true;
-        this.toastr.success('File duplicated');
-      },
-      error: () => {}
-    }
-  };
 
   /* OTHER TEMPLATE FUNCTIONS */
 
