@@ -1,11 +1,9 @@
 import { Injectable, InjectionToken, Injector } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router, ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of, from } from 'rxjs';
 
 import { AuthService } from './auth.service';
-import { filter, mergeMap, takeWhile } from 'rxjs/operators';
-import { of } from 'rxjs/observable/of';
-import { from } from 'rxjs/observable/from';
+import { filter, map, mergeMap, takeWhile } from 'rxjs/operators';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -24,17 +22,19 @@ export class AuthGuard implements CanActivate {
   }
 
   checkLogin(url: string): Observable<boolean> {
-    return this.authService.authStatus.pipe(filter(value => typeof value === 'boolean')).map((value) => {
-      if (value === false) {
-        // Store the attempted URL for redirecting
-        this.authService.redirectUrl = url;
+    return this.authService.authStatus.pipe(
+      filter(value => typeof value === 'boolean'),
+      map((value) => {
+        if (value === false) {
+          // Store the attempted URL for redirecting
+          this.authService.redirectUrl = url;
 
-        // Navigate to the login page with extras
-        this.router.navigate(['/home/login']);
-      }
+          // Navigate to the login page with extras
+          this.router.navigate(['/home/login']);
+        }
 
-      return value;
-    });
+        return value;
+      }));
   }
 
   recursivelyGetGuardedRoutes(route: ActivatedRoute): ActivatedRoute[] {

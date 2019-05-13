@@ -1,5 +1,4 @@
-import * as $ from 'jquery';
-declare function require(name: string);
+declare var $: any;
 
 let is = (element, type) => element.$instanceOf(type);
 
@@ -171,7 +170,7 @@ export class Comments {
       }
     });
 
-  };
+  }
 
   _getCommentsElement(element, create) {
 
@@ -191,7 +190,7 @@ export class Comments {
     }
 
     return comments;
-  };
+  }
 
   getComments(element) {
     let doc = this._getCommentsElement(element, null);
@@ -203,7 +202,7 @@ export class Comments {
         return str.split(/:/, 2);
       });
     }
-  };
+  }
 
   setComments(element, comments) {
     let doc = this._getCommentsElement(element, true);
@@ -212,13 +211,13 @@ export class Comments {
     }).join(';\n;');
 
     doc.text = str;
-  };
+  }
 
   addComment(element, author, str) {
     let comments = this.getComments(element);
     comments.push([ author, str ]);
     this.setComments(element, comments);
-  };
+  }
 
   removeComment(element, comment) {
     let comments = this.getComments(element);
@@ -240,7 +239,7 @@ export class Comments {
     }
 
     this.setComments(element, comments);
-  };
+  }
 
 }
 

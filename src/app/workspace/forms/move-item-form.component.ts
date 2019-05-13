@@ -3,6 +3,7 @@ import { ApiService } from 'app/api.service';
 import { FilesComponent } from 'app/workspace/pages/files.component';
 import { AuthService } from 'app/auth/auth.service';
 import { ToastrService } from 'ngx-toastr';
+import { finalize } from 'rxjs/operators';
 
 declare var $: any;
 
@@ -97,11 +98,11 @@ export class MoveItemFormComponent {
     this.apiService[this.pobject.type === 'file' ? 'updateFile' : 'updateDirectory'](this.pobject, {
       directory: {id: this.target.id},
       permissions: permissions
-    })
-      .finally(() => {
+    }).pipe(
+      finalize(() => {
         this.saving = false;
         $('#moveItemForm').modal('hide');
-      })
+      }))
       .subscribe(
         () => {
           this.filesComponent.getSharedDirectory();
