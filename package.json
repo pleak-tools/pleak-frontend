@@ -10,9 +10,9 @@
     "ng": "ng",
     "node": "node",
     "prestart": "npm install",
-    "start": "ng build --prod --aot",
+    "start": "ng build --prod --aot --build-optimizer=false",
     "poststart": "node server.js",
-    "build": "ng build --prod --aot",
+    "build": "ng build --prod --aot --build-optimizer=false",
     "build:dev": "ng build --dev",
     "serve": "ng serve --host 0.0.0.0 --poll 200"
   },
