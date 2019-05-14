@@ -54,42 +54,11 @@ export class ModelerComponent implements OnInit {
       success => {
         self.file = success;
         self.fileId = self.file.id;
-        if (self.file.content.length === 0) { // If no content added yet, show option to import or create a new model
-          if (self.canEdit()) {
-            $('#template-selector-overlay, #template-selector').show();
-            document.getElementById('importModel').onclick = (e) => {
-              document.getElementById('fileImportInput').click();
-            };
-            document.getElementById('fileImportInput').onchange = (e: any) => {
-              let file = null;
-              file = e.target.files[0];
-              if (!file) {
-                return;
-              }
-              self.modeler = null;
-              const reader = new FileReader();
-              reader.onload = (event: any) => {
-                const content = event.target.result.replace(/\n/g, ' ').replace(/  +/g, ' ').replace(/entity/gi, '').replace(/\<\!DOCTYPE.+]\>/gi, ''); // Minor cleaning
-                if (this.isXML(content)) {
-                  this.file.content = content;
-                  this.openDiagram(content);
-                  $('#template-selector-overlay, #template-selector').hide();
-                  $('#save-diagram').addClass('active');
-                } else {
-                  this.toastr.error('File cannot be opened!', '', { disableTimeOut: true });
-                }
-              };
-              reader.readAsText(file);
-            };
-            $(document).on('click', '#createNewModel', (e) => {
-              self.file.content = initialBpmn;
-              self.openDiagram(self.file.content);
-              $('#template-selector-overlay, #template-selector').hide();
-            });
-          } else {
-            this.toastr.error('File is empty!', '', { disableTimeOut: true });
-          }
-        } else { // Content is already added, so just open the model
+        if (self.file.content.length === 0) {
+          // If no content added yet, show option to import or create a new model
+          self.importModel();
+        } else {
+          // Content is already added, so just open the model
           self.openDiagram(self.file.content);
         }
         $('#fileName').val(self.file.title);
@@ -113,6 +82,45 @@ export class ModelerComponent implements OnInit {
 
       }
     );
+  }
+
+  importModel(): void {
+    if (this.canEdit()) {
+      $('#template-selector-overlay, #template-selector').show();
+      document.getElementById('importModel').onclick = (e) => {
+        document.getElementById('fileImportInput').click();
+      };
+      document.getElementById('fileImportInput').onchange = (e: any) => {
+        let file = null;
+        file = e.target.files[0];
+        if (!file) {
+          return;
+        }
+        this.modeler = null;
+        const reader = new FileReader();
+        reader.onload = (event: any) => {
+          const content = event.target.result.replace(/  +/g, ' ').replace(/entity/gi, '').replace(/\<\!DOCTYPE.+]\>/gi, ''); // Minor cleaning
+          if (content.length === 0) {
+            this.toastr.error('File is empty!');
+          } else if (this.isXML(content)) {
+            this.file.content = content;
+            this.openDiagram(content);
+            $('#template-selector-overlay, #template-selector').hide();
+            $('#save-diagram').addClass('active');
+          } else {
+            this.toastr.error('File cannot be opened!', '', { disableTimeOut: true });
+          }
+        };
+        reader.readAsText(file);
+      };
+      $(document).on('click', '#createNewModel', (e) => {
+        this.file.content = initialBpmn;
+        this.openDiagram(this.file.content);
+        $('#template-selector-overlay, #template-selector').hide();
+      });
+    } else {
+      this.toastr.error('File is empty!', '', { disableTimeOut: true });
+    }
   }
 
   openDiagram(diagram: String) {
