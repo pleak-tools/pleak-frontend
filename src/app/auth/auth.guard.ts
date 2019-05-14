@@ -45,9 +45,9 @@ export class AuthGuard implements CanActivate {
       : returned;
   }
 
-  getGuardChain(): Observable<boolean> {
+  getGuardChain(): Observable<any> {
     const routes = this.recursivelyGetGuardedRoutes(this.route);
-    const obs = routes.reduce((acc: (Observable<boolean> | Promise<boolean>)[], route) => {
+    const obs = routes.reduce((acc: any[], route) => {
       return acc.concat(route.routeConfig.canActivate.map((token: InjectionToken<CanActivate>) => {
         const guard = this.injector.get(token);
         if (guard === this) {

@@ -1,6 +1,6 @@
 <div class="row {{parent.isPobjectDirectory(pobject) ? ' group' : ''}}{{parent.isPobjectHighlighted(pobject) ? ' highlight' : ''}}" *ngIf="parent.isMatchingSearch(pobject)">
   <div class="col-xs-6 col-md-5 col-lg-6 text-column" (click)="pobject.open = !pobject.open" >
-    <span [ngStyle]="{'margin-left.px': Math.max(0, (depth-1) * 30) }">
+    <span [ngStyle]="{'margin-left.px': Math.max(0, (depth-1) * 30).toString() }">
       <span *ngIf="parent.isPobjectDirectory(pobject)" class="title">
         <span class="glyphicon " [ngClass]="pobject.open ? 'glyphicon-folder-open' : 'glyphicon-folder-close'"></span> {{pobject.title}}
         <span *ngIf="pobject.open && pobject.pobjects.length === 0">(empty)</span>

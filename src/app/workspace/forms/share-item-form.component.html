@@ -13,7 +13,7 @@
             </tr>
             </thead>
             <tbody formArrayName="permissions">
-            <tr *ngFor="let fp of permissions.controls; let i=index" [formGroupName]="i">
+            <tr *ngFor="let fp of permissions.controls; let i=index" [formGroupName]="i.toString()">
               <ng-container *ngIf="pobject.user.email !== fp.value.user.email">
                 <td class="{{!canEditShare(fp.value) ? 'disabled' : ''}}">{{fp.value.user.email}}</td>
                 <td *ngIf="canEditShare(fp.value)" style="text-align: right;">
