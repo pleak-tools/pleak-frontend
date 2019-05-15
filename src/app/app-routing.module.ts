@@ -1,4 +1,4 @@
-import { Component, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { WorkspaceComponent } from './workspace/workspace.component';
 import { FilesComponent } from './workspace/pages/files.component';
@@ -27,7 +27,7 @@ const routes: Routes = [
   { path: 'redirect', component: RedirectComponent},
   { path: 'modeler/:id', component: ModelerComponent, canActivate: [ AuthGuard ]},
   { path: '', redirectTo: '/home', pathMatch: 'full' },
-  { path: '**', component: Component},
+  { path: '**', redirectTo: '/home'},
 ];
 
 @NgModule({
