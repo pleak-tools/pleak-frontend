@@ -29,9 +29,9 @@ export class FilesComponent implements OnInit {
 
   }
 
-  @ViewChild(ShareItemFormComponent) private shareItemForm: ShareItemFormComponent;
-  @ViewChild(PublishFolderFormComponent) private publishFolderForm: PublishFolderFormComponent;
-  @ViewChild(MoveItemFormComponent) private moveItemForm: MoveItemFormComponent;
+  @ViewChild(ShareItemFormComponent, { static: true }) private shareItemForm: ShareItemFormComponent;
+  @ViewChild(PublishFolderFormComponent, { static: true }) private publishFolderForm: PublishFolderFormComponent;
+  @ViewChild(MoveItemFormComponent, { static: true }) private moveItemForm: MoveItemFormComponent;
 
   private rootDir: any = {};
   private sharedDir: any = {};
