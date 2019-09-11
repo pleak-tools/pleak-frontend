@@ -142,7 +142,7 @@ export class ModelerComponent implements OnInit {
       self.modeler.importXML(diagram, (error, definitions) => {
         if (!error) {
           let canvas = self.modeler.get('canvas');
-          canvas.zoom('fit-viewport');
+          canvas.zoom('fit-viewport','auto');
           self.loadExportButtons();
         } else {
           this.toastr.error('File cannot be opened!', '', { disableTimeOut: true });
