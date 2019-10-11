@@ -25,24 +25,26 @@ export class ModelerComponent implements OnInit {
 
   constructor(public http: HttpClient, public authService: AuthService, private route: ActivatedRoute, private router: Router, private toastr: ToastrService) { }
 
-  private modeler;
-  private eventBus;
-  private overlays;
+  private modeler: any;
+  private eventBus: any;
+  private overlays: any;
+  private bpmnFactory: any;
 
-  private modelId;
+  private modelId: string;
 
-  private lastContent: String = '';
+  private lastContent: string = '';
 
   private fileId: Number = null;
   private file: any = null;
 
-  fileLoaded = false;
+  fileLoaded: boolean = false;
 
-  private dataObjectSettings = null;
+  private dataObjectSettings: any = null;
+  private poolSettings: any = null;
 
   private lastModified: Number = null;
 
-  getModel() {
+  getModel(): void {
     let self = this;
     self.modeler = null;
     $('#canvas').html('');
@@ -123,7 +125,7 @@ export class ModelerComponent implements OnInit {
     }
   }
 
-  openDiagram(diagram: String) {
+  openDiagram(diagram: string): void {
 
     let self = this;
 
@@ -142,7 +144,8 @@ export class ModelerComponent implements OnInit {
       self.modeler.importXML(diagram, (error, definitions) => {
         if (!error) {
           let canvas = self.modeler.get('canvas');
-          canvas.zoom('fit-viewport','auto');
+          this.bpmnFactory = this.modeler.get('bpmnFactory');
+          canvas.zoom('fit-viewport', 'auto');
           self.loadExportButtons();
         } else {
           this.toastr.error('File cannot be opened!', '', { disableTimeOut: true });
@@ -158,6 +161,7 @@ export class ModelerComponent implements OnInit {
 
       self.eventBus.on('element.click', (e) => {
         self.initDataObjectSettings(e);
+        self.initPoolSettings(e);
       });
 
       $('.buttons-container').on('click', '#save-diagram', (e) => {
@@ -219,7 +223,7 @@ export class ModelerComponent implements OnInit {
   }
 
   // Save model
-  save() {
+  save(): void {
     let self = this;
     if ($('#save-diagram').is('.active')) {
       self.modeler.saveXML(
@@ -273,7 +277,7 @@ export class ModelerComponent implements OnInit {
     }
   }
 
-  loadExportButtons() {
+  loadExportButtons(): void {
     let self = this;
     if (!self.canEdit()) {
       $('.djs-palette').hide();
@@ -311,75 +315,129 @@ export class ModelerComponent implements OnInit {
     });
   }
 
-  initDataObjectSettings(event) {
-
-    let self = this;
-
-    self.terminateDataObjectSettings();
-
+  initDataObjectSettings(event: any): void {
+    this.terminateDataObjectSettings();
     if (is(event.element.businessObject, 'bpmn:DataObjectReference')) {
+      this.reloadDataObjectSettings(event);
+    }
+  }
 
-      let dObj = event.element.businessObject.dataObjectRef;
-      let overlayHtml = `<div class="collection-editor" id="` + event.element.businessObject.id + `-collection-selector" style="background:white; padding:10px; border-radius:2px">`;
+  reloadDataObjectSettings(event: any): void {
+    this.terminateDataObjectSettings();
+    const dataObject = event.element.businessObject.dataObjectRef;
+    const dataObjectId = event.element.businessObject.id;
+    let overlayHtml = `<div class="collection-editor" id="` + dataObjectId + `-collection-selector" style="background:white; padding:10px; border-radius:2px">`;
 
-      if (event.element.businessObject.dataObjectRef.isCollection === true) {
-        overlayHtml += `<button class="btn btn-default" id="` + event.element.businessObject.id + `-collection-off-button">-> Object</button><br>`;
-      } else {
-        overlayHtml += `<button class="btn btn-default" id="` + event.element.businessObject.id + `-collection-on-button">-> Collection</button><br>`;
-      }
-      overlayHtml += `</div>`;
-      overlayHtml = $(overlayHtml);
+    if (dataObject.isCollection === true) {
+      overlayHtml += `<button class="btn btn-default" id="` + dataObjectId + `-collection-off-button">-> Object</button><br>`;
+    } else {
+      overlayHtml += `<button class="btn btn-default" id="` + dataObjectId + `-collection-on-button">-> Collection</button><br>`;
+    }
+    overlayHtml += `</div>`;
+    overlayHtml = $(overlayHtml);
 
-      self.dataObjectSettings = self.overlays.add(event.element, {
-        position: {
-          top: -15,
-          right: -30
-        },
-        html: overlayHtml
+    this.dataObjectSettings = this.overlays.add(event.element, {
+      position: {
+        top: -15,
+        right: -30
+      },
+      html: overlayHtml
+    });
+
+    if (dataObject.isCollection === true) {
+      $(overlayHtml).on('click', '#' + dataObjectId + '-collection-off-button', (ev1) => {
+        dataObject.isCollection = false;
+        this.eventBus.fire('shape.changed', event);
+        this.loadExportButtons();
+        $('#save-diagram').addClass('active');
+        this.reloadDataObjectSettings(event);
       });
-
-      if (event.element.businessObject.dataObjectRef.isCollection === true) {
-        $(overlayHtml).on('click', '#' + event.element.businessObject.id + '-collection-off-button', (ev1) => {
-          dObj.isCollection = false;
-          self.eventBus.fire('shape.changed', event);
-          self.loadExportButtons();
-          $('#save-diagram').addClass('active');
-          self.terminateDataObjectSettings();
-        });
-      } else {
-        $(overlayHtml).on('click', '#' + event.element.businessObject.id + '-collection-on-button', (ev2) => {
-          dObj.isCollection = true;
-          self.eventBus.fire('shape.changed', event);
-          self.loadExportButtons();
-          $('#save-diagram').addClass('active');
-          self.terminateDataObjectSettings();
-        });
-      }
-
+    } else {
+      $(overlayHtml).on('click', '#' + dataObjectId + '-collection-on-button', (ev2) => {
+        dataObject.isCollection = true;
+        this.eventBus.fire('shape.changed', event);
+        this.loadExportButtons();
+        $('#save-diagram').addClass('active');
+        this.reloadDataObjectSettings(event);
+      });
     }
 
   }
 
-  terminateDataObjectSettings() {
+  terminateDataObjectSettings(): void {
     if (this.dataObjectSettings != null) {
       this.overlays.remove({ id: this.dataObjectSettings });
     }
   }
 
+  initPoolSettings(event: any): void {
+    this.terminatePoolSettings();
+    if (is(event.element.businessObject, 'bpmn:Participant')) {
+      this.reloadPoolSettings(event);
+    }
+  }
 
-  initLoginModal() {
+  reloadPoolSettings(event: any): void {
+    this.terminatePoolSettings();
+    const poolObject = event.element.businessObject;
+    const poolId = event.element.businessObject.id;
+    let overlayHtml = `<div class="multiinstance-editor" id="` + poolId + `-multiinstance-selector" style="background:white; padding:10px; border-radius:2px">`;
+    if (poolObject.participantMultiplicity) {
+      overlayHtml += `<button class="btn btn-default" id="` + poolId + `-multiinstance-off-button">-> Pool</button><br>`;
+    } else {
+      overlayHtml += `<button class="btn btn-default" id="` + poolId + `-multiinstance-on-button">-> Multi-instance Pool</button><br>`;
+    }
+    overlayHtml += `</div>`;
+    overlayHtml = $(overlayHtml);
+
+    this.poolSettings = this.overlays.add(event.element, {
+      position: {
+        top: -15,
+        right: -55
+      },
+      html: overlayHtml
+    });
+    if (poolObject.participantMultiplicity) {
+      $(overlayHtml).on('click', '#' + poolId + '-multiinstance-off-button', (ev1) => {
+        delete poolObject.participantMultiplicity;
+        this.eventBus.fire('shape.changed', event);
+        this.loadExportButtons();
+        $('#save-diagram').addClass('active');
+        this.reloadPoolSettings(event);
+      });
+    } else {
+      $(overlayHtml).on('click', '#' + poolId + '-multiinstance-on-button', (ev2) => {
+        let participantMultiplicity = this.bpmnFactory.create("bpmn:ParticipantMultiplicity", { minimum: 1, maximum: 10 });
+        poolObject.participantMultiplicity = participantMultiplicity;
+        participantMultiplicity.$parent = poolObject;
+        this.eventBus.fire('shape.changed', event);
+        this.loadExportButtons();
+        $('#save-diagram').addClass('active');
+        this.reloadPoolSettings(event);
+      });
+    }
+  }
+
+  terminatePoolSettings(): void {
+    if (this.poolSettings != null) {
+      this.overlays.remove({ id: this.poolSettings });
+    }
+  }
+
+
+  initLoginModal(): void {
     this.authService.initLoginModal();
   }
 
-  initLogoutModal() {
+  initLogoutModal(): void {
     this.authService.initLogoutModal();
   }
 
-  isOwner(pobject) {
+  isOwner(pobject: any): boolean {
     return this.authService.user ? pobject.user.id === parseInt(this.authService.user.sub) : false;
   }
 
-  canEdit() {
+  canEdit(): boolean {
     if (this.file != null && this.authService.user != null) {
       let file = this.file;
       if (this.isOwner(file)) return true;
@@ -393,7 +451,7 @@ export class ModelerComponent implements OnInit {
     return false;
   }
 
-  isXML(xml) {
+  isXML(xml: string): boolean {
     try {
       $.parseXML(xml);
       return true;
@@ -402,7 +460,7 @@ export class ModelerComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     window.addEventListener('storage', (event: StorageEvent) => {
       if (event.storageArea === localStorage) {
         if (!this.authService.verifyToken()) {
