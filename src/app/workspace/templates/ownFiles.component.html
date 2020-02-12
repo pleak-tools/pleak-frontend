@@ -36,8 +36,14 @@
             <li *ngIf="parent.canEditFileInRoot(pobject)">
               <a (click)="parent.openFile(pobject)">Edit</a>
             </li>
+            <li *ngIf="parent.canEditFileInRoot(pobject)">
+              <a (click)="parent.openFileCompositionModeler(pobject)">Edit in Composition Modeler</a>
+            </li>
             <li *ngIf="parent.canViewFile(pobject)">
               <a (click)="parent.openFile(pobject)">View</a>
+            </li>
+            <li *ngIf="parent.canViewFile(pobject)">
+              <a (click)="parent.openFileCompositionModeler(pobject)">View in Composition Modeler</a>
             </li>
             <li *ngIf="parent.canCreateFile(pobject)">
               <a (click)="parent.initCreateNewFileModal(pobject.id)">New model</a>

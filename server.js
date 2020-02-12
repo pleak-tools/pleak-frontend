@@ -8,6 +8,7 @@ app.use('/app/', express.static(__dirname + '/../' + config.frontend.folder + '/
 app.use('/sql-privacy-editor/:id', express.static(__dirname + '/../' + config.sql_editor.folder + '/dist'));
 app.use('/sql-privacy-editor/viewer/:id', express.static(__dirname + '/../' + config.sql_editor.folder + '/dist'));
 app.use('/graph/:diagram_id/:run_number/:selected_dto/:dot_filename', express.static(__dirname + '/../' + config.sql_editor.folder + '/src/app/graphs'));
+app.use('/graph2/:diagram_id/:run_number/:selected_dto/:dot_filename', express.static(__dirname + '/../' + config.pe_bpmn_editor.folder + '/src/app/editor/leaks-when-analysis/graphs'));
 app.use('/pe-bpmn-editor/:id', express.static(__dirname + '/../' + config.pe_bpmn_editor.folder + '/dist'));
 app.use('/pe-bpmn-editor/viewer/:id', express.static(__dirname + '/../' + config.pe_bpmn_editor.folder + '/dist'));
 app.use('/pe-bpmn-editor/export/:id/:export_type', express.static(__dirname + '/../' + config.pe_bpmn_editor.folder + '/dist')); // '/src/app/editor/export'));

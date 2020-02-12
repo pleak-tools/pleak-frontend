@@ -1,0 +1,41 @@
+<div class="panel panel-default">
+    <div class="panel-heading clickable" (click)="collapsed = !collapsed">
+        <strong>Matching lanes</strong>
+        <span class="glyphicon" [ngClass]="collapsed ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+    </div>
+    <div class="panel-body" *ngIf="!collapsed">
+        <table class="table text-left" *ngIf="linkedLanes?.length">
+            <tr>
+                <th>Name</th>
+
+                <th>Matches</th>
+            </tr>
+
+            <ng-template #laneItem let-lane let-depth="depth">
+
+                <tr>
+                    <td>{{'&nbsp;'.repeat(depth * 2)}}{{lane.lane.name}}</td>
+                    <td>
+                        <select [(ngModel)]="lane.lane.matches" [id]="lane.lane.id" *ngIf="currentLanes">
+                            <option [value]="null">Select matching lane</option>
+                            <option [value]="element2.id" *ngFor="let element2 of matchingLanes; trackBy: tracker">
+                                {{'&nbsp;'.repeat(element2.depth * 2)}}{{element2.name}}
+                            </option>
+                        </select>
+                    </td>
+                </tr>
+                <ng-container *ngFor="let child of lane.children">
+                    <ng-container *ngTemplateOutlet="laneItem; context:{$implicit: linkedLanesMap.get(child), depth: depth + 1}"></ng-container>
+                </ng-container>
+
+            </ng-template>
+
+            <ng-container *ngFor="let root of rootLanes">
+                <ng-container *ngTemplateOutlet="laneItem; context:{$implicit: root, depth: 0}"></ng-container>
+            </ng-container>
+        </table>
+        <div *ngIf="!linkedLanes?.length">
+            No lanes available
+        </div>
+    </div>
+</div>

@@ -1,0 +1,115 @@
+<div class="panel panel-default">
+    <div class="panel-heading clickable" (click)="collapsed = !collapsed">
+        <strong>Matching labels</strong>
+        <span class="glyphicon" [ngClass]="collapsed ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+    </div>
+    <div class="panel-body" *ngIf="!collapsed">
+        <table class="table text-left" *ngIf="selectedCompositionElement.selectedModelConnectionsInfo?.length">
+            <ng-container *ngFor="let element of selectedCompositionElement.selectedModelConnectionsInfo">
+                <tr style="background-color:aliceblue">
+                    <td colspan="4"><strong>{{element.name}}</strong> (<i>{{element.type}}</i>)</td>
+                </tr>
+                <tr>
+                    <th>Label</th>
+                    <th>Direction</th>
+                    <th>Connection</th>
+                    <th></th>
+                </tr>
+                <tr *ngFor="let label of element.linkLabels" [class.ignored]="isLabelSetToBeIgnored(label)">
+                    <td class="nodelabel">{{label.label}}</td>
+                    <td>
+                        <span *ngIf="label.direction == 'to'"><span
+                                class="glyphicon glyphicon-arrow-left"></span></span>
+                        <span *ngIf="label.direction == 'from'"><span
+                                class="glyphicon glyphicon-arrow-right"></span></span>
+                        <span *ngIf="label.direction == 'both'"><span
+                                class="glyphicon glyphicon-arrow-left"></span><span
+                                class="glyphicon glyphicon-arrow-right"></span></span>
+                    </td>
+                    <td class="nodelabel">
+                        <ng-container>
+                            <ng-container *ngIf="label.possibleMatch.label.length > 0">
+                                {{label.possibleMatch.label}}
+                            </ng-container>
+                            <ng-container *ngIf="label.direction.length > 0">
+                                <span
+                                        *ngIf="label.possibleMatch.label.length === 0 && labelHasAlternativeMatches(element.id, label)"
+                                        style="color:darkred">not matched</span>
+                                <span *ngIf="label.possibleMatch.label.length === 0 && !labelHasAlternativeMatches(element.id, label)"
+                                      style="color:red">no suitable
+                          match</span>
+                                <ng-container
+                                        *ngIf="labelHasAlternativeMatches(element.id, label) && !isLabelSetToBeIgnored(label)">
+                                    <span (click)="initConnectionPanel(element.id, selectedCompositionElement.id, label)"
+                                          class="clickable"><span class="glyphicon glyphicon-pencil"></span></span>
+                                </ng-container>
+                            </ng-container>
+                        </ng-container>
+                    </td>
+                    <td>
+                        <a class="clickable"
+                           (click)="toggleLabelToBeIgnored(label)">{{isLabelSetToBeIgnored(label) ? 'Unignore' : 'Ignore'}}</a>
+                    </td>
+                </tr>
+            </ng-container>
+        </table>
+    <div *ngIf="!selectedCompositionElement.selectedModelConnectionsInfo?.length">
+        No labels available
+    </div>
+    </div>
+    <div class="modal fade" id="setLabelMatchModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Select matching label
+                </div>
+                <div class="modal-body">
+                    <div
+                            *ngIf="selectedCompositionElement.currentModelConnectableElements || selectedCompositionElement.componentModelsConnectableElements">
+                        <h4 style="text-align: center">Select element to be connected to {{selectedCompositionElement.labelBeingLinked.label}}</h4>
+                        <h5>Frame model elements:</h5>
+                        <table class="table text-left"
+                               *ngIf="selectedCompositionElement.currentModelConnectableElements && selectedCompositionElement.currentModelConnectableElements.length > 0">
+                            <ng-container
+                                    *ngFor="let element of selectedCompositionElement.currentModelConnectableElements">
+                                <tr style="background-color:aliceblue">
+                                    <td colspan="3">{{element.name && element.name.length > 0 ? element.name : 'Unnamed'}} (<i>{{element.type}}</i>) :</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <a class="clickable label-row"
+                                            *ngFor="let label of element.labels"
+                                           [class.bold-link]="isLabelMatchedToAnotherLabel(selectedCompositionElement.labelBeingLinked, label)"
+                                           (click)="matchLabelOnElementToLabelOnAnotherElement(selectedCompositionElement.id, selectedCompositionElement.elementBeingLinked, selectedCompositionElement.labelBeingLinked, element.id, label)">{{label.label}}
+                                            ({{label.direction == "to" ? "incoming" : label.direction == "both" ? 'incoming & outgoing' : 'outgoing'}})<br>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </table>
+                        <h5>Component models' elements:</h5>
+                        <table class="table text-left"
+                               *ngIf="selectedCompositionElement.componentModelsConnectableElements">
+
+                            <ng-container
+                                    *ngFor="let celement of selectedCompositionElement.componentModelsConnectableElements">
+                                <tr style="background-color:aliceblue">
+                                    <td colspan="3">Component: {{celement.component}}: {{celement.name && celement.name.length > 0 ? celement.name : 'Unnamed'}} (<i>{{celement.type}}</i>)</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <a class="clickable"
+                                            *ngFor="let label of celement.labels"
+                                           [class.bold-link]="isLabelMatchedToAnotherLabel(selectedCompositionElement.labelBeingLinked, label)"
+                                           (click)="matchLabelOnElementToLabelOnAnotherElement(selectedCompositionElement.id, selectedCompositionElement.elementBeingLinked, selectedCompositionElement.labelBeingLinked, celement.id, label)">{{label.label}}
+                                            ({{label.direction == "to" ? "incoming" : label.direction == "both" ? 'incoming & outgoing' : 'outgoing'}})<br>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

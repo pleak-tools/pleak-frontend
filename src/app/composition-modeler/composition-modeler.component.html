@@ -1,0 +1,193 @@
+<div class="row import-export">
+  <div class="col-lg-12">
+    <div class="row">
+      <div class="col-lg-4 form-group file-name-container" *ngIf="(authService.authStatus | async) && canEdit()">
+        <input type="text" class="form-control pull-right file-name-box" id="fileName" value="{{file.title}}"
+          [(ngModel)]="file.title" placeholder="File name" *ngIf="fileLoaded">
+        <span id="fileCannotBeOpenedError" class="help-block error-message" style="display: none;">
+          File cannot be found or opened!
+        </span>
+
+      </div>
+      <div class="col-lg-8 buttons-container">
+        <ul class="buttons" *ngIf="(authService.authStatus | async) && fileLoaded && canEdit()">
+          <li>
+            <a id="save-diagram" title="save BPMN diagram" href="#">
+              <span class="glyphicon glyphicon-floppy-disk"></span> Save diagram
+            </a>
+          </li>
+        </ul>
+        <ul class="buttons" *ngIf="(authService.authStatus | async) && fileLoaded">
+          <li>
+            <a id="download-diagram" title="download BPMN diagram" href="#">
+              <span class="glyphicon glyphicon-cloud-download"></span> BPMN diagram
+            </a>
+          </li>
+          <span class="separator">|</span>
+          <li>
+            <a id="download-svg" title="download as SVG image" href="#">
+              <span class="glyphicon glyphicon-cloud-download"></span> SVG image
+            </a>
+          </li>
+        </ul>
+        <ul class="buttons analyze" id="login-container" *ngIf="!(authService.authStatus | async)">
+          <li>
+            <a [routerLink]="" class="active" id="log-in" (click)="initLoginModal()">
+              <span class="glyphicon glyphicon-log-in"></span> Log in
+            </a>
+          </li>
+        </ul>
+        <ul class="buttons analyze" id="login-container" *ngIf="(authService.authStatus | async)">
+          <li>
+            <a [routerLink]="" class="active" id="log-out" (click)="initLogoutModal()">
+              <span class="glyphicon glyphicon-log-in"></span> Log out
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="canvas" [class.hidden]="showMergeResults"></div>
+<div id="tempCanvas" class="hidden"></div>
+<div id="tempResultCanvas" class="hidden"></div>
+<div id="resultCanvas" [class.hidden]="!showMergeResults"></div>
+<div id="sidebar">
+  <button class="btn btn-primary pull-left" type="button" (click)="mergeComponentsAndShowResults()"
+    *ngIf="!mergeDone && !mergeInProgress">Merge all</button>
+  <button class="btn btn-default pull-left" type="button" (click)="revertAll()"
+    *ngIf="!mergeInProgress && mergeDone">Revert merge</button>
+  <button class="btn btn-default pull-left" type="button" (click)="toggleMergeResults()"
+    *ngIf="!showMergeResults && !mergeInProgress && mergeDone">Show merge results</button>
+  <button class="btn btn-default pull-left" type="button" (click)="toggleMergeResults()"
+    *ngIf="showMergeResults && !mergeInProgress && mergeDone">Hide merge results</button>
+  <button class="btn btn-default pull-left" type="button"
+    (click)="showConsoleLog ? showConsoleLog = false : showConsoleLog = true" *ngIf="consoleLog.length > 0 && !showConsoleLog">Show console
+    log</button>
+  <button class="btn btn-default pull-left" type="button"
+    (click)="showConsoleLog ? showConsoleLog = false : showConsoleLog = true" *ngIf="consoleLog.length > 0 && showConsoleLog">Hide console
+    log</button>
+  <a class="btn btn-success pull-left" type="button" [class.hidden]="mergeInProgress || !mergeDone"
+    id="download-merged-diagram">Export merged model</a>
+
+  <div class="console" style="width:100%; background-color: white; margin-top:50px; padding:10px;"
+    *ngIf="showConsoleLog && consoleLog.length > 0">
+    <div class="console-text text-left">
+      <b>Console log</b>
+      <hr style="margin-top:5px; margin-bottom:10px">
+      <div style="margin-bottom:2px; word-wrap: break-word;" *ngFor="let consoleRow of consoleLog">
+        <span *ngIf="consoleRow.type == 'success'" style="color:green;">{{consoleRow.msg}}</span>
+        <span *ngIf="consoleRow.type == 'warning'" style="color:orange;">{{consoleRow.msg}}</span>
+        <span *ngIf="consoleRow.type == 'error'" style="color:red;">{{consoleRow.msg}}</span>
+        <span *ngIf="consoleRow.type == 'normal'" style="color:black;">{{consoleRow.msg}}</span>
+      </div>
+    </div>
+  </div>
+  <div class="merge-spinner" *ngIf="!mergeDone && mergeInProgress">
+    <div class="double-bounce1-2"></div>
+    <div class="double-bounce2-2"></div>
+  </div>
+
+  <!-- START Labels creating panel-->
+  <div class="panel panel-default" id="composition-link-options-sidebar" *ngIf="selectedCompositionLinkElement.id">
+    <div class="panel-heading blue-panel-heading">
+      <button class="btn btn-default pull-right" type="button" (click)="selectedCompositionLinkElement={}">X</button>
+      <h3>{{selectedCompositionLinkElement.title}}</h3>
+    </div>
+    <div class="panel-body" id="composition-link-options">
+      <div>
+        <manage-labels [element]="selectedCompositionLinkElement">
+        </manage-labels>
+      </div>
+    </div>
+    <div class="panel-footer blue-panel-footer text-right" *ngIf="canEdit()">
+      <button [disabled]="!canRemoveLinkElementDetails(selectedCompositionLinkElement.id)"
+        class="btn btn-default pull-left" type="button"
+        (click)="removeLinkElementDetails(selectedCompositionLinkElement.id)">Remove all</button>
+      <button class="btn btn-success" type="button"
+        (click)="saveLinkElementDetails(selectedCompositionLinkElement.id)">Save</button>
+    </div>
+  </div>
+  <!-- END Labels creating panel -->
+
+  <!-- START Elements removing panel -->
+  <div class="panel panel-default" id="composition-options-sidebar" *ngIf="selectedCompositionElement.id">
+    <div class="panel-heading blue-panel-heading">
+      <button class="btn btn-default pull-right" type="button" (click)="selectedCompositionElement={}">X</button>
+      <h3 id="composition-options-title">{{selectedCompositionElement.title}}</h3>
+    </div>
+    <div class="panel-body" id="composition-options">
+
+      <div>
+        <link-model *ngIf="selectedCompositionElement.id"
+          [linkedModel]="{id: selectedCompositionElement.modelId, name: selectedCompositionElement.modelTitle}"
+          [selfId]="fileId" (onLinked)="this.loadSelectedModelDataForElement($event, selectedCompositionElement.id)">
+        </link-model>
+      </div>
+      <div>
+        <match-lanes [linkedLanes]="selectedCompositionElement.parentElements"
+          [currentLanes]="getAllParentElementsOfCurrentModel()"></match-lanes>
+      </div>
+
+      <div>
+        <match-labels [selectedCompositionElement]="selectedCompositionElement" [elementRegistry]="elementRegistry">
+        </match-labels>
+      </div>
+
+      <div>
+        <match-objects [selectedCompositionElement]="selectedCompositionElement">
+        </match-objects>
+      </div>
+
+      <div *ngIf="selectedCompositionElement.selectedModelElements">
+        <div class="panel panel-default">
+          <div class="panel-heading clickable">
+            <strong>Select elements not to be merged into composition</strong>
+          </div>
+          <div class="panel-body">
+            <table class="table text-left">
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Action</th>
+              </tr>
+              <tr *ngFor="let element of selectedCompositionElement.selectedModelElements">
+                <td>{{element.name}}</td>
+                <td>{{element.type}}</td>
+                <td>
+                  <a *ngIf="!isElementSetToBeRemoved(element.id)" (click)="toggleElementToBeRemoved(element.id)">Remove
+                    element</a>
+                  <a *ngIf="isElementSetToBeRemoved(element.id)" class="bold-text"
+                    (click)="toggleElementToBeRemoved(element.id)">Unremove
+                    element</a>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- END Elements removing panel -->
+
+
+
+    </div>
+    <div class="panel-footer blue-panel-footer text-right" *ngIf="canEdit()">
+      <button class="btn btn-success" type="button"
+        (click)="saveElementDetails(selectedCompositionElement.id)">Save</button>
+    </div>
+  </div>
+</div>
+<div id="template-selector-overlay"></div>
+<div id="template-selector">
+  <div class="selector">
+    <div>
+      <input type="button" id="importModel" value="Import" class="btn btn-primary">
+      <input type="file" accept=".bpmn" id="fileImportInput" style="display:none">
+    </div>
+    or
+    <br>
+    <div>
+      <input type="button" id="createNewModel" value="Create a new model" class="btn btn-default">
+    </div>
+  </div>
+</div>

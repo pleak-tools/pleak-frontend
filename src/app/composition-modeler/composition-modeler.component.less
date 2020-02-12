@@ -1,0 +1,162 @@
+[class^="bpmn-icon-"]:before, [class*=" bpmn-icon-"]:before {
+  margin-left: 0!important;
+  margin-right: 0!important;
+}
+
+.import-export {
+  position: fixed;
+  top: 10px;
+  left: 20px;
+
+  padding: 0;
+
+  z-index: 1000;
+  min-width: 800px;
+}
+
+.buttons {
+  background: #FFF;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  border-radius: 2px;
+  list-style: none;
+  padding: 5px;
+  display: inline-block;
+  margin-right: 5px;
+  margin-bottom: 0;
+}
+
+.buttons > li {
+  display: inline-block;
+}
+
+.buttons > li > a {
+  display: inline-block;
+  padding: 5px;
+  text-decoration: none;
+  opacity: 0.3;
+}
+
+.buttons > li > a.active {
+  opacity: 1.0;
+}
+
+.analyze {
+  background-color: #337ab7;
+}
+
+.analyze a {
+  color: #fff;
+  &.active {
+    color: #fff;
+  }
+}
+
+.separator {
+  color: #337ab7;
+  opacity: 0.3;
+}
+
+.file-name-box {
+  height: 40px!important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3)!important;
+  border: none!important;
+  border-radius: 2px!important;
+}
+
+.file-name-container {
+  padding-right: 0!important;
+}
+
+.buttons-container {
+  padding-left: 10px !important;
+}
+
+#template-selector-overlay {
+  display: none;
+  position: fixed;
+  left :0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: 0.6;
+  z-index:1001;
+}
+
+#template-selector {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  z-index: 1002;
+}
+
+#template-selector .selector {
+  width: 200px;
+  height: 130px;
+  background-color: white;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 100px;
+  text-align: center;
+  padding: 20px;
+  z-index: 1003;
+  border-radius: 3px;
+}
+
+html, body, #canvas, #canvas > div, #sidebar {
+  height: 100%;
+}
+
+body {
+  padding-top: 0!important;
+}
+
+#sidebar {
+  width: 30%;
+  min-width: 250px;
+  background: lightskyblue;
+  display: block;
+  text-align: center;
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  padding: 10px;
+  overflow-y: scroll;
+}
+
+#composition-options-sidebar, #composition-link-options-sidebar {
+  margin-top: 45px;
+  margin-bottom: 75px;
+
+  .blue-panel-heading {
+    background-color: aliceblue;
+    color: deepskyblue;
+  }
+
+  .blue-panel-footer {
+    background-color: aliceblue;
+  }
+
+  #composition-options {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  a {
+    cursor: pointer;
+  }
+
+  a.bold-link, .bold-text {
+    font-weight: 600;
+  }
+}
+
+.composition-options-panel > .panel-heading {
+  padding-top: 1px;
+  padding-bottom: 1px;
+}

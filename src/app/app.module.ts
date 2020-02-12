@@ -27,6 +27,7 @@ import { NguiAutoCompleteModule} from '@ngui/auto-complete';
 import { HomeComponent } from './workspace/pages/home.component';
 import { RedirectComponent } from './redirect.component';
 import { ToastrModule } from 'ngx-toastr';
+import { CompositionModelerModule } from './composition-modeler/composition-modeler.module';
 
 
 @NgModule({
@@ -45,6 +46,7 @@ import { ToastrModule } from 'ngx-toastr';
     MoveItemFormComponent
   ],
   imports: [
+    CompositionModelerModule,
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,

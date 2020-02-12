@@ -39,8 +39,14 @@
             <li *ngIf="parent.canEditFileInShared(pobject)">
               <a (click)="parent.openFile(pobject)">Edit</a>
             </li>
+            <li *ngIf="parent.canEditFileInShared(pobject)">
+              <a (click)="parent.openFileCompositionModeler(pobject)">Edit in Composition Modeler</a>
+            </li>
             <li *ngIf="parent.canViewFile(pobject)">
               <a (click)="parent.openFile(pobject)">View</a>
+            </li>
+            <li *ngIf="parent.canViewFile(pobject)">
+              <a (click)="parent.openFileCompositionModeler(pobject)">View in Composition Modeler</a>
             </li>
             <li *ngIf="parent.canRenameFile(pobject)">
               <a (click)="parent.initRenameFileModal(pobject.id)">Rename</a>

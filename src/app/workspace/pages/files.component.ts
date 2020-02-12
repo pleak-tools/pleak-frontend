@@ -948,6 +948,10 @@ export class FilesComponent implements OnInit {
     window.open(this.getFileCSEditorUrl(pobject), '_blank');
   }
 
+  openFileCompositionModeler(pobject) {
+    window.open(this.getFileCompositionModelerUrl(pobject), '_blank');
+  }
+
   getFileUrl(pobject) {
     return config ? config.frontend.host + '/modeler/' + pobject.id : '';
   }
@@ -970,6 +974,10 @@ export class FilesComponent implements OnInit {
 
   getFileCSEditorUrl(pobject) {
     return config ? config.frontend.host + '/combined-sensitivity-editor/' + pobject.id : '';
+  }
+
+  getFileCompositionModelerUrl(pobject) {
+    return config ? config.frontend.host + '/composition-modeler/' + pobject.id : '';
   }
 
   sortPobjects(dir, sortFunction) {

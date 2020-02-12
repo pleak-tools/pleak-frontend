@@ -26,6 +26,7 @@ const routes: Routes = [
   },
   { path: 'redirect', component: RedirectComponent},
   { path: 'modeler/:id', component: ModelerComponent, canActivate: [ AuthGuard ]},
+  { path: 'composition-modeler', loadChildren: './composition-modeler/composition-modeler.module#CompositionModelerModule', canActivate: [ AuthGuard ]},
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', redirectTo: '/home'},
 ];

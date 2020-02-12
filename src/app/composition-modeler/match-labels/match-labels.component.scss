@@ -1,0 +1,36 @@
+table {
+  width: 100%;
+  td, th {
+    text-align: center;
+    padding: 10px 0;
+    select {
+      width: 100%;
+    }
+  }
+
+  tr.ignored {
+    color: #949da5;
+    .nodelabel {
+      text-decoration: line-through;
+    }
+  }
+}
+
+.modal .modal-body {
+  text-align: left;
+  table {
+    td, th {
+      text-align: left;
+      .label-row {
+        display: list-item;
+        margin-left: 2rem;
+      }
+    }
+  }
+
+  .bold-link {
+    font-weight: bold;
+    color: darkblue;
+  }
+
+}

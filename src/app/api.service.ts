@@ -4,6 +4,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { AuthService } from './auth/auth.service';
+
 declare function require(name: string);
 
 const config = require('../config.json');
@@ -15,7 +17,7 @@ export class ApiService {
   }
 
   userExists(email: string): Observable<any> {
-    return this.http.post(config.backend.host + '/rest/user/exists', {email: email}, {headers: {'JSON-Web-Token': localStorage.jwt}});
+    return this.http.post(config.backend.host + '/rest/user/exists', { email: email }, AuthService.loadRequestOptions());
   }
 
   updateFile(pobject: any, values: Object = {}): Observable<any> {
@@ -27,7 +29,7 @@ export class ApiService {
 
     return this.http.put(config.backend.host + '/rest/directories/files/' + pobject.id,
       requestItem,
-      {headers: {'JSON-Web-Token': localStorage.jwt}}
+      AuthService.loadRequestOptions()
     ).pipe(map(
       (response: any) => {
         Object.assign(pobject, response);
@@ -51,12 +53,16 @@ export class ApiService {
 
     return this.http.put(config.backend.host + '/rest/directories/' + directory.id,
       requestItem,
-      {headers: {'JSON-Web-Token': localStorage.jwt}}
+      AuthService.loadRequestOptions()
     ).pipe(map(
       (response: any) => {
         Object.assign(directory, response);
         return response;
       }
     ));
+  }
+
+  getRootDirectory() {
+    return this.http.get(config.backend.host + '/rest/directories/root', AuthService.loadRequestOptions())
   }
 }

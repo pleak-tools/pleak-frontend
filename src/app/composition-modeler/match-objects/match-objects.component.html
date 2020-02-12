@@ -1,0 +1,61 @@
+<div class="panel panel-default">
+    <div class="panel-heading clickable" (click)="collapsed = !collapsed">
+        <strong>Matching inputs & outputs</strong>
+        <span class="glyphicon" [ngClass]="collapsed ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+    </div>
+    <div class="panel-body" *ngIf="!collapsed">
+        <table class="table text-left" *ngIf="selectedCompositionElement.inputsJoiningData && selectedCompositionElement.outputsJoiningData">
+            <ng-container *ngIf="selectedCompositionElement.inputsJoiningData">
+                <tr style="background-color:aliceblue">
+                    <td colspan="2" style="text-align: center"><strong>Inputs</strong></td>
+                </tr>
+                <tr>
+                    <th>Name</th>
+                    <th>Matches</th>
+                </tr>
+                <tr *ngFor="let inputData of selectedCompositionElement.inputsJoiningData">
+                    <td>{{inputData.input.name}}</td>
+                    <td>
+                        <ng-container *ngIf="inputData.allMatches.length === 0">
+                            match cannot be found
+                        </ng-container>
+
+                        <select #select (change)="modelChanged(select.value, inputData)" *ngIf="inputData.allMatches.length">
+                            <option [value]="null"> --- </option>
+                            <option [value]="match.id" *ngFor="let match of inputData.allMatches" [selected]="inputData.match && match.id == inputData.match.id">
+                                {{match.name}}
+                            </option>
+                        </select>
+                    </td>
+                </tr>
+            </ng-container>
+            <ng-container *ngIf="selectedCompositionElement.outputsJoiningData">
+                <tr style="background-color:aliceblue">
+                    <td colspan="2" style="text-align: center"><strong>Outputs</strong></td>
+                </tr>
+                <tr>
+                    <th>Name</th>
+                    <th>Matches</th>
+                </tr>
+                <tr *ngFor="let outputData of selectedCompositionElement.outputsJoiningData">
+                    <td>{{outputData.input.name}}</td>
+                    <td>
+                        <ng-container *ngIf="outputData.allMatches.length === 0">
+                            match cannot be found
+                        </ng-container>
+
+                        <select #select (change)="modelChanged(select.value, outputData)" *ngIf="outputData.allMatches.length">
+                            <option [value]="null"> --- </option>
+                            <option [value]="match.id" *ngFor="let match of outputData.allMatches" [selected]="outputData.match && match.id == outputData.match.id">
+                                {{match.name}}
+                            </option>
+                        </select>
+                    </td>
+                </tr>
+            </ng-container>
+        </table>
+        <div *ngIf="!selectedCompositionElement.inputsJoiningData && !selectedCompositionElement.outputsJoiningData">
+            No inputs or outputs available
+        </div>
+    </div>
+</div>

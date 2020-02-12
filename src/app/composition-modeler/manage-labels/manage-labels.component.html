@@ -1,0 +1,68 @@
+<div class="panel panel-default">
+  <div class="panel-heading clickable" (click)="collapsed = !collapsed">
+    <strong>Labels</strong>
+    <span class="glyphicon" [ngClass]="collapsed ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+  </div>
+  <div class="panel-body text-left" *ngIf="!collapsed">
+    <ng-container *ngIf="element.connectionsType == 'both'">
+      <table class="table text-left">
+        <tr>
+          <th>Label</th>
+          <th>Outgoing</th>
+          <th>Incoming</th>
+          <th></th>
+        </tr>
+        <tr *ngFor="let label of element.labels">
+          <td><input type="text" [(ngModel)]="label.label" /></td>
+          <td>
+            <label class="clickable" style="white-space: nowrap;">
+              <input type="checkbox" class="clickable" [(ngModel)]="label.linkFrom">
+              <span class="glyphicon glyphicon-arrow-right"></span>
+            </label>
+          </td>
+          <td>
+            <label class="clickable" style="white-space: nowrap;">
+              <span class="glyphicon glyphicon-arrow-right"></span>
+              <input type="checkbox" class="clickable" [(ngModel)]="label.linkTo">
+            </label>
+          </td>
+          <td><span class="glyphicon glyphicon-trash clickable" (click)="removeLabel(label)"></span></td>
+        </tr>
+        <tr>
+          <td colspan="4"><button class="btn btn-primary btn-xs" type="button" (click)="addLabel()">Add label <span
+                class="glyphicon glyphicon-plus"></span></button></td>
+        </tr>
+      </table>
+    </ng-container>
+    <ng-container *ngIf="element.connectionsType == 'outgoing' || element.connectionsType == 'incoming'">
+      <table class="table text-left">
+        <tr>
+          <th>Label</th>
+          <th>Direction</th>
+          <th></th>
+        </tr>
+        <tr *ngFor="let label of element.labels">
+          <td><input type="text" [(ngModel)]="label.label" /></td>
+          <td>
+            <span style="white-space: nowrap;">
+              <ng-container *ngIf="element.connectionsType == 'outgoing'">
+                Outgoing
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </ng-container>
+              <ng-container *ngIf="element.connectionsType == 'incoming'">
+                <span class="glyphicon glyphicon-arrow-right"></span>
+                Incoming
+              </ng-container>
+            </span>
+          </td>
+          <td><span class="glyphicon glyphicon-trash checked" (click)="removeLabel(label)"></span></td>
+        </tr>
+        <tr>
+          <td colspan="3"><button class="btn btn-primary btn-xs" type="button" (click)="addLabel()">Add label <span
+                class="glyphicon glyphicon-plus"></span></button></td>
+        </tr>
+      </table>
+    </ng-container>
+    Incoming labels match with outgoing labels and vice versa.
+  </div>
+</div>
