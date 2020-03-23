@@ -24,7 +24,7 @@ export class CompositionModelerComponent implements OnInit {
 
   constructor(public http: HttpClient, public authService: AuthService, private route: ActivatedRoute, private router: Router, private toastr: ToastrService) { }
 
-  @ViewChild(MatchLabelsComponent, { static: true }) matchLabelsComp: MatchLabelsComponent;
+  @ViewChild(MatchLabelsComponent, { static: false }) matchLabelsComp: MatchLabelsComponent;
 
   private viewer: NavigatedViewer;
   private eventBus: any;
