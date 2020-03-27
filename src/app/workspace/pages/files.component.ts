@@ -928,12 +928,8 @@ export class FilesComponent implements OnInit {
     window.open(this.getFileUrl(pobject), '_blank');
   }
 
-  openFileSQLEditor(pobject) {
-    window.open(this.getFileSqlEditorUrl(pobject), '_blank');
-  }
-
-  openFileSQLDerivativeSensitivityEditor(pobject) {
-    window.open(this.getFileSqlDerivativeSensitivityEditorUrl(pobject), '_blank');
+  openFileSensitivitiesEditor(pobject) {
+    window.open(this.getFileSensitivitiesEditorUrl(pobject), '_blank');
   }
 
   openFilePEBPMNEditor(pobject) {
@@ -944,10 +940,6 @@ export class FilesComponent implements OnInit {
     window.open(this.getFileGAEditorUrl(pobject), '_blank');
   }
 
-  openFileCSEditor(pobject) {
-    window.open(this.getFileCSEditorUrl(pobject), '_blank');
-  }
-
   openFileCompositionModeler(pobject) {
     window.open(this.getFileCompositionModelerUrl(pobject), '_blank');
   }
@@ -956,12 +948,8 @@ export class FilesComponent implements OnInit {
     return config ? config.frontend.host + '/modeler/' + pobject.id : '';
   }
 
-  getFileSqlEditorUrl(pobject) {
-    return config ? config.frontend.host + '/sql-privacy-editor/' + pobject.id : '';
-  }
-
-  getFileSqlDerivativeSensitivityEditorUrl(pobject) {
-    return config ? config.frontend.host + '/sql-derivative-sensitivity-editor/' + pobject.id : '';
+  getFileSensitivitiesEditorUrl(pobject) {
+    return config ? config.frontend.host + '/sensitivities-editor/' + pobject.id : '';
   }
 
   getFilePEBPMNEditorUrl(pobject) {
@@ -970,10 +958,6 @@ export class FilesComponent implements OnInit {
 
   getFileGAEditorUrl(pobject) {
     return config ? config.frontend.host + '/guessing-advantage-editor/' + pobject.id : '';
-  }
-
-  getFileCSEditorUrl(pobject) {
-    return config ? config.frontend.host + '/combined-sensitivity-editor/' + pobject.id : '';
   }
 
   getFileCompositionModelerUrl(pobject) {
