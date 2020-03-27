@@ -928,10 +928,6 @@ export class FilesComponent implements OnInit {
     window.open(this.getFileUrl(pobject), '_blank');
   }
 
-  openFileSensitivitiesEditor(pobject) {
-    window.open(this.getFileSensitivitiesEditorUrl(pobject), '_blank');
-  }
-
   openFilePEBPMNEditor(pobject) {
     window.open(this.getFilePEBPMNEditorUrl(pobject), '_blank');
   }
@@ -942,6 +938,10 @@ export class FilesComponent implements OnInit {
 
   openFileCompositionModeler(pobject) {
     window.open(this.getFileCompositionModelerUrl(pobject), '_blank');
+  }
+
+  openFileSensitivitiesEditor(pobject) {
+    window.open(this.getFileSensitivitiesEditorUrl(pobject), '_blank');
   }
 
   getFileUrl(pobject) {

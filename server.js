@@ -3,6 +3,14 @@ var fs = require("fs");
 var app = express();
 var config = JSON.parse(fs.readFileSync('src/config.json', 'utf8'));
 
+
+// For easier local debugging using with ng serve
+// app.use(function(req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "http://localhost:4200");
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//   next();
+// });
+
 app.set('port', config.frontend.port);
 app.use('/app/', express.static(__dirname + '/../' + config.frontend.folder + '/dist'));
 app.use('/graph/:diagram_id/:run_number/:selected_dto/:dot_filename', express.static(__dirname + '/../' + config.pe_bpmn_editor.folder + '/src/app/editor/leaks-when-analysis/graphs'));
