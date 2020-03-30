@@ -32,7 +32,7 @@ export class CompositionModelerComponent implements OnInit {
   private overlays: any;
   private canvas: any;
 
-  private modelId: string;
+  modelId: string;
   public fileId: number = null;
   private file: any = null;
 

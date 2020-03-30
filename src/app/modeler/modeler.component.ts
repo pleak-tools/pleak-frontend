@@ -30,7 +30,7 @@ export class ModelerComponent implements OnInit {
   private overlays: any;
   private bpmnFactory: any;
 
-  private modelId: string;
+  modelId: string;
 
   private lastContent: string = '';
 
