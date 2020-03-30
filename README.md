@@ -1,10 +1,10 @@
-# pleak-frontend
+# Pleak frontend
 
-The user-facing part of the Privacy Leak Tools
+The user-facing part of the Privacy LEAKage (PLEAK) Tools
 
 ## Prerequisites
 
-You need to locate [pleak-backend](https://github.com/pleak-tools/pleak-backend), pleak-frontend, [pleak-sql-analysis](https://github.com/pleak-tools/pleak-sql-analysis), [pleak-leaks-when-analysis](https://github.com/pleak-tools/pleak-leaks-when-analysis), [pleak-leaks-when-ast-transformation](https://github.com/pleak-tools/pleak-leaks-when-ast-transformation), [pleak-sql-editor](https://github.com/pleak-tools/pleak-sql-editor), [pleak-pe-bpmn-editor](https://github.com/pleak-tools/pleak-pe-bpmn-editor), [pleak-sql-derivative-sensitivity-editor](https://github.com/pleak-tools/pleak-sql-derivative-sensitivity-editor), [pleak-guessing-advantage-editor](https://github.com/pleak-tools/pleak-guessing-advantage-editor), [pleak-combined-sensitivity-editor](https://github.com/pleak-tools/pleak-combined-sensitivity-editor) and [pleak-leakage-detection-analysis](https://github.com/pleak-tools/pleak-leakage-detection-analysis) directories all into the same directory and specify their names in the config.json file.
+You need to locate pleak-frontend, [pleak-backend](https://github.com/pleak-tools/pleak-backend), [pleak-sql-analysis](https://github.com/pleak-tools/pleak-sql-analysis), [pleak-leaks-when-ast-transformation](https://github.com/pleak-tools/pleak-leaks-when-ast-transformation), [pleak-leaks-when-analysis](https://github.com/pleak-tools/pleak-leaks-when-analysis), [pleak-leakage-detection-analysis](https://github.com/pleak-tools/pleak-leakage-detection-analysis), [pleak-sql-constraint-propagation](https://github.com/pleak-tools/pleak-sql-constraint-propagation), [pleak-pe-bpmn-editor](https://github.com/pleak-tools/pleak-pe-bpmn-editor), [pleak-guessing-advantage-editor](https://github.com/pleak-tools/pleak-guessing-advantage-editor) and [pleak-sensitivities-editor](https://github.com/pleak-tools/pleak-sensitivities-editor) directories all into the same directory and specify their names in the src/config.json file.
 Read more from sub-repositories how to build each module.
 
 ## Building
