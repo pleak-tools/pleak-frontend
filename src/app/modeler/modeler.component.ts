@@ -65,7 +65,7 @@ export class ModelerComponent implements OnInit {
         }
         $('#fileName').val(self.file.title);
         self.lastContent = self.file.content;
-        document.title = 'Pleak editor - ' + self.file.title;
+        document.title = 'Pleak modeler - ' + self.file.title;
         self.lastModified = new Date().getTime();
         self.fileLoaded = true;
       },
@@ -254,7 +254,7 @@ export class ModelerComponent implements OnInit {
                   self.file.md5Hash = data.md5Hash;
                   self.lastContent = self.file.content;
                   self.fileId = data.id;
-                  document.title = 'Pleak editor - ' + self.file.title;
+                  document.title = 'Pleak modeler - ' + self.file.title;
                 }
               },
               (fail: HttpResponse<any>) => {

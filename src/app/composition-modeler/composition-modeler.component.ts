@@ -2158,7 +2158,7 @@ export class CompositionModelerComponent implements OnInit {
           this.toastr.error('File is empty!', '', { disableTimeOut: true });
         }
         self.lastContent = self.file.content;
-        document.title = 'Pleak editor - ' + self.file.title;
+        document.title = 'Pleak composition modeler - ' + self.file.title;
         self.lastModified = new Date().getTime();
         self.fileLoaded = true;
       },
@@ -2336,7 +2336,7 @@ export class CompositionModelerComponent implements OnInit {
                   self.file.md5Hash = data.md5Hash;
                   self.lastContent = self.file.content;
                   self.fileId = data.id;
-                  document.title = 'Pleak editor - ' + self.file.title;
+                  document.title = 'Pleak composition modeler - ' + self.file.title;
                 }
               },
               (fail: HttpResponse<any>) => {
