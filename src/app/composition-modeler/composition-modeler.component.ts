@@ -1960,8 +1960,8 @@ export class CompositionModelerComponent implements OnInit {
       );
       this.compositionElementMarkers[elementId] = this.overlays.add(this.elementRegistry.get(elementId), {
         position: {
-          bottom: 0,
-          left: -5
+          bottom: 22,
+          left: -15
         },
         show: {
           minZoom: 0,
