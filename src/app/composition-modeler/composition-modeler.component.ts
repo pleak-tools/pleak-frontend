@@ -2253,6 +2253,30 @@ export class CompositionModelerComponent implements OnInit {
             this.loadCompositionLinkElementMarkers();
             this.loadCompositionTaskMarkers();
 
+            $(window).resize(() => {
+              $('#resize-buttons-container').width($('#sidebar').width());
+            });
+
+            $('#resize-inc').on('click', () => {
+              if ($('#sidebar').width() < 0.4 * window.innerWidth) {
+                $('#sidebar').width($('#sidebar').width() * 1.3);
+              }
+              this.loadResizeButtonsMode();
+            });
+
+            $('#resize-dec').on('click', () => {
+              if ($('#sidebar').width() > 250) {
+                if (($('#sidebar').width() / 1.3) < 250) {
+                  $('#sidebar').width(250);
+                } else {
+                  $('#sidebar').width($('#sidebar').width() / 1.3);
+                }
+              }
+              this.loadResizeButtonsMode();
+            });
+
+            this.loadResizeButtonsMode();
+
             resolve();
           } else {
             this.toastr.error('File cannot be opened!', '', { disableTimeOut: true });
@@ -2262,6 +2286,21 @@ export class CompositionModelerComponent implements OnInit {
         });
       });
     }
+  }
+
+  loadResizeButtonsMode(): void {
+    if ($('#sidebar').width() <= 250) {
+      $('#resize-dec').prop('disabled', true);
+    } else {
+      $('#resize-dec').prop('disabled', false);
+    }
+
+    if ($('#sidebar').width() >= 0.4 * window.innerWidth) {
+      $('#resize-inc').prop('disabled', true);
+    } else {
+      $('#resize-inc').prop('disabled', false);
+    }
+    $("#resize-buttons-container").css('width', $('#sidebar').width());
   }
 
   // Save model
