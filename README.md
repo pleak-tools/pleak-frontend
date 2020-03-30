@@ -29,6 +29,8 @@ and serve with
 node server.js
 ```
 
+Alternatively, follow the instructions in [pleak-ansible](https://github.com/pleak-tools/pleak-ansible) repository to build Pleak development virtual machine using Ansible script.
+
 ## Using
 
 Set up (serve) pleak-backend and pleak-frontend and go to the URL: http://localhost:8000.
