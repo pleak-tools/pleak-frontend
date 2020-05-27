@@ -1754,7 +1754,7 @@ export class CompositionModelerComponent implements OnInit {
   }
 
   renameScriptForElement(elementId: string, prefix: string, joiningMatches: any[]): void {
-    let regex = new RegExp(/\b[A-Za-z0-9_[\]]+(?!\(|\")?[\.|\"]\b/, 'gm'); // Without negative lookbehind, but matched names contain dot-s in the end
+    let regex = new RegExp(/\b[A-Za-z0-9_\-[\]]+(?!\(|\")?[\.|\"]\b/, 'gm'); // Without negative lookbehind, but matched names contain dot-s in the end
     // let regex = new RegExp(/\b(?<!\.|\")[A-Za-z0-9_[\]]+(?!\(|\")\b/, 'gm');
     if (elementId && prefix) {
       let element = this.resultElementRegistry.get(elementId);
