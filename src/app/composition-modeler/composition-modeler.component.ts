@@ -762,7 +762,7 @@ export class CompositionModelerComponent implements OnInit {
   }
 
   debugFn1(): void {
-    let tasks = this.resultElementRegistry.filter((element) => { return element.businessObject && element.businessObject.$type === 'bpmn:Task' && element.businessObject.incoming && element.businessObject.incoming.length > 1 });
+    let tasks = this.resultElementRegistry.filter((element) => { return element.businessObject && (element.businessObject.$type === 'bpmn:Task' || (element.businessObject.$type === 'bpmn:SubProcess' && element.collapsed)) && element.businessObject.incoming && element.businessObject.incoming.length > 1 });
     for (let task of tasks) {
       let taskName = task.businessObject.name ? task.businessObject.name : "undefined";
       this.consoleLog.push({ type: "warning", msg: "task " + taskName + " has " + task.businessObject.incoming.length + " incoming connections" });
@@ -1036,7 +1036,7 @@ export class CompositionModelerComponent implements OnInit {
 
   getAllTasksOfComponentModels(): any[] {
     let currentModelTasks = this.resultElementRegistry.filter(function (obj) {
-      return obj.type === 'bpmn:Task' && obj.businessObject && obj.businessObject.compositionTaskDetails;
+      return (obj.type === 'bpmn:Task' || obj.type === 'bpmn:SubProcess' && obj.collapsed) && obj.businessObject && obj.businessObject.compositionTaskDetails;
     });
     return currentModelTasks;
   }
@@ -1129,7 +1129,7 @@ export class CompositionModelerComponent implements OnInit {
   }
 
   initElementSidebarPanel(element: any): void {
-    if (element.type === 'bpmn:Task') {
+    if (element.type === 'bpmn:Task' || element.type === 'bpmn:SubProcess' && element.collapsed) {
       let elementId = element.businessObject.id;
       let elementName = element.businessObject.name;
       if (this.selectedCompositionElement.title && this.selectedCompositionElement.title != element.businessObject.name) {

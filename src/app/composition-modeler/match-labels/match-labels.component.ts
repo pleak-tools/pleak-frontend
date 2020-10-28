@@ -95,7 +95,7 @@ export class MatchLabelsComponent {
       let inputObjects = [];
       let outputObjects = [];
 
-      if (type === "bpmn:Task") {
+      if (type === "bpmn:Task" || type === "bpmn:SubProcess" && a.collapsed) {
         inputObjects = this.getTaskInputObjects(a, registry[elementId]).map(obj => {
           let objLabels = undefined;
           if (obj.businessObject.compositionLinkInfo) {
@@ -201,7 +201,7 @@ export class MatchLabelsComponent {
     }
 
     let componentModelTasks = this.elementRegistry.filter((obj) => {
-      return obj.type === 'bpmn:Task' && obj.businessObject && obj.businessObject.compositionTaskDetails && obj.id != elementId;
+      return (obj.type === 'bpmn:Task' || obj.type === 'bpmn:SubProcess' && obj.collapsed) && obj.businessObject && obj.businessObject.compositionTaskDetails && obj.id != elementId;
     });
 
     let elements = [];
@@ -255,7 +255,7 @@ export class MatchLabelsComponent {
     });
 
     let componentModelTasks = this.elementRegistry.filter((obj) => {
-      return obj.type === 'bpmn:Task' && obj.businessObject && obj.businessObject.id && obj.businessObject.compositionTaskDetails && obj.businessObject.id != parentElementId;
+      return (obj.type === 'bpmn:Task' || obj.type === 'bpmn:SubProcess' && obj.collapsed) && obj.businessObject && obj.businessObject.id && obj.businessObject.compositionTaskDetails && obj.businessObject.id != parentElementId;
     });
     let componentModelsCompositionLinkElements = [];
     for (let componentTask of componentModelTasks) {
