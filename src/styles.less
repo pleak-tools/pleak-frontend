@@ -1,10 +1,11 @@
 @import "../node_modules/bootstrap/less/bootstrap.less";
 
-@brand-primary:         darken(#4a85bf, 6.5%); // #337ab7
-@brand-success:         #6EAF6E;
-@brand-info:            #4a85bf;
-@brand-warning:         #ceba63;
-@brand-danger:          #ce6363;
+@brand-primary:           darken(#4a85bf, 6.5%); // #337ab7
+@brand-success:           #6EAF6E;
+@brand-info:              #4a85bf;
+@brand-warning:           #ceba63;
+@brand-danger:            #ce6363;
+@brand-canvas-background: #faf6f4;
 
 @font-family-sans-serif: 'Roboto', Helvetica, Arial, sans-serif;
 @font-letter-spacing: .3px;
@@ -33,12 +34,13 @@ html, body, #canvas, #canvas > div, #resultCanvas, #resultCanvas > div {
 }
 
 body {
-  padding-top: 25px;
   height: 100%;
   letter-spacing: @font-letter-spacing;
 }
 
-
+#home-navbar {
+  padding-top: 25px;
+}
 
 .icon-pleaks-query {
   background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="#357986" width="270" height="240"><path d="M22,8 L36,15 L36,29 L22,36 L8,29 L8,15 Z"/></svg>');
@@ -736,7 +738,7 @@ body {
 // Canvas background
 
 .djs-container {
-  background: #faf6f4;
+  background: @brand-canvas-background;
 }
 
 // Color picker
@@ -747,7 +749,7 @@ body {
 }
 
 .bpmn-item-color {
-  vertical-align: super;
+  vertical-align: top;
 }
 
 [class^="color-icon-"]:before, [class*=" color-icon-"]:before {
