@@ -83,19 +83,56 @@ export default class ColorPopupProvider {
             label: 'Cyan',
             fill: '#ceffff',
             stroke: '#00bfbf'
+        }, {
+            label: 'Cyber Red',
+            fill: '#fe5d5d',
+            stroke: '#fe5d5d'
+        }, {
+            label: 'Cyber Black',
+            fill: '#202020',
+            stroke: '#202020'
+        }, {
+            label: 'Cyber Dark Gray',
+            fill: '#989898',
+            stroke: '#989898'
+        }, {
+            label: 'Cyber Light Gray',
+            fill: '#dfdfdf',
+            stroke: '#dfdfdf'
+        }, {
+            label: 'Cyber Lightest Gray',
+            fill: '#f2f2f2',
+            stroke: '#f2f2f2'
+        }, {
+            label: 'Cyber Green',
+            fill: '#b7f6c1',
+            stroke: '#b7f6c1'
         }];
 
         let entries = colors.map(function (color) {
+            if (!self.isConnection(element)) {
+                color.stroke = "#000000";
+            }
+            let lowerCaseLabel = color.label.toLowerCase().replace(/ /g, "-");
             return {
                 title: self.translate(color.label),
-                id: color.label.toLowerCase() + '-color',
-                className: 'color-icon-' + color.label.toLowerCase(),
+                id: lowerCaseLabel + '-color',
+                className: 'color-icon-' + lowerCaseLabel,
                 action: self.createAction(self.modeling, element, color)
             };
         });
 
         return entries;
     };
+
+    isConnection(element) {
+        return element.type === 'bpmn:DataInputAssociation' 
+        || element.type === 'bpmn:DataOutputAssociation' 
+        || element.type === 'bpmn:SequenceFlow'
+        || element.type === 'label' 
+        || element.type === 'bpmn:MessageFlow' 
+        || element.type === 'bpmn:Association';
+    }
 
     createAction(modeling, element, color) {
         return function () {
