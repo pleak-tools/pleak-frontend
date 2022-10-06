@@ -14,14 +14,16 @@
 
           <ng-template #pobjectItem let-dest let-depth="depth">
             <li class="pobject" *ngIf="dest.type === 'directory' && canMove(pobject, dest)">
-              <div class="move-item" (click)="target = dest" [ngClass]="{'active': target === dest}">
+              <div class="move-item" (click)="target = dest; dest.openMove = !dest.openMove" [ngClass]="{'active': target === dest}">
                 <div class="row">
                   <div class="col-xs-12">
-                    <span class="title" [ngStyle]="{'margin-left.px': Math.max(0, (depth-1) * 30).toString() }"><span class="glyphicon glyphicon-folder-open"></span> {{dest.title}}</span>
+                    <span class="title" [ngStyle]="{'margin-left.px': Math.max(0, (depth-1) * 30).toString() }">
+                      <span class="glyphicon" [ngClass]="dest.openMove ? 'glyphicon-folder-open' : 'glyphicon-folder-close'"></span> {{dest.title}}</span>
+                      <span *ngIf="dest.openMove && dest.pobjects.length === 0">(empty)</span>
                   </div>
                 </div>
               </div>
-              <ul class="pobject-list subgroup">
+              <ul class="pobject-list subgroup" *ngIf="dest.openMove">
                 <ng-container *ngFor="let item of dest.pobjects">
                   <ng-container *ngTemplateOutlet="pobjectItem; context:{$implicit: item, depth: depth + 1}"></ng-container>
                 </ng-container>

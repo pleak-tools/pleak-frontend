@@ -232,6 +232,7 @@ export class FilesComponent implements OnInit {
         this.rootDir = success;
         this.createPublicUrls(this.rootDir);
         this.rootDir.open = true;
+        this.rootDir.openMove = true;
       });
   }
 
