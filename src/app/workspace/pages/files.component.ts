@@ -234,8 +234,25 @@ export class FilesComponent implements OnInit {
         this.rootDir.open = true;
         this.rootDir.openMove = true;
 
+        // apply open/close from the previous state
         if(oldOpenDirsSet != null) {
           MoveItemFormComponent.copyStateToTree(this.rootDir, oldOpenDirsSet)
+        }
+
+        // sort as in the previous state
+        switch (this.sort) {
+          case 2:
+            this.sortPobjectsByTitleDesc();
+            break;
+          case 3:
+            this.sortPobjectsByLastModifiedAsc();
+            break;
+          case 4:
+            this.sortPobjectsByLastModifiedDesc();
+            break;
+          default: // 0 and 1 cases
+            this.sortPobjectsByTitleAsc();
+            break;
         }
       });
   }
@@ -252,6 +269,7 @@ export class FilesComponent implements OnInit {
         this.sharedDir = success;
         this.createPublicUrls(this.sharedDir);
 
+        // apply open/close from the previous state
         if(oldOpenDirsSet != null) {
           MoveItemFormComponent.copyStateToTree(this.sharedDir, oldOpenDirsSet)
         }
