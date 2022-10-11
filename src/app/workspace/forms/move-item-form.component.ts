@@ -105,8 +105,11 @@ export class MoveItemFormComponent {
       }))
       .subscribe(
         () => {
-          this.filesComponent.getSharedDirectory();
-          this.filesComponent.getRootDirectory();
+          let oldOpenStateShared = MoveItemFormComponent.getOpenDirsSet(this.filesComponent.getShared())
+          let oldOpenStateRoot = MoveItemFormComponent.getOpenDirsSet(this.filesComponent.getRoot())
+
+          this.filesComponent.getSharedDirectory(oldOpenStateShared);
+          this.filesComponent.getRootDirectory(oldOpenStateRoot);
 
           if (this.pobject.type === 'file')
             this.toastr.success('File moved');
@@ -141,4 +144,56 @@ export class MoveItemFormComponent {
     return true;
   }
 
+  static getOpenDirsSet(fromRoot): Set<number> {
+    let open: Set<number> = new Set();
+
+    // BFS throught the dirs tree
+
+    let visited: Set<number> = new Set()
+    let qFrom = new Array<any>();
+
+    visited.add(fromRoot.id);
+    qFrom.push(fromRoot);
+
+    while (qFrom.length > 0) {
+      const vFrom = qFrom.shift();
+      if (vFrom.hasOwnProperty("open") && vFrom.open) {
+        open.add(vFrom.id)
+      }
+      if (vFrom.hasOwnProperty("pobjects")) {        
+        for (let child of vFrom.pobjects) {
+          if (!visited.has(child.id)) {
+            visited.add(child.id);
+            qFrom.push(child);
+          }
+        }
+      }
+    }
+    return open;
+  }
+
+  static copyStateToTree(root, openDirs:Set<number>) {
+    // BFS throught the dirs tree
+
+    let visited: Set<number> = new Set()
+    let qTo = new Array<any>();
+
+    visited.add(root.id);;
+    qTo.push(root);
+
+    while (qTo.length > 0) {
+      let vTo = qTo.shift();
+      if(openDirs.has(vTo.id)) {
+        vTo.open = true;
+      }
+      if (vTo.hasOwnProperty("pobjects")) {        
+        for (let child of vTo.pobjects) {
+          if (!visited.has(child.id)) {
+            visited.add(child.id);
+            qTo.push(child);
+          }
+        }
+      }
+    }
+  }
 }
