@@ -57,6 +57,9 @@
             <li *ngIf="parent.canExport(pobject)">
               <a (click)="parent.exportFile(pobject)" id="export-{{pobject.id}}">Export</a>
             </li>
+            <li *ngIf="parent.canExportDir(pobject)">
+              <a (click)="parent.exportDir(pobject)" id="export-{{pobject.id}}">Export Directory</a>
+            </li>
             <li *ngIf="parent.canMoveFileInRoot(pobject)">
               <a (click)="parent.openMoveItemModal(pobject)">Move</a>
             </li>

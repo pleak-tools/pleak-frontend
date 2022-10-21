@@ -93,6 +93,9 @@
             <li *ngIf="parent.canCreateDirectory(pobject)">
               <a (click)="parent.initCreateNewDirectoryModal(pobject.id)">New directory</a>
             </li>
+            <li *ngIf="parent.canExportDir(pobject)">
+              <a (click)="parent.exportDir(pobject)" id="export-{{pobject.id}}">Export Directory</a>
+            </li>
             <li *ngIf="parent.canShare(pobject)" role="separator" class="divider"></li>
             <li *ngIf="parent.canShare(pobject)">
               <a (click)="parent.openShareItemModal(pobject)">Share</a>

@@ -22,6 +22,9 @@
               <button type="button" class="btn btn-success" (click)="initCreateNewDirectoryModal(getRoot().id)">
                 <span class="glyphicon glyphicon-folder-close"></span> New directory
               </button>
+              <button type="button" class="btn btn-secondary" (click)="exportDir(getRoot())">
+                <span class="glyphicon glyphicon-folder-close"></span> Export Root Directory
+              </button>
             </div>
           </div>
           <!-- Table -->
@@ -88,6 +91,11 @@
           <div class="row" style="margin-bottom: 15px;">
             <div class="col-xs-4">
               <input type="search" class="form-control pull-right" placeholder="Search files" value="{{search}}" #searchBox (keyup)="setSearchInput(searchBox.value)">
+            </div>
+            <div class="col-xs-8 text-right ">
+              <button type="button" class="btn btn-secondary" (click)="exportDir(getShared())">
+                <span class="glyphicon glyphicon-folder-close"></span> Export Root Directory
+              </button>
             </div>
           </div>
           <div class="shared-files-list">

@@ -9,6 +9,8 @@ import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs/operators';
 
+import * as JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 declare var $: any;
 declare function require(name: string);
@@ -118,7 +120,7 @@ export class FilesComponent implements OnInit {
       error: () => {
       }
     },
-     publishFile: {
+    publishFile: {
       success: (response) => {
         $('#server-error').hide();
         $('.form-group.input-group').removeClass('has-error');
@@ -599,7 +601,7 @@ export class FilesComponent implements OnInit {
     if (this.isOwner(file)) { return true; }
     for (let pIx = 0; pIx < file.permissions.length; pIx++) {
       if (file.permissions[pIx].action.title === 'edit' &&
-          this.authService.user ? file.permissions[pIx].user.id === parseInt(this.authService.user.sub) : false) {
+        this.authService.user ? file.permissions[pIx].user.id === parseInt(this.authService.user.sub) : false) {
         return true;
       }
     }
@@ -635,7 +637,7 @@ export class FilesComponent implements OnInit {
 
     for (let pIx = 0; pIx < file.permissions.length; pIx++) {
       if (file.permissions[pIx].action.title === 'view' &&
-          this.authService.user ? file.permissions[pIx].user.id === parseInt(this.authService.user.sub) : false) {
+        this.authService.user ? file.permissions[pIx].user.id === parseInt(this.authService.user.sub) : false) {
         return true;
       }
     }
@@ -663,6 +665,10 @@ export class FilesComponent implements OnInit {
 
   canExport(file) {
     return this.isPobjectFile(file);
+  }
+
+  canExportDir(dir) {
+    return this.isPobjectDirectory(dir);
   }
 
   canMoveFileInRoot(pobject) {
@@ -698,6 +704,49 @@ export class FilesComponent implements OnInit {
         this.canExportModel = false;
       }
     );
+  }
+
+  exportDir(dir) {
+    let errors = [];
+    let toastr = this.toastr;
+    const zip = new JSZip();
+    this.traverseDir(dir, zip, errors).then(() => {
+      zip.generateAsync({type:"blob"})
+        .then(function(content) {
+          if (content == null || content.size == 0) {
+            errors.push("Could not generate the zip file...");
+          }
+          if (errors.length == 0) {
+            saveAs(content, dir.title + ".zip");
+          } else {
+            toastr.error(errors.join("<br/>"), '', {enableHtml: true, disableTimeOut: true});
+          }
+        }
+      );
+    });
+  }
+
+  async traverseDir(dir, zip, errors) {
+    for (const pobject of dir.pobjects) {
+      if (this.isPobjectFile(pobject)) {
+        await this.http.get(config.backend.host + '/rest/directories/files/' + pobject.id, AuthService.loadRequestOptions())
+          .toPromise()
+          .then((data: any) => {
+            if (data.content.length > 0) {
+              zip.file(pobject.title, data.content);
+              return;
+            }
+            errors.push(`File "${pobject.title}" has no data...`)
+          })
+          .catch(err => {
+            errors.push(`Could not download file "${pobject.title}" ...`)
+          })
+      }
+      else if (this.isPobjectDirectory(pobject)) {
+        let folder = zip.folder(pobject.title);
+        await this.traverseDir(pobject, folder, errors);
+      }
+    }
   }
 
   isMatchingSearch(pobject) {
@@ -745,8 +794,8 @@ export class FilesComponent implements OnInit {
   // Searches all children recursively for id
   containsById(id, dir) {
     if (!this.isPobjectDirectory(dir) ||
-        id === undefined ||
-        id === null) return false;
+      id === undefined ||
+      id === null) return false;
 
     for (let pIx = 0; pIx < dir.pobjects.length; pIx++) {
       if (dir.pobjects[pIx].id === id) {
@@ -762,8 +811,8 @@ export class FilesComponent implements OnInit {
   // Searches all children recursively for partial title
   containsByPartialTitle(dir, title) {
     if (!this.isPobjectDirectory(dir) ||
-        title === undefined ||
-        title === null) return false;
+      title === undefined ||
+      title === null) return false;
 
     for (let pIx = 0; pIx < dir.pobjects.length; pIx++) {
       if (this.isMatchingPartialTitle(dir.pobjects[pIx], title)) {
