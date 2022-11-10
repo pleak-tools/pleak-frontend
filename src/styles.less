@@ -1,10 +1,11 @@
 @import "../node_modules/bootstrap/less/bootstrap.less";
 
-@brand-primary:         darken(#4a85bf, 6.5%); // #337ab7
-@brand-success:         #6EAF6E;
-@brand-info:            #4a85bf;
-@brand-warning:         #ceba63;
-@brand-danger:          #ce6363;
+@brand-primary:           darken(#4a85bf, 6.5%); // #337ab7
+@brand-success:           #6EAF6E;
+@brand-info:              #4a85bf;
+@brand-warning:           #ceba63;
+@brand-danger:            #ce6363;
+@brand-canvas-background: #faf6f4;
 
 @font-family-sans-serif: 'Roboto', Helvetica, Arial, sans-serif;
 @font-letter-spacing: .3px;
@@ -33,12 +34,13 @@ html, body, #canvas, #canvas > div, #resultCanvas, #resultCanvas > div {
 }
 
 body {
-  padding-top: 25px;
   height: 100%;
   letter-spacing: @font-letter-spacing;
 }
 
-
+#home-navbar {
+  padding-top: 25px;
+}
 
 .icon-pleaks-query {
   background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="#357986" width="270" height="240"><path d="M22,8 L36,15 L36,29 L22,36 L8,29 L8,15 Z"/></svg>');
@@ -731,4 +733,140 @@ body {
 
 .highlight-component-task:not(.djs-connection) .djs-visual > :nth-child(1) {
   fill: lightgray!important;
+}
+
+// Canvas background
+
+.djs-container {
+  background: @brand-canvas-background;
+}
+
+// Color picker
+
+.color-picker .djs-popup-body {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.bpmn-item-color {
+  vertical-align: top;
+}
+
+[class^="color-icon-"]:before, [class*=" color-icon-"]:before {
+  display: inline-block;
+  content: '';
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 0.1em;
+  border: 0.03em solid black;
+}
+
+.color-icon-default:before {
+  background-color: white;
+  border-color: black;
+}
+
+.color-icon-blue:before {
+  background-color: #BBDEFB;
+  border-color: #0073d7;
+}
+
+.color-icon-orange:before {
+  background-color: #ffe6c0;
+  border-color: #e67e00;
+}
+
+.color-icon-green:before {
+  background-color: #C8E6C9;
+  border-color: #009608;
+}
+
+.color-icon-red:before {
+  background-color: #FFCDD2;
+  border-color: #dd0400;
+}
+
+.color-icon-purple:before {
+  background-color: #E1BEE7;
+  border-color: #8400a8;
+}
+
+.color-icon-fuchsia:before {
+  background-color: #ffd1ff;
+  border-color: #FF00FF;
+}
+
+.color-icon-gray:before {
+  background-color: #bdbdbd;
+  border-color: #575555;
+}
+
+.color-icon-lime:before {
+  background-color: #acffac;
+  border-color: #00b100;
+}
+
+.color-icon-maroon:before {
+  background-color: #c0a7a7;
+  border-color: #800000;
+}
+
+.color-icon-navy:before {
+  background-color: #9595be;
+  border-color: #000080;
+}
+
+.color-icon-olive:before {
+  background-color: #e7e7ab;
+  border-color: #808000;
+}
+
+.color-icon-silver:before {
+  background-color: #e7e7e7;
+  border-color: #828282;
+}
+
+.color-icon-teal:before {
+  background-color: #9ddada;
+  border-color: #008080;
+}
+
+.color-icon-yellow:before {
+  background-color: #ffff71;
+  border-color: #a2a200;
+}
+
+.color-icon-cyan:before {
+  background-color: #ceffff;
+  border-color: #00bfbf;
+}
+
+.color-icon-cyber-red:before {
+  background-color: #fe5d5d;
+  border-color: #202020;
+}
+
+.color-icon-cyber-black:before {
+  background-color: #202020;
+  border-color: #202020;
+}
+
+.color-icon-cyber-dark-gray:before {
+  background-color: #989898;
+  border-color: #202020;
+}
+
+.color-icon-cyber-light-gray:before {
+  background-color: #dfdfdf;
+  border-color: #202020;
+}
+
+.color-icon-cyber-lightest-gray:before {
+  background-color: #f2f2f2;
+  border-color: #202020;
+}
+
+.color-icon-cyber-green:before {
+  background-color: #b7f6c1;
+  border-color: #202020;
 }

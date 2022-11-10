@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'app/auth/auth.service';
 
 import Modeler from 'bpmn-js/lib/Modeler';
+import BpmnColorPickerModule from 'assets/colors/colors';
 import { Comments } from 'assets/comments/comments';
 import { SqlBPMNModdle } from 'assets/bpmn-labels-extension';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
@@ -138,7 +139,10 @@ export class ModelerComponent implements OnInit {
         },
         moddleExtensions: {
           sqlExt: SqlBPMNModdle
-        }
+        },
+        additionalModules: [
+          BpmnColorPickerModule
+        ]
       });
 
       self.modeler.importXML(diagram, (error, definitions) => {
