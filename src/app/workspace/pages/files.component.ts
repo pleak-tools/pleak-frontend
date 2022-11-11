@@ -220,7 +220,7 @@ export class FilesComponent implements OnInit {
 
   /** BACK-END RELATED FUNCTIONS */
 
-  getRootDirectory() {
+  getRootDirectory(oldOpenDirsSet:null|Set<number>=null) {
     this.ownFilesLoading = true;
 
     this.http.get(config.backend.host + '/rest/directories/root', AuthService.loadRequestOptions())
@@ -232,10 +232,32 @@ export class FilesComponent implements OnInit {
         this.rootDir = success;
         this.createPublicUrls(this.rootDir);
         this.rootDir.open = true;
+        this.rootDir.openMove = true;
+
+        // apply open/close from the previous state
+        if(oldOpenDirsSet != null) {
+          MoveItemFormComponent.copyStateToTree(this.rootDir, oldOpenDirsSet)
+        }
+
+        // sort as in the previous state
+        switch (this.sort) {
+          case 2:
+            this.sortPobjectsByTitleDesc();
+            break;
+          case 3:
+            this.sortPobjectsByLastModifiedAsc();
+            break;
+          case 4:
+            this.sortPobjectsByLastModifiedDesc();
+            break;
+          default: // 0 and 1 cases
+            this.sortPobjectsByTitleAsc();
+            break;
+        }
       });
   }
 
-  getSharedDirectory() {
+  getSharedDirectory(oldOpenDirsSet:null|Set<number>=null) {
     this.sharedFilesLoading = true;
 
     this.http.get(config.backend.host + '/rest/directories/shared', AuthService.loadRequestOptions())
@@ -246,6 +268,11 @@ export class FilesComponent implements OnInit {
       .subscribe(success => {
         this.sharedDir = success;
         this.createPublicUrls(this.sharedDir);
+
+        // apply open/close from the previous state
+        if(oldOpenDirsSet != null) {
+          MoveItemFormComponent.copyStateToTree(this.sharedDir, oldOpenDirsSet)
+        }
       });
   }
 
