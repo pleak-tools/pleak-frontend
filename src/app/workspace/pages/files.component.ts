@@ -290,10 +290,10 @@ export class FilesComponent implements OnInit {
         let directoryInOwnFiles = this.getPobjectById(id, this.getRoot());
         let directoryInSharedFiles = this.getPobjectById(id, this.getShared());
         if (directoryInOwnFiles) {
-          this.deletePobjectById(id, this.rootDir);
+          this.deletePobjectById(id, this.getRoot());
         }
         if (directoryInSharedFiles) {
-          this.deletePobjectById(id, this.sharedDir);
+          this.deletePobjectById(id, this.getShared());
         }
         this.triggerLocalStorageChangeEvent();
         this.toastr.success('Directory deleted');
