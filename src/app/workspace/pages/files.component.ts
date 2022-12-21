@@ -287,7 +287,14 @@ export class FilesComponent implements OnInit {
   deleteDirectoryREST(id) {
     this.http.delete(config.backend.host + '/rest/directories/' + id, AuthService.loadRequestOptions()).subscribe(
       success => {
-        this.deletePobjectById(id, this.rootDir);
+        let directoryInOwnFiles = this.getPobjectById(id, this.getRoot());
+        let directoryInSharedFiles = this.getPobjectById(id, this.getShared());
+        if (directoryInOwnFiles) {
+          this.deletePobjectById(id, this.rootDir);
+        }
+        if (directoryInSharedFiles) {
+          this.deletePobjectById(id, this.sharedDir);
+        }
         this.triggerLocalStorageChangeEvent();
         this.toastr.success('Directory deleted');
       },
@@ -428,7 +435,8 @@ export class FilesComponent implements OnInit {
   }
 
   renameDirectory(oldDirectoryId, title) {
-    let oldDirectory = this.getPobjectById(Number.parseInt(oldDirectoryId), this.getRoot());
+    let directoryInOwnFiles = this.getPobjectById(Number.parseInt(oldDirectoryId), this.getRoot());
+    let oldDirectory = directoryInOwnFiles ? directoryInOwnFiles : this.getPobjectById(Number.parseInt(oldDirectoryId), this.getShared());
     let newDirectory = Object.assign({}, oldDirectory);
     newDirectory.title = title;
     // sending generic classes as JSON to java is not smart enough, TODO: get better JSON<->POJO lib?
@@ -1095,7 +1103,8 @@ export class FilesComponent implements OnInit {
   }
 
   initRenameDirectoryModal(id) {
-    let directory = this.getPobjectById(id, this.getRoot());
+    let directoryInOwnFiles = this.getPobjectById(id, this.getRoot());
+    let directory = directoryInOwnFiles ? directoryInOwnFiles : this.getPobjectById(id, this.getShared());
     $('.directory-name-input').removeClass('has-error');
     $('.directory-name-error').hide();
     $('#renameDirectoryModal').find('.renameDirectoryParentId').val(id);
@@ -1121,7 +1130,8 @@ export class FilesComponent implements OnInit {
   }
 
   initDeleteDirectoryModal(id) {
-    let directory = this.getPobjectById(id, this.getRoot());
+    let directoryInOwnFiles = this.getPobjectById(id, this.getRoot());
+    let directory = directoryInOwnFiles ? directoryInOwnFiles : this.getPobjectById(id, this.getShared());
     $('#deleteDirectoryModal').find('.deleteDirectoryParentId').val(id);
     $('#deleteDirectoryModal').find('.deleteDirectoryTitle').text(directory.title);
     $('#deleteDirectoryModal').modal();
