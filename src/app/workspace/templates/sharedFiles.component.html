@@ -93,6 +93,12 @@
             <li *ngIf="parent.canCreateDirectory(pobject)">
               <a (click)="parent.initCreateNewDirectoryModal(pobject.id)">New directory</a>
             </li>
+            <li *ngIf="parent.canRenameDirectory(pobject)">
+              <a (click)="parent.initRenameDirectoryModal(pobject.id)">Rename</a>
+            </li>
+            <li *ngIf="parent.canDeleteDirectory(pobject)">
+              <a (click)="parent.initDeleteDirectoryModal(pobject.id)">Delete</a>
+            </li>
             <li *ngIf="parent.canShare(pobject)" role="separator" class="divider"></li>
             <li *ngIf="parent.canShare(pobject)">
               <a (click)="parent.openShareItemModal(pobject)">Share</a>
